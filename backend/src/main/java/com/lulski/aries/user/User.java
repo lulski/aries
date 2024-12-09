@@ -12,7 +12,6 @@ public class User {
     private String email;
 
     public User(String username, String firstName, String lastName, String email) {
-        super();
         this.username = username;
         this.firstName = firstName;
         this.lastName = lastName;
