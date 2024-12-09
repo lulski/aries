@@ -13,13 +13,9 @@ import reactor.core.publisher.Mono;
 public interface UserRepository extends ReactiveMongoRepository<User, String> {
     Flux<User> findAllByLastName(String value);
 
-    //@Query("{email:'?0'}")
     Mono<User> findByEmail(String email);
 
-   // @Query("{username:'?0'}")
-    Mono<User> findByUsername(String username);
-
-    //Mono<User>
+    Mono<User> findTopByUsername(String username);
 
     Mono<User> deleteByUsername(String username);
 }
