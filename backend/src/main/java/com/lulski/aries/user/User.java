@@ -1,5 +1,7 @@
 package com.lulski.aries.user;
 
+import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Size;
 import org.bson.types.ObjectId;
 import org.springframework.data.mongodb.core.mapping.Document;
 
@@ -7,17 +9,39 @@ import org.springframework.data.mongodb.core.mapping.Document;
 public class User {
 
     private ObjectId id;
-    private String username;
-    private String firstName;
-    private String lastName;
-    private String email;
 
-    public User(ObjectId id, String username, String firstName, String lastName, String email) {
+    @NotNull(message = "Username must not be empty")
+    @Size(min = 5, max = 50, message = "Username must be between 5-50 characters")
+    private String username;
+
+    @NotNull(message = "Firstname must not be empty")
+    @Size(min = 3, max = 50, message = "Firstname must be between 3-50 characters")
+    private String firstName;
+
+    @NotNull(message = "Lastname must not be empty")
+    @Size(min = 3, max = 50, message = "Lastname must be between 3-50 characters")
+    private String lastName;
+
+    @NotNull(message = "Email must not be empty")
+    private String email;
+    @NotNull()
+    private boolean isArchived = false;
+
+    public User(ObjectId id, String username, String firstName, String lastName, String email, boolean isArchived) {
         this.id = id;
         this.username = username;
         this.firstName = firstName;
         this.lastName = lastName;
         this.email = email;
+        this.isArchived = isArchived;
+    }
+
+    public boolean isArchived() {
+        return isArchived;
+    }
+
+    public void setArchived(@NotNull() boolean archived) {
+        isArchived = archived;
     }
 
     public ObjectId getId() {
