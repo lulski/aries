@@ -15,7 +15,8 @@ play with reactive programming model.
   - create [x]
   - delete [x]
   - list [x]
-  - update [ ] - update functionality doesn't work, updating produces new documents instead of updating.
+  - update [x] - update functionality doesn't work, updating produces new documents instead of updating.
+    - is fixed by ba03235ecf48a9c8f38e8ef9c5906f02d0503725
 - [ ] setup springsecurity config
 - [ ] setup `post` endpoints
   - [ ] create
