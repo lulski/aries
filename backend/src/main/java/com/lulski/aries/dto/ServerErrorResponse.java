@@ -1,11 +1,11 @@
 package com.lulski.aries.dto;
 
-public class ErrorResponse extends ServerResponse {
+public class ServerErrorResponse extends ServerResponse {
     private String message;
     private String details;
     private int errorCode;
 
-    public ErrorResponse(String message, String details, int errorCode) {
+    public ServerErrorResponse(String message, String details, int errorCode) {
         this.message = message;
         this.details = details;
         this.errorCode = errorCode;

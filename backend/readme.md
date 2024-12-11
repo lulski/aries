@@ -13,6 +13,7 @@ play with reactive programming model.
 - [x] setup mongodb locally, do CRUD and see how it behaves - [Reactive MongoDB](https://www.baeldung.com/spring-data-mongodb-reactive)
 - [] setup `user` endpoints
   - create [x]
+      - [ ] add friendlier error response incase request failed due to duplicate
   - delete [x]
   - list [x]
   - update [x] - update functionality doesn't work, updating produces new documents instead of updating.
@@ -77,4 +78,9 @@ play with reactive programming model.
     ```
 
   - [ ] Collection index.
-  - [ ] unique fields (username, email).
+      - [x] unique fields (username, email).
+          - ```
+        db["users"].createIndex({username:1}, {unique: true})
+        
+        db["users"].createIndex({email:1}, {unique: true})
+        ```

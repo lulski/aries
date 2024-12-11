@@ -1,11 +1,9 @@
 package com.lulski.aries.user;
 
-import com.lulski.aries.dto.ErrorResponse;
 import com.lulski.aries.dto.ServerResponse;
 import com.lulski.aries.util.Page;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import reactor.core.publisher.Mono;
@@ -43,13 +41,8 @@ public class UserController {
     public Mono<ResponseEntity<ServerResponse>> addUser(@RequestBody User user) {
         printLastLineStackTrace("POST " + CONTROLLER_PATH);
 
-        return userRepository.save(user).map(savedUser -> ResponseEntity.accepted()
-                        .body(new ServerResponse(user)))
-                .onErrorResume(e -> {
-                    ErrorResponse errorResponse = new ErrorResponse(e.getClass().getName(), e.getMessage(),
-                            HttpStatus.UNPROCESSABLE_ENTITY.value());
-                    return Mono.just(ResponseEntity.unprocessableEntity().body(new ServerResponse(errorResponse)));
-                });
+        return userRepository.save(user)
+                .map(savedUser -> ResponseEntity.accepted().body(new ServerResponse(user)));
     }
 
     @GetMapping(CONTROLLER_PATH + "/{username}")
@@ -62,14 +55,19 @@ public class UserController {
     @PatchMapping(CONTROLLER_PATH + "/{username}")
     public Mono<ResponseEntity<User>> updateByUsername(@PathVariable String username, @RequestBody User user) {
         printLastLineStackTrace("PATCH " + CONTROLLER_PATH + "/" + username);
+        user.setUsername(username);
 
-        return userRepository.findTopByUsername(username).flatMap(foundUser -> {
+  /*      return userRepository.findTopByUsername(username).flatMap(foundUser -> {
             foundUser.setFirstName(user.getFirstName());
             foundUser.setLastName(user.getLastName());
             foundUser.setEmail(user.getEmail());
 
             return userRepository.save(foundUser).map(updatedUser -> ResponseEntity.ok().body(updatedUser));
-        }).switchIfEmpty(Mono.just(ResponseEntity.notFound().build()));
+        }).switchIfEmpty(Mono.just(ResponseEntity.notFound().build()));*/
+
+        return userService.update(user)
+                .then(Mono.just(ResponseEntity.accepted().body(user)))
+                .switchIfEmpty(Mono.just(ResponseEntity.notFound().build()));
 
     }
 
@@ -77,7 +75,9 @@ public class UserController {
     public Mono<ResponseEntity<Object>> deleteUserByUsername(@PathVariable String username) {
         printLastLineStackTrace("DEL " + CONTROLLER_PATH + "/" + username);
 
-        return userRepository.deleteByUsername(username).then(Mono.just(ResponseEntity.noContent().build())).onErrorResume(e -> Mono.just(ResponseEntity.notFound().build()));
+        return userRepository.deleteByUsername(username)
+                .then(Mono.just(ResponseEntity.noContent().build()))
+                .onErrorResume(e -> Mono.just(ResponseEntity.notFound().build()));
     }
 
     @GetMapping(API_V1 + "/users")

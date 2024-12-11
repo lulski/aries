@@ -5,7 +5,7 @@ import com.lulski.aries.user.User;
 public class ServerResponse {
 
     private User item;
-    private ErrorResponse error;
+    private ServerErrorResponse error;
 
     public ServerResponse() {
     }
@@ -14,15 +14,15 @@ public class ServerResponse {
         this.item = item;
     }
 
-    public ServerResponse(ErrorResponse errorResponse) {
+    public ServerResponse(ServerErrorResponse errorResponse) {
         this.error = errorResponse;
     }
 
-    public ErrorResponse getError() {
+    public ServerErrorResponse getError() {
         return error;
     }
 
-    public void setError(ErrorResponse error) {
+    public void setError(ServerErrorResponse error) {
         this.error = error;
     }
 
