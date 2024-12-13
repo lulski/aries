@@ -24,24 +24,24 @@ public class User {
 
     @NotNull(message = "Email must not be empty")
     private String email;
-    @NotNull()
+
     private boolean isArchived = false;
 
-    public User(ObjectId id, String username, String firstName, String lastName, String email, boolean isArchived) {
+    public User(ObjectId id, String username, String firstName, String lastName, String email, Boolean isArchived) {
         this.id = id;
         this.username = username;
         this.firstName = firstName;
         this.lastName = lastName;
         this.email = email;
-        this.isArchived = isArchived;
+        this.isArchived = (isArchived == null) ? false: isArchived;
     }
 
     public boolean isArchived() {
-        return isArchived;
+        return this.isArchived;
     }
 
-    public void setArchived(@NotNull() boolean archived) {
-        isArchived = archived;
+    public void setArchived(Boolean archived) {
+        this.isArchived = (archived == null) ? false : archived;
     }
 
     public ObjectId getId() {
