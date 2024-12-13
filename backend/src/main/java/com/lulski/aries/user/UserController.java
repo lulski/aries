@@ -8,7 +8,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import reactor.core.publisher.Mono;
 
-import static com.lulski.aries.util.Constant.API_V1;
+import static com.lulski.aries.util.Constant.*;
 
 /**
  *
@@ -17,7 +17,6 @@ import static com.lulski.aries.util.Constant.API_V1;
 public class UserController {
 
     private final static Logger LOGGER = LoggerFactory.getLogger(UserController.class);
-    private final static String CONTROLLER_PATH = API_V1 + "/user";
     private final UserRepository userRepository;
     private final UserService userService;
 
@@ -37,24 +36,24 @@ public class UserController {
      * @param user
      * @return
      */
-    @PostMapping(CONTROLLER_PATH)
+    @PostMapping(PATH_USER)
     public Mono<ResponseEntity<ServerResponse>> addUser(@RequestBody User user) {
-        printLastLineStackTrace("POST " + CONTROLLER_PATH);
+        printLastLineStackTrace("POST " + PATH_USER);
 
         return userRepository.save(user)
                 .map(savedUser -> ResponseEntity.accepted().body(new ServerResponse(user)));
     }
 
-    @GetMapping(CONTROLLER_PATH + "/{username}")
+    @GetMapping(PATH_USER + "/{username}")
     public Mono<ResponseEntity<User>> getUserByUsername(@PathVariable String username) {
-        printLastLineStackTrace("GET " + CONTROLLER_PATH + "/" + username);
+        printLastLineStackTrace("GET " + PATH_USER + "/" + username);
 
         return userRepository.findTopByUsername(username).map(foundUser -> ResponseEntity.ok().body(foundUser)).switchIfEmpty(Mono.just(ResponseEntity.notFound().build()));
     }
 
-    @PatchMapping(CONTROLLER_PATH + "/{username}")
+    @PatchMapping(PATH_USER + "/{username}")
     public Mono<ResponseEntity<User>> updateByUsername(@PathVariable String username, @RequestBody User user) {
-        printLastLineStackTrace("PATCH " + CONTROLLER_PATH + "/" + username);
+        printLastLineStackTrace("PATCH " + PATH_USER + "/" + username);
         user.setUsername(username);
 
   /*      return userRepository.findTopByUsername(username).flatMap(foundUser -> {
@@ -71,18 +70,18 @@ public class UserController {
 
     }
 
-    @DeleteMapping(CONTROLLER_PATH + "/{username}")
+    @DeleteMapping(PATH_USER + "/{username}")
     public Mono<ResponseEntity<Object>> deleteUserByUsername(@PathVariable String username) {
-        printLastLineStackTrace("DEL " + CONTROLLER_PATH + "/" + username);
+        printLastLineStackTrace("DEL " + PATH_USER + "/" + username);
 
         return userRepository.deleteByUsername(username)
                 .then(Mono.just(ResponseEntity.noContent().build()))
                 .onErrorResume(e -> Mono.just(ResponseEntity.notFound().build()));
     }
 
-    @GetMapping(API_V1 + "/users")
+    @GetMapping(PATH_USER)
     public Mono<Page<User>> listAllUsers(@RequestParam int page, @RequestParam int size) {
-        printLastLineStackTrace("GET " + CONTROLLER_PATH + "s" + "&page=" + page + "&size=" + size);
+        printLastLineStackTrace("GET " + PATH_USER + "s" + "&page=" + page + "&size=" + size);
         int skipCount = (page - 1) * size; // Calculate the number of items to skip
 
         var paginatedUsers = userRepository.findAll().skip(skipCount).take(size);
