@@ -45,10 +45,18 @@ public class UserController {
     }
 
     @GetMapping(PATH_USER + "/{username}")
-    public Mono<ResponseEntity<User>> getUserByUsername(@PathVariable String username) {
+    public Mono<ResponseEntity<ServerResponse>> getUserByUsername(@PathVariable String username) {
         printLastLineStackTrace("GET " + PATH_USER + "/" + username);
 
-        return userRepository.findTopByUsername(username).map(foundUser -> ResponseEntity.ok().body(foundUser)).switchIfEmpty(Mono.just(ResponseEntity.notFound().build()));
+        return userRepository.findTopByUsername(username)
+                .map(
+                    foundUser -> ResponseEntity.ok().body(new ServerResponse(foundUser))
+                ).switchIfEmpty(
+                  Mono.defer(() -> {
+                              System.out.println("empty");
+                              return Mono.error(UserNotFoundException::new);
+                          })
+            );
     }
 
     @PatchMapping(PATH_USER + "/{username}")

@@ -1,38 +1,36 @@
 package com.lulski.aries.user;
 
-import com.github.dockerjava.zerodep.shaded.org.apache.hc.core5.http.HeaderElement;
 import com.lulski.aries.config.MongoDBContainerUtil;
 import com.lulski.aries.config.TestMongoConfig;
 import com.lulski.aries.config.TestWebSecurityConfig;
 import com.lulski.aries.dto.ServerResponse;
-import org.junit.jupiter.api.AfterAll;
-import org.junit.jupiter.api.BeforeAll;
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Test;
-import org.junit.runner.RunWith;
-import org.mockito.Mock;
+import org.junit.jupiter.api.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.reactive.WebFluxTest;
-import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.context.annotation.Import;
 import org.springframework.http.MediaType;
-import org.springframework.security.web.header.Header;
-import org.springframework.test.context.ContextConfiguration;
-import org.springframework.test.context.bean.override.mockito.MockitoBean;
-import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.test.web.reactive.server.WebTestClient;
 import org.springframework.web.reactive.function.BodyInserters;
+import reactor.core.publisher.Mono;
+import reactor.test.StepVerifier;
 
 import java.util.Objects;
 
 import static com.lulski.aries.util.Constant.PATH_USER;
+import static org.assertj.core.api.Assertions.assertThat;
 
 @WebFluxTest(controllers = UserController.class)
-@Import({TestWebSecurityConfig.class, TestMongoConfig.class, UserService.class})
+@Import({UserService.class, TestMongoConfig.class, TestWebSecurityConfig.class})
+@TestMethodOrder(MethodOrderer.OrderAnnotation.class)
 class UserControllerTest {
 
+    private final User dummyUser = new User(null, "dummyUser", "just a dummy", "not mandatory"
+            , "dummy@xyz.com", false);
     @Autowired
     private WebTestClient webTestClient;
+
+    @Autowired
+    private UserRepository userRepository;
 
     @BeforeAll
     static void setUpDb() {
@@ -52,26 +50,45 @@ class UserControllerTest {
     }
 
     @Test
+    @Order(1)
     void addUser() {
-        User newUser = new User(null, "dummyUser", "dummy", "",
-                "dummy@dummy.com", false);
-
         webTestClient.post()
                 .uri(PATH_USER)
                 .accept(MediaType.ALL)
-                .body(BodyInserters.fromValue(newUser))
+                .body(BodyInserters.fromValue(this.dummyUser))
                 .exchange().expectStatus().is2xxSuccessful()
                 .expectBody(ServerResponse.class).value(serverResponse -> {
-                    assert Objects.nonNull(serverResponse.getItem().getId());
-                    assert Objects.equals(serverResponse.getItem().getUsername(), newUser.getUsername());
+                            assert Objects.nonNull(serverResponse.getItem().getId());
+                            assert Objects.equals(serverResponse.getItem().getUsername(), this.dummyUser.getUsername());
                         }
                 );
     }
 
     @Test
+    @Order(2)
     void getUserByUsername() {
-    }
+        Mono monoUserSaveResponse = userRepository.save(this.dummyUser).single();
 
+        StepVerifier.create(monoUserSaveResponse)
+                .expectNextMatches(user -> {
+                    User savedUser = (User) user;
+                    System.out.println(savedUser.getId());
+                    userRepository.findTopByUsername(savedUser.getUsername());
+                    return true;
+                })
+                .expectComplete().verify();
+
+        webTestClient.get().uri(PATH_USER + "/" + this.dummyUser.getUsername())
+                .exchange().expectStatus().isOk().expectBody(ServerResponse.class).value(
+                        serverResponse -> {
+                            assertThat(serverResponse.getItem().getUsername()).isEqualTo(this.dummyUser.getUsername());
+                            assertThat(serverResponse.getItem().getEmail()).isEqualTo(this.dummyUser.getEmail());
+                            assertThat(serverResponse.getItem().getLastName()).isEqualTo(this.dummyUser.getLastName());
+                        }
+                );
+
+    }
+/*
     @Test
     void updateByUsername() {
     }
@@ -82,5 +99,5 @@ class UserControllerTest {
 
     @Test
     void listAllUsers() {
-    }
+    }*/
 }
