@@ -51,12 +51,7 @@ public class UserController {
         return userRepository.findTopByUsername(username)
                 .map(
                     foundUser -> ResponseEntity.ok().body(new ServerResponse(foundUser))
-                ).switchIfEmpty(
-                  Mono.defer(() -> {
-                              System.out.println("empty");
-                              return Mono.error(UserNotFoundException::new);
-                          })
-            );
+                ).switchIfEmpty(Mono.just(ResponseEntity.notFound().build()));
     }
 
     @PatchMapping(PATH_USER + "/{username}")
