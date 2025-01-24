@@ -50,22 +50,14 @@ public class UserController {
 
         return userRepository.findTopByUsername(username)
                 .map(
-                    foundUser -> ResponseEntity.ok().body(new ServerResponse(foundUser))
-                ).switchIfEmpty(Mono.just(ResponseEntity.notFound().build()));
+                        foundUser -> ResponseEntity.ok().body(new ServerResponse(foundUser)))
+                .switchIfEmpty(Mono.just(ResponseEntity.notFound().build()));
     }
 
     @PatchMapping(PATH_USER + "/{username}")
     public Mono<ResponseEntity<User>> updateByUsername(@PathVariable String username, @RequestBody User user) {
         printLastLineStackTrace("PATCH " + PATH_USER + "/" + username);
         user.setUsername(username);
-
-  /*      return userRepository.findTopByUsername(username).flatMap(foundUser -> {
-            foundUser.setFirstName(user.getFirstName());
-            foundUser.setLastName(user.getLastName());
-            foundUser.setEmail(user.getEmail());
-
-            return userRepository.save(foundUser).map(updatedUser -> ResponseEntity.ok().body(updatedUser));
-        }).switchIfEmpty(Mono.just(ResponseEntity.notFound().build()));*/
 
         return userService.update(user)
                 .then(Mono.just(ResponseEntity.accepted().body(user)))
@@ -89,17 +81,10 @@ public class UserController {
 
         var paginatedUsers = userRepository.findAll().skip(skipCount).take(size);
 
-        //debug only
-        //        paginatedUsers.subscribe(user -> System.out.println("Received user: " + user.getUsername()),
-        //                error -> System.out.println("Error: " + error),
-        //                () -> System.out.println("All users received."));
-
         var totalCount = userRepository.count();
 
-        //debug only
-        //        totalCount.subscribe(value -> LOGGER.info("totalCount: " + value));
-
-        return Mono.zip(totalCount, paginatedUsers.collectList()).map(tuple -> new Page<>(tuple.getT1(), tuple.getT2(), page, size));
+        return Mono.zip(totalCount, paginatedUsers.collectList())
+                .map(tuple -> new Page<>(tuple.getT1(), tuple.getT2(), page, size));
     }
 
 }
