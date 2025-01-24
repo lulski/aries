@@ -1,7 +1,8 @@
 package com.lulski.aries.user;
 
 import com.lulski.aries.config.MongoDBContainerUtil;
-import com.lulski.aries.config.TestMongoConfig;
+import com.lulski.aries.config.TestDbMongoConfig;
+import com.lulski.aries.config.TestcontainerMongoConfig;
 import com.lulski.aries.config.TestWebSecurityConfig;
 import com.lulski.aries.dto.ServerResponse;
 import org.junit.jupiter.api.*;
@@ -20,12 +21,11 @@ import static com.lulski.aries.util.Constant.PATH_USER;
 import static org.assertj.core.api.Assertions.assertThat;
 
 @WebFluxTest(controllers = UserController.class)
-@Import({UserService.class, TestMongoConfig.class, TestWebSecurityConfig.class})
+@Import({ UserService.class, TestcontainerMongoConfig.class, TestWebSecurityConfig.class, TestDbMongoConfig.class })
 @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
 class UserControllerTest {
 
-    private final User dummyUser = new User(null, "dummyUser", "just a dummy", "not mandatory"
-            , "dummy@xyz.com", false);
+    private final User dummyUser = new User(null, "dummyUser", "just a dummy", "not mandatory", "dummy@xyz.com", false);
     @Autowired
     private WebTestClient webTestClient;
 
@@ -58,16 +58,15 @@ class UserControllerTest {
                 .body(BodyInserters.fromValue(this.dummyUser))
                 .exchange().expectStatus().is2xxSuccessful()
                 .expectBody(ServerResponse.class).value(serverResponse -> {
-                            assert Objects.nonNull(serverResponse.getItem().getId());
-                            assert Objects.equals(serverResponse.getItem().getUsername(), this.dummyUser.getUsername());
-                        }
-                );
+                    assert Objects.nonNull(serverResponse.getItem().getId());
+                    assert Objects.equals(serverResponse.getItem().getUsername(), this.dummyUser.getUsername());
+                });
     }
 
     @Test
     @Order(2)
     void getUserByUsername() {
-        Mono monoUserSaveResponse = userRepository.save(this.dummyUser).single();
+        Mono<User> monoUserSaveResponse = userRepository.save(this.dummyUser).single();
 
         StepVerifier.create(monoUserSaveResponse)
                 .expectNextMatches(user -> {
@@ -84,20 +83,20 @@ class UserControllerTest {
                             assertThat(serverResponse.getItem().getUsername()).isEqualTo(this.dummyUser.getUsername());
                             assertThat(serverResponse.getItem().getEmail()).isEqualTo(this.dummyUser.getEmail());
                             assertThat(serverResponse.getItem().getLastName()).isEqualTo(this.dummyUser.getLastName());
-                        }
-                );
+                        });
 
     }
-/*
-    @Test
-    void updateByUsername() {
-    }
-
-    @Test
-    void deleteUserByUsername() {
-    }
-
-    @Test
-    void listAllUsers() {
-    }*/
+    /*
+     * @Test
+     * void updateByUsername() {
+     * }
+     * 
+     * @Test
+     * void deleteUserByUsername() {
+     * }
+     * 
+     * @Test
+     * void listAllUsers() {
+     * }
+     */
 }
