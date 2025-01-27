@@ -51,7 +51,7 @@ class UserControllerTest {
 
     @Test
     @Order(1)
-    void addUser() {
+    void createNewUser() {
         webTestClient.post()
                 .uri(PATH_USER)
                 .accept(MediaType.ALL)
@@ -86,17 +86,4 @@ class UserControllerTest {
                         });
 
     }
-    /*
-     * @Test
-     * void updateByUsername() {
-     * }
-     * 
-     * @Test
-     * void deleteUserByUsername() {
-     * }
-     * 
-     * @Test
-     * void listAllUsers() {
-     * }
-     */
 }
