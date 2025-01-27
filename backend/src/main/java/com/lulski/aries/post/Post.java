@@ -3,17 +3,20 @@ package com.lulski.aries.post;
 import java.time.LocalDateTime;
 
 import org.bson.types.ObjectId;
+import org.springframework.data.mongodb.core.index.Indexed;
 import org.springframework.data.mongodb.core.mapping.Document;
-
-import com.lulski.aries.user.User;
 
 @Document(collection = "posts")
 public class Post {
 
     private ObjectId id;
+
+    @Indexed
     private String title;
+
+    private String author;
+
     private String content;
-    private User author;
     private LocalDateTime createdOn;
     private LocalDateTime modifiedOn;
     private Boolean isPublished;
@@ -22,7 +25,7 @@ public class Post {
     public Post() {
     }
 
-    public Post(String title, String content, User author, LocalDateTime createdOn, LocalDateTime modifiedOn,
+    public Post(String title, String content, String author, LocalDateTime createdOn, LocalDateTime modifiedOn,
             Boolean isPublished,
             Boolean isArchived) {
         this.title = title;
@@ -50,11 +53,11 @@ public class Post {
         this.content = content;
     }
 
-    public User getAuthor() {
+    public String getAuthor() {
         return author;
     }
 
-    public void setAuthor(User author) {
+    public void setAuthor(String author) {
         this.author = author;
     }
 
