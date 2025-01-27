@@ -2,22 +2,20 @@ package com.lulski.aries.post;
 
 import java.time.LocalDateTime;
 
+import org.bson.types.ObjectId;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
-import org.springframework.boot.test.autoconfigure.data.mongo.DataMongoTest;
-import org.springframework.test.context.ContextConfiguration;
+import org.springframework.boot.test.context.SpringBootTest;
 
 import com.lulski.aries.config.MongoDBContainerUtil;
 import com.lulski.aries.user.User;
+import com.lulski.aries.user.UserRepository;
 
 import reactor.test.StepVerifier;
 
-@DataMongoTest
-@ContextConfiguration(classes = PostService.class)
-@EnableAutoConfiguration
+@SpringBootTest
 public class PostServiceTest {
 
     @Autowired
@@ -26,14 +24,19 @@ public class PostServiceTest {
     @Autowired
     PostRepository postRepository;
 
-    private final User author = new User(null, "rbelmont", "Richter", "Belmont", "rbelmont@xyz.com", false);
-    private final Post post = new Post("how to gitgood", "you just have to grind 3 hours everyday",
-            author, LocalDateTime.now(), LocalDateTime.now(), false, false);
+    @Autowired
+    UserRepository userRepository;
+
+    private final User author = new User(new ObjectId("6795b64f525959be00d07c0b"), "rbelmont", "Richter", "Belmont",
+            "rbelmont@xyz.com", false);
+    private final Post post = new Post("how to gitgood part two", "you just have to grind 3 hours everyday",
+            author.getUsername(), LocalDateTime.now(), LocalDateTime.now(), false, false);
 
     @BeforeAll
     static void setUp() {
         System.out.println(">>> Starting testcontainer:mongodb");
         MongoDBContainerUtil.getMongoDbContainer().start();
+
     }
 
     @AfterAll
@@ -42,12 +45,26 @@ public class PostServiceTest {
     }
 
     @Test
-    void testArchivePost() {
+    void createNewPostThenArchiveIt() {
+        Post postToBeArchived = new Post("test archiving a post",
+                "Help keep the library tidy by returning your dishes to the cafe",
+                author.getUsername(), LocalDateTime.now(), LocalDateTime.now(), false, false);
 
+        Post saved = postRepository.save(postToBeArchived).block();
+
+        // postService.archivePost(saved).block();
+
+        StepVerifier.create(postService.archivePost(postToBeArchived).single()).expectNextMatches(
+                p -> {
+                    if (p.getIsArchived() == true)
+                        return true;
+                    else
+                        return false;
+                }).verifyComplete();
     }
 
     @Test
-    void testCreate() {
+    void createNewPost() {
         StepVerifier.create(postRepository.save(post).single()).expectNextMatches(p -> {
             if (p.getId() != null)
                 return true;
