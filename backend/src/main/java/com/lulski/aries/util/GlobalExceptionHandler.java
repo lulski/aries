@@ -1,8 +1,5 @@
 package com.lulski.aries.util;
 
-import com.lulski.aries.dto.ServerErrorResponse;
-import com.lulski.aries.dto.ServerResponse;
-import com.lulski.aries.user.UserNotFoundException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.dao.DataIntegrityViolationException;
@@ -12,13 +9,28 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.http.server.reactive.ServerHttpRequest;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
+
+import com.lulski.aries.dto.ServerErrorResponse;
+import com.lulski.aries.dto.ServerResponse;
+import com.lulski.aries.user.UserNotFoundException;
+
 import reactor.core.publisher.Mono;
 
+/**
+ * Controller exception handler
+ */
 @ControllerAdvice
 public class GlobalExceptionHandler {
 
-    private final static Logger LOGGER = LoggerFactory.getLogger(GlobalExceptionHandler.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(GlobalExceptionHandler.class);
 
+    /**
+     * duplicate key handler
+     *
+     * @param e
+     * @param request
+     * @return
+     */
     @ExceptionHandler(DuplicateKeyException.class)
     public Mono<ResponseEntity<ServerResponse>> handleDuplicateKey(Exception e, ServerHttpRequest request) {
         LOGGER.error("Error happened on " + request.getMethod() + " " + request.getPath());
@@ -29,20 +41,37 @@ public class GlobalExceptionHandler {
         return Mono.just(ResponseEntity.unprocessableEntity().body(errorResponse));
     }
 
+    /**
+     * userNotFound handler
+     *
+     * @param e
+     * @param request
+     * @return
+     */
     @ExceptionHandler(UserNotFoundException.class)
     public Mono<ResponseEntity<ServerResponse>> userNotFound(UserNotFoundException e, ServerHttpRequest request) {
         LOGGER.error("Can't find username " + request.getMethod() + " " + request.getPath());
-        var username = request.getAttributes().get("org.springframework.web.reactive.HandlerMapping.uriTemplateVariables").toString();
-        ServerErrorResponse errorResponse = new ServerErrorResponse(e.getMessage(), username + " doesn't exist", HttpStatus.NOT_FOUND.value());
+        var username = request.getAttributes()
+                .get("org.springframework.web.reactive.HandlerMapping.uriTemplateVariables").toString();
+        ServerErrorResponse errorResponse = new ServerErrorResponse(e.getMessage(), username + " doesn't exist",
+                HttpStatus.NOT_FOUND.value());
 
         return Mono.just(ResponseEntity.unprocessableEntity().body(errorResponse));
     }
 
+    /**
+     * unique key exception handler
+     *
+     * @param e
+     * @param request
+     * @return
+     */
     @ExceptionHandler(DataIntegrityViolationException.class)
     public Mono<ResponseEntity<ServerResponse>> handleInvalidRequest(Exception e, ServerHttpRequest request) {
         LOGGER.error("Error happened on " + request.getMethod() + " " + request.getPath());
         e.printStackTrace();
-        ServerErrorResponse errorResponse = new ServerErrorResponse("Invalid request body", "username, firstname, and email are required",
+        ServerErrorResponse errorResponse = new ServerErrorResponse("Invalid request body",
+                "username, firstname, and email are required",
                 HttpStatus.UNPROCESSABLE_ENTITY.value());
 
         return Mono.just(ResponseEntity.badRequest().body(errorResponse));

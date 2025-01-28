@@ -1,4 +1,7 @@
 package com.lulski.aries.post;
 
-public record PostDTO(String body) {
+/**
+ * DTO for PostController
+ */
+public record PostDto(String body) {
 }

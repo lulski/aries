@@ -10,10 +10,18 @@ import org.springframework.security.core.userdetails.User;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.web.server.SecurityWebFilterChain;
 
+/**
+ * Config for websecurity
+ */
 @Configuration
 @EnableWebFluxSecurity
 public class WebSecurityConfig {
 
+    /**
+     * define the allowed user
+     *
+     * @return
+     */
     @Bean
     public MapReactiveUserDetailsService userDetailsService() {
         UserDetails userDetails = User.withDefaultPasswordEncoder()
@@ -24,20 +32,12 @@ public class WebSecurityConfig {
         return new MapReactiveUserDetailsService(userDetails);
     }
 
-    /*
-     * @Bean
-     * public SecurityWebFilterChain securityWebFilterChain(ServerHttpSecurity
-     * httpSecurity) {
-     * httpSecurity.authorizeExchange(exchanges ->
-     * exchanges.anyExchange().authenticated())
-     * .httpBasic(Customizer.withDefaults())
-     * .formLogin(Customizer.withDefaults());
-     * 
-     * 
-     * return httpSecurity.build();
-     * }
+    /**
+     * no security `dev` profile
+     *
+     * @param httpSecurity
+     * @return
      */
-
     @Bean
     @Profile("dev")
     public SecurityWebFilterChain devSecurityWebFilterChain(ServerHttpSecurity httpSecurity) {

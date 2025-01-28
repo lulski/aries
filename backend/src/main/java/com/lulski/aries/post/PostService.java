@@ -6,6 +6,9 @@ import org.springframework.stereotype.Service;
 
 import reactor.core.publisher.Mono;
 
+/**
+ * Service for Post
+ */
 @Service
 public class PostService {
     private static final Logger logger = LoggerFactory.getLogger(PostService.class);
@@ -15,6 +18,13 @@ public class PostService {
         this.postRepository = postRepository;
     }
 
+    /**
+     * Will do repository lookup for the supplied post then set isArchived field to
+     * true
+     *
+     * @param post
+     * @return
+     */
     public Mono<Post> archivePost(Post post) {
         return postRepository.findById(post.getId())
                 .doOnNext(p -> System.out.println(">>> found post with id : " + p.getId()))

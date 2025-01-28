@@ -1,8 +1,12 @@
 package com.lulski.aries.user;
 
 import org.springframework.stereotype.Service;
+
 import reactor.core.publisher.Mono;
 
+/**
+ * User service
+ */
 @Service
 public class UserService {
 
@@ -12,6 +16,12 @@ public class UserService {
         this.userRepository = userRepository;
     }
 
+    /**
+     * update User object
+     *
+     * @param userUpdate
+     * @return
+     */
     public Mono<User> update(User userUpdate) {
         return userRepository.findTopByUsername(userUpdate.getUsername())
                 .flatMap(foundUser -> {
@@ -21,6 +31,12 @@ public class UserService {
                 .switchIfEmpty(Mono.error(new UserNotFoundException()));
     }
 
+    /**
+     * set originalUser fields with the values from userUpdate
+     *
+     * @param originalUser
+     * @param userUpdate
+     */
     public void prepareUpdate(User originalUser, User userUpdate) {
         userUpdate.setId(originalUser.getId());
 

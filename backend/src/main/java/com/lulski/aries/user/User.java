@@ -1,10 +1,14 @@
 package com.lulski.aries.user;
 
-import jakarta.validation.constraints.NotNull;
-import jakarta.validation.constraints.Size;
 import org.bson.types.ObjectId;
 import org.springframework.data.mongodb.core.mapping.Document;
 
+import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Size;
+
+/**
+ * Data model for `users` collection
+ */
 @Document("users")
 public class User {
 
@@ -27,6 +31,16 @@ public class User {
 
     private boolean isArchived = false;
 
+    /**
+     * main constructor
+     *
+     * @param id
+     * @param username
+     * @param firstName
+     * @param lastName
+     * @param email
+     * @param isArchived
+     */
     public User(ObjectId id, String username, String firstName, String lastName, String email, Boolean isArchived) {
         this.id = id;
         this.username = username;
