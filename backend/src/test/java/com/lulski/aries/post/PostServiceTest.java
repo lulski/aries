@@ -9,9 +9,8 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 
-import com.lulski.aries.config.MongoDBContainerUtil;
+import com.lulski.aries.config.MongoDbContainerUtil;
 import com.lulski.aries.user.User;
-import com.lulski.aries.user.UserRepository;
 
 import reactor.test.StepVerifier;
 
@@ -19,13 +18,10 @@ import reactor.test.StepVerifier;
 public class PostServiceTest {
 
     @Autowired
-    PostService postService;
+    private PostService postService;
 
     @Autowired
-    PostRepository postRepository;
-
-    @Autowired
-    UserRepository userRepository;
+    private PostRepository postRepository;
 
     private final User author = new User(new ObjectId("6795b64f525959be00d07c0b"), "rbelmont", "Richter", "Belmont",
             "rbelmont@xyz.com", false);
@@ -35,13 +31,13 @@ public class PostServiceTest {
     @BeforeAll
     static void setUp() {
         System.out.println(">>> Starting testcontainer:mongodb");
-        MongoDBContainerUtil.getMongoDbContainer().start();
+        MongoDbContainerUtil.getMongoDbContainer().start();
 
     }
 
     @AfterAll
     static void afterAll() {
-        MongoDBContainerUtil.getMongoDbContainer().stop();
+        MongoDbContainerUtil.getMongoDbContainer().stop();
     }
 
     @Test
@@ -52,25 +48,15 @@ public class PostServiceTest {
 
         Post saved = postRepository.save(postToBeArchived).block();
 
-        // postService.archivePost(saved).block();
-
-        StepVerifier.create(postService.archivePost(postToBeArchived).single()).expectNextMatches(
-                p -> {
-                    if (p.getIsArchived() == true)
-                        return true;
-                    else
-                        return false;
-                }).verifyComplete();
+        StepVerifier.create(postService.archivePost(postToBeArchived).single())
+                .expectNextMatches(p -> p.getIsArchived() == true)
+                .verifyComplete();
     }
 
     @Test
     void createNewPost() {
-        StepVerifier.create(postRepository.save(post).single()).expectNextMatches(p -> {
-            if (p.getId() != null)
-                return true;
-            else
-                return false;
-        }).verifyComplete();
+        StepVerifier.create(postRepository.save(post).single()).expectNextMatches(p -> p.getId() != null)
+                .verifyComplete();
 
     }
 }

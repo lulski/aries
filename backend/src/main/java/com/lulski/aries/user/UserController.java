@@ -41,7 +41,7 @@ public class UserController {
         printLastLineStackTrace("POST " + PATH_USER);
 
         return userRepository.save(user)
-                .map(savedUser -> ResponseEntity.accepted().body(new ServerResponse(user)));
+                .map(savedUser -> ResponseEntity.accepted().body(new ServerResponse(savedUser)));
     }
 
     @GetMapping(PATH_USER + "/{username}")

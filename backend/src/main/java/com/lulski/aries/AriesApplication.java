@@ -14,7 +14,7 @@ public class AriesApplication {
 
     public static void main(String[] args) {
 
-        ConfigurableApplicationContext context = SpringApplication.run(AriesApplication.class, args);
+        SpringApplication.run(AriesApplication.class, args);
         /*
          * String[] beanNames = context.getBeanDefinitionNames();
          * Arrays.stream(beanNames).forEach(System.out::println);

@@ -33,7 +33,7 @@ public class User {
         this.firstName = firstName;
         this.lastName = lastName;
         this.email = email;
-        this.isArchived = (isArchived == null) ? false: isArchived;
+        this.isArchived = (isArchived == null) ? false : isArchived;
     }
 
     public boolean isArchived() {
