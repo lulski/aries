@@ -9,12 +9,15 @@ import com.mongodb.MongoClientSettings;
 import com.mongodb.reactivestreams.client.MongoClient;
 import com.mongodb.reactivestreams.client.MongoClients;
 
+/**
+ * Testcontainer config
+ */
 @Configuration
 @Profile("testcontainer")
 public class TestcontainerMongoConfig extends AbstractReactiveMongoConfiguration {
 
     public TestcontainerMongoConfig() {
-        MongoDBContainerUtil.getMongoDbContainer().start();
+        MongoDbContainerUtil.getMongoDbContainer().start();
     }
 
     @Override
@@ -24,7 +27,7 @@ public class TestcontainerMongoConfig extends AbstractReactiveMongoConfiguration
 
     @Override
     public MongoClient reactiveMongoClient() {
-        ConnectionString connectionString = new ConnectionString(MongoDBContainerUtil.getMongoDbContainer()
+        ConnectionString connectionString = new ConnectionString(MongoDbContainerUtil.getMongoDbContainer()
                 .getConnectionString());
         MongoClientSettings settings = MongoClientSettings.builder().applyConnectionString(connectionString).build();
         return MongoClients.create(settings);

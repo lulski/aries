@@ -1,29 +1,42 @@
 package com.lulski.aries.user;
 
-import com.lulski.aries.config.MongoDBContainerUtil;
-import com.lulski.aries.config.TestDbMongoConfig;
-import com.lulski.aries.config.TestcontainerMongoConfig;
-import com.lulski.aries.config.TestWebSecurityConfig;
-import com.lulski.aries.dto.ServerResponse;
-import org.junit.jupiter.api.*;
+import static com.lulski.aries.util.Constant.PATH_USER;
+import static org.assertj.core.api.Assertions.assertThat;
+
+import java.util.Objects;
+
+import org.junit.jupiter.api.AfterAll;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.MethodOrderer;
+import org.junit.jupiter.api.Order;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.TestMethodOrder;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.autoconfigure.web.reactive.WebFluxTest;
+import org.springframework.boot.test.autoconfigure.web.reactive.AutoConfigureWebTestClient;
+import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.context.annotation.Import;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.reactive.server.WebTestClient;
 import org.springframework.web.reactive.function.BodyInserters;
+
+import com.lulski.aries.config.MongoDbContainerUtil;
+import com.lulski.aries.config.TestDbMongoConfig;
+import com.lulski.aries.config.TestWebSecurityConfig;
+import com.lulski.aries.config.TestcontainerMongoConfig;
+import com.lulski.aries.dto.ServerResponse;
+
 import reactor.core.publisher.Mono;
 import reactor.test.StepVerifier;
 
-import java.util.Objects;
-
-import static com.lulski.aries.util.Constant.PATH_USER;
-import static org.assertj.core.api.Assertions.assertThat;
-
-@WebFluxTest(controllers = UserController.class)
 @Import({ UserService.class, TestcontainerMongoConfig.class, TestWebSecurityConfig.class, TestDbMongoConfig.class })
 @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
+@SpringBootTest
+@AutoConfigureWebTestClient(timeout = "100000000")
 class UserControllerTest {
+    private final Logger logger = LoggerFactory.getLogger(UserControllerTest.class);
 
     private final User dummyUser = new User(null, "dummyUser", "just a dummy", "not mandatory", "dummy@xyz.com", false);
     @Autowired
@@ -32,16 +45,19 @@ class UserControllerTest {
     @Autowired
     private UserRepository userRepository;
 
+    @Autowired
+    private UserController userController;
+
     @BeforeAll
     static void setUpDb() {
         System.out.println(">>> Starting testcontainer:mongodb");
-        MongoDBContainerUtil.getMongoDbContainer().start();
+        MongoDbContainerUtil.getMongoDbContainer().start();
     }
 
     @AfterAll
     static void tearDownDb() {
         System.out.println(">>> Stopping testcontainer:mongodb");
-        MongoDBContainerUtil.getMongoDbContainer().stop();
+        MongoDbContainerUtil.getMongoDbContainer().stop();
     }
 
     @BeforeEach
@@ -49,7 +65,6 @@ class UserControllerTest {
         System.out.println(">>> beforeEach");
     }
 
-    @Test
     @Order(1)
     void createNewUser() {
         webTestClient.post()
@@ -57,7 +72,10 @@ class UserControllerTest {
                 .accept(MediaType.ALL)
                 .body(BodyInserters.fromValue(this.dummyUser))
                 .exchange().expectStatus().is2xxSuccessful()
-                .expectBody(ServerResponse.class).value(serverResponse -> {
+                .expectBody(ServerResponse.class)
+                .value(serverResponse -> {
+                    logger.info("serverResponse: " + serverResponse.getItem().getUsername());
+                    logger.info("dummyUser: " + dummyUser.getUsername());
                     assert Objects.nonNull(serverResponse.getItem().getId());
                     assert Objects.equals(serverResponse.getItem().getUsername(), this.dummyUser.getUsername());
                 });
