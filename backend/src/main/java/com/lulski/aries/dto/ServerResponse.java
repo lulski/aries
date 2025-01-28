@@ -27,8 +27,13 @@ public class ServerResponse {
         this.error = errorResponse;
     }
 
-    @SuppressFBWarnings // the serializer went haywire if the method returns errorCopy, supressing for
-                        // now.
+    /**
+     * SuppressFBWarnings because there is a serialization process that went haywire
+     * if errorCopy is used
+     *
+     * @return
+     */
+    @SuppressFBWarnings
     public ServerErrorResponse getError() {
         // var errorCopy = new ServerErrorResponse(null, null, 0);
         // if (this.error != null) {
