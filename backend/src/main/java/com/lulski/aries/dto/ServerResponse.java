@@ -5,6 +5,9 @@ import org.slf4j.LoggerFactory;
 
 import com.lulski.aries.user.User;
 
+/**
+ * DTO for UserController
+ */
 public class ServerResponse {
     private static final Logger logger = LoggerFactory.getLogger(ServerResponse.class);
     private User item;

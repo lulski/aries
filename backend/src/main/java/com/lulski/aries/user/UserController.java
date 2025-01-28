@@ -1,25 +1,40 @@
 package com.lulski.aries.user;
 
-import com.lulski.aries.dto.ServerResponse;
-import com.lulski.aries.util.Page;
+import static com.lulski.aries.util.Constant.PATH_USER;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PatchMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RestController;
+
+import com.lulski.aries.dto.ServerResponse;
+import com.lulski.aries.util.Page;
+
 import reactor.core.publisher.Mono;
 
-import static com.lulski.aries.util.Constant.*;
-
 /**
- *
+ * User controller reactive
  */
 @RestController
 public class UserController {
 
-    private final static Logger LOGGER = LoggerFactory.getLogger(UserController.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(UserController.class);
     private final UserRepository userRepository;
     private final UserService userService;
 
+    /**
+     * main constructor
+     *
+     * @param userRepository
+     * @param userService
+     */
     public UserController(UserRepository userRepository, UserService userService) {
         this.userRepository = userRepository;
         this.userService = userService;
@@ -44,6 +59,12 @@ public class UserController {
                 .map(savedUser -> ResponseEntity.accepted().body(new ServerResponse(savedUser)));
     }
 
+    /**
+     * return `user` based on the supplied `username`
+     *
+     * @param username
+     * @return
+     */
     @GetMapping(PATH_USER + "/{username}")
     public Mono<ResponseEntity<ServerResponse>> getUserByUsername(@PathVariable String username) {
         printLastLineStackTrace("GET " + PATH_USER + "/" + username);
@@ -54,6 +75,13 @@ public class UserController {
                 .switchIfEmpty(Mono.just(ResponseEntity.notFound().build()));
     }
 
+    /**
+     * update `user` based on the supplied `username`
+     *
+     * @param username
+     * @param user
+     * @return
+     */
     @PatchMapping(PATH_USER + "/{username}")
     public Mono<ResponseEntity<User>> updateByUsername(@PathVariable String username, @RequestBody User user) {
         printLastLineStackTrace("PATCH " + PATH_USER + "/" + username);
@@ -65,6 +93,12 @@ public class UserController {
 
     }
 
+    /**
+     * delete `user` based on the supplied username
+     *
+     * @param username
+     * @return
+     */
     @DeleteMapping(PATH_USER + "/{username}")
     public Mono<ResponseEntity<Object>> deleteUserByUsername(@PathVariable String username) {
         printLastLineStackTrace("DEL " + PATH_USER + "/" + username);
@@ -74,6 +108,13 @@ public class UserController {
                 .onErrorResume(e -> Mono.just(ResponseEntity.notFound().build()));
     }
 
+    /**
+     * return all users (paginated)
+     *
+     * @param page
+     * @param size
+     * @return
+     */
     @GetMapping(PATH_USER)
     public Mono<Page<User>> listAllUsers(@RequestParam int page, @RequestParam int size) {
         printLastLineStackTrace("GET " + PATH_USER + "s" + "&page=" + page + "&size=" + size);

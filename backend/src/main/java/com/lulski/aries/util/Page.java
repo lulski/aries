@@ -2,12 +2,23 @@ package com.lulski.aries.util;
 
 import java.util.List;
 
+/**
+ * Util class to paginate json response
+ */
 public class Page<T> {
     private final long totalItems;
     private final List<T> items;
     private final int currentPage;
     private final int pageSize;
 
+    /**
+     * main constructor
+     *
+     * @param totalItems
+     * @param items
+     * @param currentPage
+     * @param pageSize
+     */
     public Page(long totalItems, List<T> items, int currentPage, int pageSize) {
         this.totalItems = totalItems;
         this.items = items;

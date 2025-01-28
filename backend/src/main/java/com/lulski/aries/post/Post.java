@@ -6,6 +6,9 @@ import org.bson.types.ObjectId;
 import org.springframework.data.mongodb.core.index.Indexed;
 import org.springframework.data.mongodb.core.mapping.Document;
 
+/**
+ * Post
+ */
 @Document(collection = "posts")
 public class Post {
 
@@ -22,9 +25,23 @@ public class Post {
     private Boolean isPublished;
     private Boolean isArchived;
 
+    /**
+     * Post
+     */
     public Post() {
     }
 
+    /**
+     * this is fun
+     *
+     * @param title
+     * @param content
+     * @param author
+     * @param createdOn
+     * @param modifiedOn
+     * @param isPublished
+     * @param isArchived
+     */
     public Post(String title, String content, String author, LocalDateTime createdOn, LocalDateTime modifiedOn,
             Boolean isPublished,
             Boolean isArchived) {
