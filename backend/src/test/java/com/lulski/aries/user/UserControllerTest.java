@@ -65,6 +65,7 @@ class UserControllerTest {
         System.out.println(">>> beforeEach");
     }
 
+    @Test
     @Order(1)
     void createNewUser() {
         webTestClient.post()

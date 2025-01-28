@@ -3,6 +3,7 @@ package com.lulski.aries.user;
 import org.bson.types.ObjectId;
 import org.springframework.data.mongodb.core.mapping.Document;
 
+import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
 
@@ -10,6 +11,7 @@ import jakarta.validation.constraints.Size;
  * Data model for `users` collection
  */
 @Document("users")
+@SuppressFBWarnings(value = "EI_EXPOSE_REP2")
 public class User {
 
     private ObjectId id;
@@ -58,6 +60,7 @@ public class User {
         this.isArchived = (archived == null) ? false : archived;
     }
 
+    @SuppressFBWarnings(value = "EI_EXPOSE_REP")
     public ObjectId getId() {
         return id;
     }

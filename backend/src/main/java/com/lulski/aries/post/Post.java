@@ -6,10 +6,13 @@ import org.bson.types.ObjectId;
 import org.springframework.data.mongodb.core.index.Indexed;
 import org.springframework.data.mongodb.core.mapping.Document;
 
+import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
+
 /**
  * Post
  */
 @Document(collection = "posts")
+@SuppressFBWarnings(value = "EI_EXPOSE_REP2")
 public class Post {
 
     private ObjectId id;
@@ -110,6 +113,7 @@ public class Post {
         this.isArchived = isArchived;
     }
 
+    @SuppressFBWarnings(value = "EI_EXPOSE_REP")
     public ObjectId getId() {
         return id;
     }

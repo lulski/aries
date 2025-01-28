@@ -5,9 +5,12 @@ import org.slf4j.LoggerFactory;
 
 import com.lulski.aries.user.User;
 
+import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
+
 /**
  * DTO for UserController
  */
+@SuppressFBWarnings(value = "EI_EXPOSE_REP2")
 public class ServerResponse {
     private static final Logger logger = LoggerFactory.getLogger(ServerResponse.class);
     private User item;
@@ -24,6 +27,8 @@ public class ServerResponse {
         this.error = errorResponse;
     }
 
+    @SuppressFBWarnings // the serializer went haywire if the method returns errorCopy, supressing for
+                        // now.
     public ServerErrorResponse getError() {
         // var errorCopy = new ServerErrorResponse(null, null, 0);
         // if (this.error != null) {
