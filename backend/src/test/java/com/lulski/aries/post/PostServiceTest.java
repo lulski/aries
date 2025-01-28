@@ -46,7 +46,7 @@ public class PostServiceTest {
                 "Help keep the library tidy by returning your dishes to the cafe",
                 author.getUsername(), LocalDateTime.now(), LocalDateTime.now(), false, false);
 
-        Post saved = postRepository.save(postToBeArchived).block();
+        postRepository.save(postToBeArchived).block();
 
         StepVerifier.create(postService.archivePost(postToBeArchived).single())
                 .expectNextMatches(p -> p.getIsArchived() == true)

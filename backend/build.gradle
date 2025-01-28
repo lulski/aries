@@ -39,7 +39,7 @@ dependencies {
 	testImplementation 'org.springframework.security:spring-security-test'
 	testImplementation "org.testcontainers:mongodb:1.20.4"
 	testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
-	compileOnly 'com.github.spotbugs:spotbugs-annotations:4.8.6'
+	implementation 'com.github.spotbugs:spotbugs-annotations:4.8.6'
 }
 
 tasks.named('test') {
@@ -51,6 +51,16 @@ spotbugsMain {
         html {
             required = true
             outputLocation = file("$buildDir/reports/spotbugs/main/spotbugs.html")
+            stylesheet = 'fancy-hist.xsl'
+        }
+    }
+}
+
+spotbugsTest {
+    reports {
+        html {
+            required = true
+            outputLocation = file("$buildDir/reports/spotbugs/test/spotbugs.html")
             stylesheet = 'fancy-hist.xsl'
         }
     }
