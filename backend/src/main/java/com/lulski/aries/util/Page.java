@@ -2,9 +2,12 @@ package com.lulski.aries.util;
 
 import java.util.List;
 
+import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
+
 /**
  * Util class to paginate json response
  */
+@SuppressFBWarnings(value = "EI_EXPOSE_REP")
 public class Page<T> {
     private final long totalItems;
     private final List<T> items;
@@ -30,6 +33,7 @@ public class Page<T> {
         return totalItems;
     }
 
+    @SuppressFBWarnings(value = "EI_EXPOSE_REP")
     public List<T> getItems() {
         return items;
     }

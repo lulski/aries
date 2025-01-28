@@ -8,10 +8,13 @@ import com.mongodb.ConnectionString;
 import com.mongodb.MongoClientSettings;
 import com.mongodb.lang.NonNull;
 
+import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
+
 /**
  * Config for mongodb
  */
 @Configuration
+@SuppressFBWarnings(value = "EI_EXPOSE_REP2")
 public class MongoConfig extends AbstractReactiveMongoConfiguration {
 
     private final MongoProperties mongoProperties;

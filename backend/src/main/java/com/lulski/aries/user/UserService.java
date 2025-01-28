@@ -2,12 +2,14 @@ package com.lulski.aries.user;
 
 import org.springframework.stereotype.Service;
 
+import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import reactor.core.publisher.Mono;
 
 /**
  * User service
  */
 @Service
+@SuppressFBWarnings(value = "EI_EXPOSE_REP2")
 public class UserService {
 
     private final UserRepository userRepository;

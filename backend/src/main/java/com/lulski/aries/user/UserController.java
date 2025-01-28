@@ -17,12 +17,14 @@ import org.springframework.web.bind.annotation.RestController;
 import com.lulski.aries.dto.ServerResponse;
 import com.lulski.aries.util.Page;
 
+import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import reactor.core.publisher.Mono;
 
 /**
  * User controller reactive
  */
 @RestController
+@SuppressFBWarnings(value = "EI_EXPOSE_REP2")
 public class UserController {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(UserController.class);
