@@ -8,6 +8,8 @@ import static org.mockito.Mockito.when;
 import java.time.LocalDateTime;
 
 import org.bson.types.ObjectId;
+import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
+import org.springframework.boot.autoconfigure.data.mongo.MongoReactiveRepositoriesAutoConfiguration;
 import org.springframework.boot.test.context.TestConfiguration;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Primary;
@@ -24,6 +26,8 @@ import reactor.core.publisher.Mono;
  * For use in environment that doesn't have database (GitHub)
  */
 @TestConfiguration
+@EnableAutoConfiguration(exclude = { MongoReactiveRepositoriesAutoConfiguration.class })
+// @EnableReactiveMongoRepositories
 public class TestRepositoryConfig {
 
     private static final User mockAuthor = new User(new ObjectId("6795b64f525959be00d07c0b"), "dummyUser",

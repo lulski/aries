@@ -6,12 +6,17 @@ plugins {
 	id("com.github.spotbugs") version "6.1.3"
 }
 
+// jar {
+//     archiveBaseName.set("ariesbackend")
+//     archiveVersion.set("0.0.1")
+//     archiveClassifier.set("") // Optional: remove classifier like "-plain"
+// }
 
-
-//checkstyle {
-//	toolVersion = "10.12.4"
-//}
-
+// bootJar {
+//     archiveBaseName.set("ariesbackend")
+//     archiveVersion.set("0.0.1")
+//     archiveClassifier.set("") 
+// }
 
 
 
