@@ -45,9 +45,11 @@ public class Post {
      * @param isPublished
      * @param isArchived
      */
-    public Post(String title, String content, String author, LocalDateTime createdOn, LocalDateTime modifiedOn,
+    public Post(ObjectId id, String title, String content, String author, LocalDateTime createdOn,
+            LocalDateTime modifiedOn,
             Boolean isPublished,
             Boolean isArchived) {
+        this.id = id;
         this.title = title;
         this.content = content;
         this.author = author;
