@@ -47,8 +47,7 @@ public class PostServiceTest {
 
     @Test
     void contextLoads() {
-        // Arrays.stream(cApplicationContext.getBeanDefinitionNames()).forEach(b ->
-        // System.out.println(">>> bean: " + b));
+        Arrays.stream(cApplicationContext.getBeanDefinitionNames()).forEach(b -> System.out.println(">>> bean: " + b));
     }
 
     @BeforeEach
