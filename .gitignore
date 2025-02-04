@@ -60,3 +60,5 @@ gradle-app.setting
 
 #log files
 *.log
+
+*/bin/

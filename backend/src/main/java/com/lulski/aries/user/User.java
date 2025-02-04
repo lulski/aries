@@ -52,6 +52,9 @@ public class User {
         this.isArchived = (isArchived == null) ? false : isArchived;
     }
 
+    public User() {
+    }
+
     public boolean isArchived() {
         return this.isArchived;
     }

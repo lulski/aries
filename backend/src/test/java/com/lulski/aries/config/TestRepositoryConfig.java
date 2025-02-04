@@ -27,7 +27,6 @@ import reactor.core.publisher.Mono;
  */
 @TestConfiguration
 @EnableAutoConfiguration(exclude = { MongoReactiveRepositoriesAutoConfiguration.class })
-// @EnableReactiveMongoRepositories
 public class TestRepositoryConfig {
 
     private static final User mockAuthor = new User(new ObjectId("6795b64f525959be00d07c0b"), "dummyUser",
