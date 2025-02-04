@@ -2,6 +2,7 @@ package com.lulski.aries.config;
 
 import org.springframework.boot.autoconfigure.mongo.MongoProperties;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.Profile;
 import org.springframework.data.mongodb.config.AbstractReactiveMongoConfiguration;
 
 import com.mongodb.ConnectionString;
@@ -15,6 +16,7 @@ import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
  */
 @Configuration
 @SuppressFBWarnings(value = "EI_EXPOSE_REP2")
+@Profile("!mock")
 public class MongoConfig extends AbstractReactiveMongoConfiguration {
 
     private final MongoProperties mongoProperties;

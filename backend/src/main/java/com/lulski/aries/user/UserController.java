@@ -1,7 +1,6 @@
 package com.lulski.aries.user;
 
 import static com.lulski.aries.util.Constant.PATH_USER;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.ResponseEntity;
@@ -18,6 +17,7 @@ import com.lulski.aries.dto.ServerResponse;
 import com.lulski.aries.util.Page;
 
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
+import jakarta.validation.Valid;
 import reactor.core.publisher.Mono;
 
 /**
@@ -54,7 +54,7 @@ public class UserController {
      * @return
      */
     @PostMapping(PATH_USER)
-    public Mono<ResponseEntity<ServerResponse>> addUser(@RequestBody User user) {
+    public Mono<ResponseEntity<ServerResponse>> addUser(@Valid @RequestBody User user) {
         printLastLineStackTrace("POST " + PATH_USER);
 
         return userRepository.save(user)
@@ -118,8 +118,10 @@ public class UserController {
      * @return
      */
     @GetMapping(PATH_USER)
-    public Mono<Page<User>> listAllUsers(@RequestParam int page, @RequestParam int size) {
+    public Mono<Page<User>> listAllUsers(@RequestParam(required = false, defaultValue = "1") int page,
+            @RequestParam(required = false, defaultValue = "10") int size) {
         printLastLineStackTrace("GET " + PATH_USER + "s" + "&page=" + page + "&size=" + size);
+
         int skipCount = (page - 1) * size; // Calculate the number of items to skip
 
         var paginatedUsers = userRepository.findAll().skip(skipCount).take(size);

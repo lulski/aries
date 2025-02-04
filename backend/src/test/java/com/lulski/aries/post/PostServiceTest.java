@@ -14,6 +14,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.Import;
+import org.springframework.test.context.ActiveProfiles;
 
 import com.lulski.aries.config.MongoDbContainerUtil;
 import com.lulski.aries.config.TestRepositoryConfig;
@@ -23,6 +24,7 @@ import reactor.test.StepVerifier;
 
 @SpringBootTest
 @Import(TestRepositoryConfig.class)
+@ActiveProfiles("mock")
 public class PostServiceTest {
 
     private static final Logger logger = LoggerFactory.getLogger(PostServiceTest.class);

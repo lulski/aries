@@ -21,6 +21,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.Import;
 import org.springframework.http.MediaType;
+import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.web.reactive.server.WebTestClient;
 import org.springframework.web.reactive.function.BodyInserters;
 
@@ -39,6 +40,7 @@ import reactor.test.StepVerifier;
 @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
 @SpringBootTest
 @AutoConfigureWebTestClient(timeout = "100000000")
+@ActiveProfiles("mock")
 class UserControllerTest {
     private final Logger logger = LoggerFactory.getLogger(UserControllerTest.class);
 
@@ -91,13 +93,16 @@ class UserControllerTest {
                 .uri(PATH_USER)
                 .accept(MediaType.ALL)
                 .body(BodyInserters.fromValue(this.dummyUser))
-                .exchange().expectStatus().is2xxSuccessful()
+                .exchange()
+                .expectStatus()
+                .is2xxSuccessful()
                 .expectBody(ServerResponse.class)
                 .value(serverResponse -> {
                     logger.info("serverResponse: " + serverResponse.getItem().getUsername());
                     logger.info("dummyUser: " + dummyUser.getUsername());
                     assert Objects.nonNull(serverResponse.getItem().getId());
-                    assert Objects.equals(serverResponse.getItem().getUsername(), this.dummyUser.getUsername());
+                    assert Objects.equals(serverResponse.getItem().getUsername(),
+                            this.dummyUser.getUsername());
                 });
     }
 
