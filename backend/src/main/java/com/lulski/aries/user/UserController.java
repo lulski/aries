@@ -1,6 +1,9 @@
 package com.lulski.aries.user;
 
 import static com.lulski.aries.util.Constant.PATH_USER;
+
+import com.lulski.aries.dto.ServerResponse;
+import com.lulski.aries.util.Page;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.ResponseEntity;
@@ -12,124 +15,148 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
-
-import com.lulski.aries.dto.ServerResponse;
-import com.lulski.aries.util.Page;
-
-import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
-import jakarta.validation.Valid;
 import reactor.core.publisher.Mono;
 
-/**
- * User controller reactive
- */
+/** User controller reactive */
 @RestController
-@SuppressFBWarnings(value = "EI_EXPOSE_REP2")
 public class UserController {
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(UserController.class);
-    private final UserRepository userRepository;
-    private final UserService userService;
+  private static final Logger LOGGER = LoggerFactory.getLogger(UserController.class);
+  private final UserRepository userRepository;
+  private final UserService userService;
 
-    /**
-     * main constructor
-     *
-     * @param userRepository
-     * @param userService
-     */
-    public UserController(UserRepository userRepository, UserService userService) {
-        this.userRepository = userRepository;
-        this.userService = userService;
-    }
+  /**
+   * main constructor
+   *
+   * @param userRepository
+   * @param userService
+   */
+  public UserController(UserRepository userRepository, UserService userService) {
+    this.userRepository = userRepository;
+    this.userService = userService;
+  }
 
-    private static void printLastLineStackTrace(String context) {
-        StackTraceElement[] stackTrace = Thread.currentThread().getStackTrace();
-        LOGGER.info("Stack trace's last line: " + stackTrace[stackTrace.length - 1].toString() + " from " + context);
-    }
+  private static void printLastLineStackTrace(String context) {
+    StackTraceElement[] stackTrace = Thread.currentThread().getStackTrace();
+    LOGGER.info(
+        "Stack trace's last line: "
+            + stackTrace[stackTrace.length - 1].toString()
+            + " from "
+            + context);
+  }
 
-    /**
-     * insert user into collection 'users'
-     *
-     * @param user
-     * @return
-     */
-    @PostMapping(PATH_USER)
-    public Mono<ResponseEntity<ServerResponse>> addUser(@Valid @RequestBody User user) {
-        printLastLineStackTrace("POST " + PATH_USER);
+  /**
+   * insert user into collection 'users'
+   *
+   * @param
+   * @return
+   */
+  @PostMapping(PATH_USER)
+  public Mono<ResponseEntity<ServerResponse>> addUser(@RequestBody UserRequestDto userDto) {
+    printLastLineStackTrace("POST " + PATH_USER);
 
-        return userRepository.save(user)
-                .map(savedUser -> ResponseEntity.accepted().body(new ServerResponse(savedUser)));
-    }
+    User user =
+        new User.UserBuilder()
+            .email(userDto.email())
+            .firstname(userDto.firstname())
+            .lastname(userDto.lastname())
+            .username(userDto.username())
+            .password(userDto.password())
+            .authorities(userDto.roles())
+            .build();
 
-    /**
-     * return `user` based on the supplied `username`
-     *
-     * @param username
-     * @return
-     */
-    @GetMapping(PATH_USER + "/{username}")
-    public Mono<ResponseEntity<ServerResponse>> getUserByUsername(@PathVariable String username) {
-        printLastLineStackTrace("GET " + PATH_USER + "/" + username);
+    return userRepository
+        .save(user)
+        .map(
+            savedUser ->
+                ResponseEntity.accepted()
+                    .body(
+                        new ServerResponse(
+                            new UserResponseDto(
+                                savedUser.getUsername(),
+                                savedUser.getId().toString(),
+                                savedUser.getAuthoritiesNames()))));
+  }
 
-        return userRepository.findTopByUsername(username)
-                .map(
-                        foundUser -> ResponseEntity.ok().body(new ServerResponse(foundUser)))
-                .switchIfEmpty(Mono.just(ResponseEntity.notFound().build()));
-    }
+  /**
+   * return `user` based on the supplied `username`
+   *
+   * @param username
+   * @return
+   */
+  @GetMapping(PATH_USER + "/{username}")
+  public Mono<ResponseEntity<ServerResponse>> getUserByUsername(@PathVariable String username) {
+    printLastLineStackTrace("GET " + PATH_USER + "/" + username);
 
-    /**
-     * update `user` based on the supplied `username`
-     *
-     * @param username
-     * @param user
-     * @return
-     */
-    @PatchMapping(PATH_USER + "/{username}")
-    public Mono<ResponseEntity<User>> updateByUsername(@PathVariable String username, @RequestBody User user) {
-        printLastLineStackTrace("PATCH " + PATH_USER + "/" + username);
-        user.setUsername(username);
+    return userRepository
+        .findTopByUsername(username)
+        .map(
+            foundUser ->
+                ResponseEntity.ok()
+                    .body(
+                        new ServerResponse(
+                            new UserResponseDto(
+                                foundUser.getUsername(),
+                                foundUser.getId().toString(),
+                                foundUser.getAuthoritiesNames()))))
+        .switchIfEmpty(Mono.just(ResponseEntity.notFound().build()));
+  }
 
-        return userService.update(user)
-                .then(Mono.just(ResponseEntity.accepted().body(user)))
-                .switchIfEmpty(Mono.just(ResponseEntity.notFound().build()));
+  /**
+   * update `user` based on the supplied `username`
+   *
+   * @param username
+   * @param user
+   * @return
+   */
+  @PatchMapping(PATH_USER + "/{username}")
+  public Mono<ResponseEntity<User>> updateByUsername(
+      @PathVariable String username, @RequestBody User user) {
+    printLastLineStackTrace("PATCH " + PATH_USER + "/" + username);
+    user.setUsername(username);
 
-    }
+    return userService
+        .update(user)
+        .then(Mono.just(ResponseEntity.accepted().body(user)))
+        .switchIfEmpty(Mono.just(ResponseEntity.notFound().build()));
+  }
 
-    /**
-     * delete `user` based on the supplied username
-     *
-     * @param username
-     * @return
-     */
-    @DeleteMapping(PATH_USER + "/{username}")
-    public Mono<ResponseEntity<Object>> deleteUserByUsername(@PathVariable String username) {
-        printLastLineStackTrace("DEL " + PATH_USER + "/" + username);
+  /**
+   * delete `user` based on the supplied username
+   *
+   * @param username
+   * @return
+   */
+  @DeleteMapping(PATH_USER + "/{username}")
+  public Mono<ResponseEntity<Object>> deleteUserByUsername(@PathVariable String username) {
+    printLastLineStackTrace("DEL " + PATH_USER + "/" + username);
 
-        return userRepository.deleteByUsername(username)
-                .then(Mono.just(ResponseEntity.noContent().build()))
-                .onErrorResume(e -> Mono.just(ResponseEntity.notFound().build()));
-    }
+    return userRepository
+        .deleteByUsername(username)
+        .then(Mono.just(ResponseEntity.noContent().build()))
+        .onErrorResume(e -> Mono.just(ResponseEntity.notFound().build()));
+  }
 
-    /**
-     * return all users (paginated)
-     *
-     * @param page
-     * @param size
-     * @return
-     */
-    @GetMapping(PATH_USER)
-    public Mono<Page<User>> listAllUsers(@RequestParam(required = false, defaultValue = "1") int page,
-            @RequestParam(required = false, defaultValue = "10") int size) {
-        printLastLineStackTrace("GET " + PATH_USER + "s" + "&page=" + page + "&size=" + size);
+  /**
+   * return all users (paginated)
+   *
+   * @param page
+   * @param size
+   * @return
+   */
+  @GetMapping(PATH_USER)
+  public Mono<Page<User>> listAllUsers(
+      @RequestParam(required = false, defaultValue = "1") int page,
+      @RequestParam(required = false, defaultValue = "10") int size) {
+    printLastLineStackTrace("GET " + PATH_USER + "s" + "&page=" + page + "&size=" + size);
 
-        int skipCount = (page - 1) * size; // Calculate the number of items to skip
+    int skipCount = (page - 1) * size; // Calculate the number of items to skip
 
-        var paginatedUsers = userRepository.findAll().skip(skipCount).take(size);
+    var paginatedUsers = userRepository.findAll().skip(skipCount).take(size);
 
-        var totalCount = userRepository.count();
+    var totalCount = userRepository.count();
 
-        return Mono.zip(totalCount, paginatedUsers.collectList())
-                .map(tuple -> new Page<>(tuple.getT1(), tuple.getT2(), page, size));
-    }
-
+    return Mono.zip(totalCount, paginatedUsers.collectList())
+        .map(tuple -> new Page<>(tuple.getT1(), tuple.getT2(), page, size));
+  }
 }
