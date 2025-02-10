@@ -2,6 +2,7 @@ package com.lulski.aries.user;
 
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Size;
+import java.util.Collections;
 import java.util.Set;
 import java.util.stream.Collectors;
 import org.bson.types.ObjectId;
@@ -76,6 +77,10 @@ public class User implements UserDetails {
   }
 
   public Set<String> getAuthoritiesNames() {
+    if (this.authorities == null) {
+      return Collections.emptySet();
+    }
+
     return this.authorities.stream()
         .map(SimpleGrantedAuthority::getAuthority)
         .collect(Collectors.toSet());
@@ -136,7 +141,7 @@ public class User implements UserDetails {
     private String password;
     private Set<String> authorities;
 
-    UserBuilder() {}
+    public UserBuilder() {}
 
     public UserBuilder username(String username) {
       this.username = username;
