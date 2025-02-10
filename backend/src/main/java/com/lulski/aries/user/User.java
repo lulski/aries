@@ -1,106 +1,182 @@
 package com.lulski.aries.user;
 
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.Size;
+import java.util.Set;
+import java.util.stream.Collectors;
 import org.bson.types.ObjectId;
 import org.springframework.data.mongodb.core.mapping.Document;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
+import org.springframework.security.core.userdetails.UserDetails;
 
-import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
-import jakarta.validation.constraints.NotNull;
-import jakarta.validation.constraints.Size;
-
-/**
- * Data model for `users` collection
- */
+/** Data model for `users` collection. */
 @Document("users")
-@SuppressFBWarnings(value = "EI_EXPOSE_REP2")
-public class User {
+public class User implements UserDetails {
 
-    private ObjectId id;
+  private ObjectId id;
 
-    @NotNull(message = "Username must not be empty")
-    @Size(min = 5, max = 50, message = "Username must be between 5-50 characters")
+  @NotBlank(message = "Username must not be empty")
+  @Size(min = 5, max = 50, message = "Username must be between 5-50 characters")
+  private String username;
+
+  @NotBlank(message = "password cannot be empty")
+  private String password;
+
+  @NotBlank(message = "authorities must be set")
+  private Set<SimpleGrantedAuthority> authorities;
+
+  @NotBlank(message = "Firstname must not be empty")
+  @Size(min = 3, max = 50, message = "Firstname must be between 3-50 characters")
+  private String firstName;
+
+  @NotBlank(message = "Lastname must not be empty")
+  @Size(min = 3, max = 50, message = "Lastname must be between 3-50 characters")
+  private String lastName;
+
+  @NotBlank(message = "Email must not be empty")
+  private String email;
+
+  /**
+   * main constructor
+   *
+   * @param id
+   * @param username
+   * @param firstName
+   * @param lastName
+   * @param email
+   */
+  public User(
+      ObjectId id,
+      String username,
+      String password,
+      String firstName,
+      String lastName,
+      String email) {
+    this.id = id;
+    this.username = username;
+    this.password = password;
+    this.firstName = firstName;
+    this.lastName = lastName;
+    this.email = email;
+  }
+
+  public User() {}
+
+  public ObjectId getId() {
+    return id;
+  }
+
+  public void setId(ObjectId id) {
+    this.id = id;
+  }
+
+  @Override
+  public Set<SimpleGrantedAuthority> getAuthorities() {
+    return this.authorities;
+  }
+
+  public Set<String> getAuthoritiesNames() {
+    return this.authorities.stream()
+        .map(SimpleGrantedAuthority::getAuthority)
+        .collect(Collectors.toSet());
+  }
+
+  public void setAuthorities(Set<String> authorities) {
+    this.authorities =
+        authorities.stream().map(SimpleGrantedAuthority::new).collect(Collectors.toSet());
+  }
+
+  @Override
+  public String getPassword() {
+    return this.password;
+  }
+
+  public void setPassword(@NotBlank(message = "password cannot be empty") String password) {
+    this.password = password;
+  }
+
+  @Override
+  public String getUsername() {
+    return username;
+  }
+
+  public void setUsername(String username) {
+    this.username = username;
+  }
+
+  public String getFirstName() {
+    return firstName;
+  }
+
+  public void setFirstName(String firstName) {
+    this.firstName = firstName;
+  }
+
+  public String getLastName() {
+    return lastName;
+  }
+
+  public void setLastName(String lastName) {
+    this.lastName = lastName;
+  }
+
+  public String getEmail() {
+    return email;
+  }
+
+  public void setEmail(String email) {
+    this.email = email;
+  }
+
+  public static final class UserBuilder {
     private String username;
-
-    @NotNull(message = "Firstname must not be empty")
-    @Size(min = 3, max = 50, message = "Firstname must be between 3-50 characters")
-    private String firstName;
-
-    @NotNull(message = "Lastname must not be empty")
-    @Size(min = 3, max = 50, message = "Lastname must be between 3-50 characters")
-    private String lastName;
-
-    @NotNull(message = "Email must not be empty")
+    private String firstname;
+    private String lastname;
     private String email;
+    private String password;
+    private Set<String> authorities;
 
-    private boolean isArchived = false;
+    UserBuilder() {}
 
-    /**
-     * main constructor
-     *
-     * @param id
-     * @param username
-     * @param firstName
-     * @param lastName
-     * @param email
-     * @param isArchived
-     */
-    public User(ObjectId id, String username, String firstName, String lastName, String email, Boolean isArchived) {
-        this.id = id;
-        this.username = username;
-        this.firstName = firstName;
-        this.lastName = lastName;
-        this.email = email;
-        this.isArchived = (isArchived == null) ? false : isArchived;
+    public UserBuilder username(String username) {
+      this.username = username;
+      return this;
     }
 
-    public User() {
+    public UserBuilder password(String password) {
+      this.password = password;
+      return this;
     }
 
-    public boolean isArchived() {
-        return this.isArchived;
+    public UserBuilder authorities(Set<String> authorities) {
+      this.authorities = authorities;
+      return this;
     }
 
-    public void setArchived(Boolean archived) {
-        this.isArchived = (archived == null) ? false : archived;
+    public UserBuilder firstname(String firstname) {
+      this.firstname = firstname;
+      return this;
     }
 
-    @SuppressFBWarnings(value = "EI_EXPOSE_REP")
-    public ObjectId getId() {
-        return id;
+    public UserBuilder lastname(String lastname) {
+      this.lastname = lastname;
+      return this;
     }
 
-    public void setId(ObjectId id) {
-        this.id = id;
+    public UserBuilder email(String email) {
+      this.email = email;
+      return this;
     }
 
-    public String getUsername() {
-        return username;
+    public User build() {
+      User user = new User();
+      user.setUsername(this.username);
+      user.setFirstName(this.firstname);
+      user.setLastName(this.lastname);
+      user.setEmail(this.email);
+      user.setPassword(this.password);
+      user.setAuthorities(this.authorities);
+      return user;
     }
-
-    public void setUsername(String username) {
-        this.username = username;
-    }
-
-    public String getFirstName() {
-        return firstName;
-    }
-
-    public void setFirstName(String firstName) {
-        this.firstName = firstName;
-    }
-
-    public String getLastName() {
-        return lastName;
-    }
-
-    public void setLastName(String lastName) {
-        this.lastName = lastName;
-    }
-
-    public String getEmail() {
-        return email;
-    }
-
-    public void setEmail(String email) {
-        this.email = email;
-    }
+  }
 }
