@@ -10,6 +10,7 @@ import com.lulski.aries.post.PostRepository;
 import com.lulski.aries.user.User;
 import com.lulski.aries.user.UserRepository;
 import java.time.LocalDateTime;
+import java.util.Set;
 import org.bson.types.ObjectId;
 import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
 import org.springframework.boot.autoconfigure.data.mongo.MongoReactiveRepositoriesAutoConfiguration;
@@ -26,13 +27,14 @@ import reactor.core.publisher.Mono;
 public class TestRepositoryConfig {
 
   private static final User mockAuthor =
-      new User(
-          new ObjectId("6795b64f525959be00d07c0b"),
-          "dummyUser",
-          "dummyPassword",
-          "just a dummy",
-          "not mandatory",
-          "dummy@xyz.com");
+      new User.UserBuilder()
+          .username("dummyUser")
+          .password("dummyPassword")
+          .authorities(Set.of("ADMIN", "USER"))
+          .firstname("bob")
+          .lastname("gonzales")
+          .email("bgz@www.com")
+          .build();
   private static final Post mockPost =
       new Post(
           new ObjectId("1234b64f525959be00d07c0b"),
