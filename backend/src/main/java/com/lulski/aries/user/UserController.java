@@ -2,10 +2,12 @@ package com.lulski.aries.user;
 
 import static com.lulski.aries.util.Constant.PATH_USER;
 
+import com.lulski.aries.dto.ServerErrorResponse;
 import com.lulski.aries.dto.ServerResponse;
 import com.lulski.aries.util.Page;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -46,7 +48,7 @@ public class UserController {
   }
 
   /**
-   * insert user into collection 'users'
+   * insert user into collection 'users'.
    *
    * @param
    * @return
@@ -62,11 +64,11 @@ public class UserController {
             .lastname(userDto.lastname())
             .username(userDto.username())
             .password(userDto.password())
-            .authorities(userDto.roles())
+            .authorities(userDto.authorities())
             .build();
 
-    return userRepository
-        .save(user)
+    return userService
+        .insertNew(user)
         .map(
             savedUser ->
                 ResponseEntity.accepted()
@@ -79,7 +81,7 @@ public class UserController {
   }
 
   /**
-   * return `user` based on the supplied `username`
+   * return `user` based on the supplied `username`.
    *
    * @param username
    * @return
@@ -106,19 +108,34 @@ public class UserController {
    * update `user` based on the supplied `username`
    *
    * @param username
-   * @param user
-   * @return
+   * @param userRequestDto
+   * @return updated User information
    */
   @PatchMapping(PATH_USER + "/{username}")
-  public Mono<ResponseEntity<User>> updateByUsername(
-      @PathVariable String username, @RequestBody User user) {
+  public Mono<ResponseEntity<ServerResponse>> updateByUsername(
+      @PathVariable String username, @RequestBody UserRequestDto userRequestDto) {
     printLastLineStackTrace("PATCH " + PATH_USER + "/" + username);
-    user.setUsername(username);
-
     return userService
-        .update(user)
-        .then(Mono.just(ResponseEntity.accepted().body(user)))
-        .switchIfEmpty(Mono.just(ResponseEntity.notFound().build()));
+        .update(username, userRequestDto)
+        .map(
+            updatedUser ->
+                ResponseEntity.ok(
+                    new ServerResponse(
+                        new UserResponseDto(
+                            updatedUser.getUsername(),
+                            updatedUser.getId().toString(),
+                            updatedUser.getAuthoritiesNames()))))
+        .switchIfEmpty(Mono.just(ResponseEntity.notFound().build()))
+        .onErrorResume(
+            e -> {
+              return Mono.just(
+                  ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                      .body(
+                          new ServerErrorResponse(
+                              "failed to update user",
+                              e.getMessage(),
+                              HttpStatus.INTERNAL_SERVER_ERROR.value())));
+            });
   }
 
   /**
