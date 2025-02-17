@@ -5,7 +5,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
 import reactor.core.publisher.Mono;
 
-/** User service */
+/** User service. */
 @Service
 public class UserService {
 
@@ -18,11 +18,11 @@ public class UserService {
   }
 
   /**
-   * update User object.
+   * Update User with supplied username with attributes from UserRequestDto.
    *
-   * @param username
-   * @param userRequestDto
-   * @return Mono user
+   * @param username username of an existing User
+   * @param userRequestDto User fields that will be updated
+   * @return User object wrapped in Mono
    */
   public Mono<User> update(String username, UserRequestDto userRequestDto) {
     return userRepository
@@ -46,36 +46,14 @@ public class UserService {
         .switchIfEmpty(Mono.error(new UserNotFoundException("User not found: " + username)));
   }
 
-  /**
-   * set originalUser fields with the values from userUpdate
-   *
-   * @param originalUser
-   * @param userUpdate
-   */
-  public void prepareUpdate(User originalUser, User userUpdate) {
-    userUpdate.setId(originalUser.getId());
-
-    if (userUpdate.getFirstName() == null) {
-      userUpdate.setFirstName(originalUser.getFirstName());
-    }
-
-    if (userUpdate.getLastName() == null) {
-      userUpdate.setLastName(originalUser.getLastName());
-    }
-
-    if (userUpdate.getEmail() == null) {
-      userUpdate.setEmail(originalUser.getEmail());
-    }
-  }
-
-  public Mono<User> insertNew(User user) {
+  public Mono<User> insertNew(UserRequestDto userRequestDto) {
     User toSave = new User();
-    toSave.setUsername(user.getUsername());
-    toSave.setPassword(passwordEncoder.encode(user.getPassword()));
-    toSave.setAuthorities(user.getAuthoritiesNames());
-    toSave.setFirstName(user.getFirstName());
-    toSave.setLastName(user.getLastName());
-    toSave.setEmail(user.getEmail());
+    toSave.setUsername(userRequestDto.username());
+    toSave.setPassword(passwordEncoder.encode(userRequestDto.password()));
+    toSave.setAuthorities(userRequestDto.authorities());
+    toSave.setFirstName(userRequestDto.firstname());
+    toSave.setLastName(userRequestDto.lastname());
+    toSave.setEmail(userRequestDto.email());
 
     return userRepository.save(toSave);
   }

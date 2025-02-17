@@ -24,13 +24,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.test.autoconfigure.web.reactive.AutoConfigureWebTestClient;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.boot.test.context.TestConfiguration;
 import org.springframework.context.ApplicationContext;
-import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Import;
 import org.springframework.http.MediaType;
-import org.springframework.security.crypto.factory.PasswordEncoderFactories;
-import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.web.reactive.server.WebTestClient;
 import org.springframework.web.reactive.function.BodyInserters;
@@ -43,30 +39,12 @@ import reactor.test.StepVerifier;
   TestWebSecurityConfig.class,
   TestDbMongoConfig.class,
   TestRepositoryConfig.class,
+  UserTestConfiguration.class
 })
 @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
 @AutoConfigureWebTestClient(timeout = "100000000")
 @ActiveProfiles(value = {"test", "withDb"})
 class UserControllerTest {
-
-  @TestConfiguration
-  static class UserControllerTestConfig {
-
-    @Bean
-    PasswordEncoder passwordEncoder() {
-      return PasswordEncoderFactories.createDelegatingPasswordEncoder();
-    }
-
-    @Bean
-    UserService userService(UserRepository userRepository, PasswordEncoder passwordEncoder) {
-      return new UserService(userRepository, passwordEncoder);
-    }
-
-    @Bean
-    UserController userController(UserRepository userRepository, UserService userService) {
-      return new UserController(userRepository, userService);
-    }
-  }
 
   private final Logger logger = LoggerFactory.getLogger(UserControllerTest.class);
 

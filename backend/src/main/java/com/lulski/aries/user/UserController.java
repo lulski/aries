@@ -57,18 +57,8 @@ public class UserController {
   public Mono<ResponseEntity<ServerResponse>> addUser(@RequestBody UserRequestDto userDto) {
     printLastLineStackTrace("POST " + PATH_USER);
 
-    User user =
-        new User.UserBuilder()
-            .email(userDto.email())
-            .firstname(userDto.firstname())
-            .lastname(userDto.lastname())
-            .username(userDto.username())
-            .password(userDto.password())
-            .authorities(userDto.authorities())
-            .build();
-
     return userService
-        .insertNew(user)
+        .insertNew(userDto)
         .map(
             savedUser ->
                 ResponseEntity.accepted()
