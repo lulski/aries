@@ -20,7 +20,7 @@ import org.springframework.context.annotation.Primary;
 import org.springframework.context.annotation.Profile;
 import reactor.core.publisher.Mono;
 
-/** For use in environment that doesn't have database (GitHub) */
+/** For use in environment that doesn't have database (GitHub). */
 @TestConfiguration
 @EnableAutoConfiguration(exclude = {MongoReactiveRepositoriesAutoConfiguration.class})
 @Profile("mock")
@@ -60,7 +60,7 @@ public class TestRepositoryConfig {
         .thenAnswer(
             invocation -> {
               User argument = invocation.getArgument(0);
-              argument.setId(mockAuthor.getId());
+              argument.setId(new ObjectId("67b2abe390f04d67290f4523"));
               return Mono.just(argument);
             });
 
