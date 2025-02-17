@@ -1,5 +1,6 @@
 package com.lulski.aries.user;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Size;
 import java.util.Collections;
@@ -76,6 +77,7 @@ public class User implements UserDetails {
     return this.authorities;
   }
 
+  @JsonIgnore
   public Set<String> getAuthoritiesNames() {
     if (this.authorities == null) {
       return Collections.emptySet();
