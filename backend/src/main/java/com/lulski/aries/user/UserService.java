@@ -1,57 +1,82 @@
 package com.lulski.aries.user;
 
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
-
-import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
+import org.springframework.util.StringUtils;
 import reactor.core.publisher.Mono;
 
-/**
- * User service
- */
+/** User service */
 @Service
-@SuppressFBWarnings(value = "EI_EXPOSE_REP2")
 public class UserService {
 
-    private final UserRepository userRepository;
+  private final UserRepository userRepository;
+  private final PasswordEncoder passwordEncoder;
 
-    public UserService(UserRepository userRepository) {
-        this.userRepository = userRepository;
+  public UserService(UserRepository userRepository, PasswordEncoder passwordEncoder) {
+    this.userRepository = userRepository;
+    this.passwordEncoder = passwordEncoder;
+  }
+
+  /**
+   * update User object.
+   *
+   * @param username
+   * @param userRequestDto
+   * @return Mono user
+   */
+  public Mono<User> update(String username, UserRequestDto userRequestDto) {
+    return userRepository
+        .findTopByUsername(username)
+        .flatMap(
+            existingUser -> {
+              if (StringUtils.hasText(userRequestDto.firstname())) {
+                existingUser.setFirstName(userRequestDto.firstname());
+              }
+              if (StringUtils.hasText(userRequestDto.lastname())) {
+                existingUser.setLastName(userRequestDto.lastname());
+              }
+              if (StringUtils.hasText(userRequestDto.email())) {
+                existingUser.setEmail(userRequestDto.email());
+              }
+              if (StringUtils.hasText(userRequestDto.password())) {
+                existingUser.setPassword(passwordEncoder.encode(userRequestDto.password()));
+              }
+              return userRepository.save(existingUser);
+            })
+        .switchIfEmpty(Mono.error(new UserNotFoundException("User not found: " + username)));
+  }
+
+  /**
+   * set originalUser fields with the values from userUpdate
+   *
+   * @param originalUser
+   * @param userUpdate
+   */
+  public void prepareUpdate(User originalUser, User userUpdate) {
+    userUpdate.setId(originalUser.getId());
+
+    if (userUpdate.getFirstName() == null) {
+      userUpdate.setFirstName(originalUser.getFirstName());
     }
 
-    /**
-     * update User object
-     *
-     * @param userUpdate
-     * @return
-     */
-    public Mono<User> update(User userUpdate) {
-        return userRepository.findTopByUsername(userUpdate.getUsername())
-                .flatMap(foundUser -> {
-                    prepareUpdate(foundUser, userUpdate);
-                    return userRepository.save(userUpdate);
-                })
-                .switchIfEmpty(Mono.error(new UserNotFoundException()));
+    if (userUpdate.getLastName() == null) {
+      userUpdate.setLastName(originalUser.getLastName());
     }
 
-    /**
-     * set originalUser fields with the values from userUpdate
-     *
-     * @param originalUser
-     * @param userUpdate
-     */
-    public void prepareUpdate(User originalUser, User userUpdate) {
-        userUpdate.setId(originalUser.getId());
-
-        if (userUpdate.getFirstName() == null) {
-            userUpdate.setFirstName(originalUser.getFirstName());
-        }
-
-        if (userUpdate.getLastName() == null) {
-            userUpdate.setLastName(originalUser.getLastName());
-        }
-
-        if (userUpdate.getEmail() == null) {
-            userUpdate.setEmail(originalUser.getEmail());
-        }
+    if (userUpdate.getEmail() == null) {
+      userUpdate.setEmail(originalUser.getEmail());
     }
+  }
+
+  public Mono<User> insertNew(User user) {
+    User toSave = new User();
+    toSave.setUsername(user.getUsername());
+    toSave.setPassword(passwordEncoder.encode(user.getPassword()));
+    toSave.setAuthorities(user.getAuthoritiesNames());
+    toSave.setFirstName(user.getFirstName());
+    toSave.setLastName(user.getLastName());
+    toSave.setEmail(user.getEmail());
+
+    return userRepository.save(toSave);
+  }
 }
