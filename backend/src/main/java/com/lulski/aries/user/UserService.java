@@ -3,6 +3,7 @@ package com.lulski.aries.user;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
+import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
 /** User service. */
@@ -56,5 +57,16 @@ public class UserService {
     toSave.setEmail(userRequestDto.email());
 
     return userRepository.save(toSave);
+  }
+
+  /** fetch all User and strip out its password. */
+  public Flux<User> findAll() {
+    return this.userRepository
+        .findAll()
+        .map(
+            user -> {
+              user.setPassword("****");
+              return user;
+            });
   }
 }
