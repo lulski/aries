@@ -73,11 +73,12 @@ public class User implements UserDetails {
   }
 
   @Override
-  public Set<SimpleGrantedAuthority> getAuthorities() {
+  @JsonIgnore
+  public @NotBlank(message = "authorities must be set") Set<SimpleGrantedAuthority>
+      getAuthorities() {
     return this.authorities;
   }
 
-  @JsonIgnore
   public Set<String> getAuthoritiesNames() {
     if (this.authorities == null) {
       return Collections.emptySet();
@@ -98,7 +99,7 @@ public class User implements UserDetails {
     return this.password;
   }
 
-  public void setPassword(@NotBlank(message = "password cannot be empty") String password) {
+  public void setPassword(String password) {
     this.password = password;
   }
 

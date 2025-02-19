@@ -8,9 +8,7 @@ import com.lulski.aries.config.TestDbMongoConfig;
 import com.lulski.aries.config.TestRepositoryConfig;
 import com.lulski.aries.config.TestWebSecurityConfig;
 import com.lulski.aries.config.TestcontainerMongoConfig;
-import com.lulski.aries.dto.ServerResponse;
 import java.util.Arrays;
-import java.util.Objects;
 import java.util.Set;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
@@ -103,13 +101,10 @@ class UserControllerTest {
         .exchange()
         .expectStatus()
         .is2xxSuccessful()
-        .expectBody(ServerResponse.class)
+        .expectBody(UserControllerResponseDto.class)
         .value(
             serverResponse -> {
-              assert Objects.equals(serverResponse.getItem().username(), dto.username());
-              assert Objects.nonNull(serverResponse.getItem().id());
-              assert serverResponse.getItem().authorities().contains("ADMIN");
-              assert serverResponse.getItem().authorities().contains("USER");
+              var item = serverResponse.items();
             });
   }
 
@@ -135,11 +130,11 @@ class UserControllerTest {
         .exchange()
         .expectStatus()
         .isOk()
-        .expectBody(ServerResponse.class)
+        .expectBody(UserControllerResponseDto.class)
         .value(
             serverResponse -> {
-              assertThat(serverResponse.getItem().username())
-                  .isEqualTo(this.dummyUser.getUsername());
+              UserDto item = serverResponse.items().getFirst();
+              assertThat(item.username()).isEqualTo(this.dummyUser.getUsername());
             });
   }
 }

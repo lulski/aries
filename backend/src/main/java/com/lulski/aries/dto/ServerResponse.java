@@ -1,6 +1,6 @@
 package com.lulski.aries.dto;
 
-import com.lulski.aries.user.UserResponseDto;
+import com.lulski.aries.user.UserControllerResponseDto;
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -9,13 +9,13 @@ import org.slf4j.LoggerFactory;
 @SuppressFBWarnings(value = "EI_EXPOSE_REP2")
 public class ServerResponse {
   private static final Logger logger = LoggerFactory.getLogger(ServerResponse.class);
-  private UserResponseDto item;
+  private UserControllerResponseDto item;
   private ServerErrorResponse error;
 
   public ServerResponse() {}
 
-  public ServerResponse(UserResponseDto userResponseDto) {
-    this.item = userResponseDto;
+  public ServerResponse(UserControllerResponseDto userControllerResponseDto) {
+    this.item = userControllerResponseDto;
   }
 
   public ServerResponse(ServerErrorResponse errorResponse) {
@@ -46,11 +46,11 @@ public class ServerResponse {
     this.error = error;
   }
 
-  public UserResponseDto getItem() {
+  public UserControllerResponseDto getItem() {
     return this.item;
   }
 
-  public void setItem(UserResponseDto item) {
+  public void setItem(UserControllerResponseDto item) {
     this.item = item;
   }
 }
