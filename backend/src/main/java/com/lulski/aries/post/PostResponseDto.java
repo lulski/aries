@@ -10,8 +10,9 @@ public record PostResponseDto(List<PostDto> postDto, String message) {
     return new PostDto(post.getTitle(), post.getContent(), post.getAuthor());
   }
 
+  /** Convert List<Post> to List<PostDto>. */
   public static List<PostDto> fromPosts(List<Post> posts) {
-    List<PostDto> list = new ArrayList<PostDto>();
+    List<PostDto> list = new ArrayList<>();
     for (Post post : posts) {
       list.add(fromPost(post));
     }
