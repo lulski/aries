@@ -16,12 +16,11 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.Import;
-import org.springframework.test.context.ActiveProfiles;
 import reactor.test.StepVerifier;
 
 @SpringBootTest
 @Import(TestRepositoryConfig.class)
-@ActiveProfiles("mock")
+// @ActiveProfiles("test")
 public class PostServiceTest {
 
   private static final Logger logger = LoggerFactory.getLogger(PostServiceTest.class);
@@ -106,6 +105,16 @@ public class PostServiceTest {
   void createNewPost() {
     StepVerifier.create(postRepository.save(post).single())
         .expectNextMatches(p -> p.getId() != null)
+        .verifyComplete();
+  }
+
+  @Test
+  void listAllPosts() {
+    StepVerifier.create(postService.listAll())
+        .expectNextMatches(
+            p -> {
+              return p != null;
+            })
         .verifyComplete();
   }
 }

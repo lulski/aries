@@ -1,127 +1,124 @@
 package com.lulski.aries.post;
 
+import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import java.time.LocalDateTime;
-
 import org.bson.types.ObjectId;
 import org.springframework.data.mongodb.core.index.Indexed;
 import org.springframework.data.mongodb.core.mapping.Document;
 
-import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
-
-/**
- * Post
- */
+/** Post */
 @Document(collection = "posts")
 @SuppressFBWarnings(value = "EI_EXPOSE_REP2")
 public class Post {
 
-    private ObjectId id;
+  private ObjectId id;
 
-    @Indexed
-    private String title;
+  @Indexed private String title;
 
-    private String author;
+  private String author;
 
-    private String content;
-    private LocalDateTime createdOn;
-    private LocalDateTime modifiedOn;
-    private Boolean isPublished;
-    private Boolean isArchived;
+  private String content;
+  private LocalDateTime createdOn;
+  private LocalDateTime modifiedOn;
 
-    /**
-     * Post
-     */
-    public Post() {
-    }
+  private Boolean isPublished = Boolean.FALSE;
+  private Boolean isArchived = Boolean.FALSE;
 
-    /**
-     * this is fun
-     *
-     * @param title
-     * @param content
-     * @param author
-     * @param createdOn
-     * @param modifiedOn
-     * @param isPublished
-     * @param isArchived
-     */
-    public Post(ObjectId id, String title, String content, String author, LocalDateTime createdOn,
-            LocalDateTime modifiedOn,
-            Boolean isPublished,
-            Boolean isArchived) {
-        this.id = id;
-        this.title = title;
-        this.content = content;
-        this.author = author;
-        this.createdOn = createdOn;
-        this.modifiedOn = modifiedOn;
-        this.isPublished = isPublished;
-        this.isArchived = isArchived;
-    }
+  /** Post */
+  public Post() {}
 
-    public String getTitle() {
-        return title;
-    }
+  /**
+   * this is fun
+   *
+   * @param title
+   * @param content
+   * @param author
+   * @param createdOn
+   * @param modifiedOn
+   * @param isPublished
+   * @param isArchived
+   */
+  public Post(
+      ObjectId id,
+      String title,
+      String content,
+      String author,
+      LocalDateTime createdOn,
+      LocalDateTime modifiedOn,
+      Boolean isPublished,
+      Boolean isArchived) {
+    this.id = id;
+    this.title = title;
+    this.content = content;
+    this.author = author;
+    this.createdOn = createdOn;
+    this.modifiedOn = modifiedOn;
+    this.isPublished = isPublished;
+    this.isArchived = isArchived;
+  }
 
-    public void setTitle(String title) {
-        this.title = title;
-    }
+  public String getTitle() {
+    return title;
+  }
 
-    public String getContent() {
-        return content;
-    }
+  public void setTitle(String title) {
+    this.title = title;
+  }
 
-    public void setContent(String content) {
-        this.content = content;
-    }
+  public String getContent() {
+    return content;
+  }
 
-    public String getAuthor() {
-        return author;
-    }
+  public void setContent(String content) {
+    this.content = content;
+  }
 
-    public void setAuthor(String author) {
-        this.author = author;
-    }
+  public String getAuthor() {
+    return author;
+  }
 
-    public LocalDateTime getCreatedOn() {
-        return createdOn;
-    }
+  public void setAuthor(String author) {
+    this.author = author;
+  }
 
-    public void setCreatedOn(LocalDateTime createdOn) {
-        this.createdOn = createdOn;
-    }
+  public LocalDateTime getCreatedOn() {
+    return createdOn;
+  }
 
-    public LocalDateTime getModifiedOn() {
-        return modifiedOn;
-    }
+  public void setCreatedOn(LocalDateTime createdOn) {
+    this.createdOn = createdOn;
+  }
 
-    public void setModifiedOn(LocalDateTime modifiedOn) {
-        this.modifiedOn = modifiedOn;
-    }
+  public LocalDateTime getModifiedOn() {
+    return modifiedOn;
+  }
 
-    public Boolean getIsPublished() {
-        return isPublished;
-    }
+  public void setModifiedOn(LocalDateTime modifiedOn) {
+    this.modifiedOn = modifiedOn;
+  }
 
-    public void setIsPublished(Boolean isPublished) {
-        this.isPublished = isPublished;
-    }
+  public Boolean getIsPublished() {
+    return isPublished;
+  }
 
-    public Boolean getIsArchived() {
-        return isArchived;
-    }
+  public void setIsPublished(Boolean isPublished) {
+    this.isPublished = isPublished;
+  }
 
-    public void setIsArchived(Boolean isArchived) {
-        this.isArchived = isArchived;
-    }
+  public Boolean getIsArchived() {
+    return isArchived;
+  }
 
-    @SuppressFBWarnings(value = "EI_EXPOSE_REP")
-    public ObjectId getId() {
-        return id;
-    }
+  public void setIsArchived(Boolean isArchived) {
+    this.isArchived = isArchived;
+  }
 
-    public void setId(ObjectId id) {
-        this.id = id;
-    }
+  @SuppressFBWarnings(value = "EI_EXPOSE_REP")
+  public ObjectId getId() {
+    return id;
+  }
 
+  public void setId(ObjectId id) {
+    this.id = id;
+  }
 }

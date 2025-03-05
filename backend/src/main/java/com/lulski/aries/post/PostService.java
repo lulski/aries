@@ -1,9 +1,11 @@
 package com.lulski.aries.post;
 
 import com.lulski.aries.user.User;
+import java.time.LocalDateTime;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
+import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
 /** Service for Post. */
@@ -16,11 +18,24 @@ public class PostService {
     this.postRepository = postRepository;
   }
 
+  public Flux<Post> listAll() {
+    return this.postRepository
+        .findAll()
+        .onErrorResume(
+            error -> {
+              logger.error(">>> failed to fetch Post data: " + error.getMessage());
+              return Flux.empty();
+            });
+  }
+
   public Mono<Post> insertNew(PostRequestDto postRequestDto, User user) {
     Post post = new Post();
     post.setAuthor(user.getFirstName() + " " + user.getLastName());
     post.setTitle(postRequestDto.title());
     post.setContent(postRequestDto.content());
+    post.setCreatedOn(LocalDateTime.now());
+    post.setModifiedOn(LocalDateTime.now());
+
     return postRepository.save(post);
   }
 

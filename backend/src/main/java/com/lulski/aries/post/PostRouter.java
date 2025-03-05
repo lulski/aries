@@ -1,12 +1,13 @@
 package com.lulski.aries.post;
 
 import com.lulski.aries.user.User;
-import java.time.LocalDateTime;
+import com.lulski.aries.util.ResponseStatus;
+import java.util.List;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
-import org.springframework.http.MediaType;
+import org.springframework.http.HttpStatus;
 import org.springframework.security.authentication.AuthenticationCredentialsNotFoundException;
 import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Component;
@@ -24,8 +25,8 @@ public class PostRouter {
 
   @Bean
   RouterFunction<ServerResponse> route(PostHandler postHandler) {
-    return RouterFunctions.route(RequestPredicates.GET("/posts"), postHandler::helloWorld)
-        .andRoute(RequestPredicates.POST("/posts"), postHandler::insertNew);
+    return RouterFunctions.route(RequestPredicates.POST("/posts"), postHandler::insertNew)
+        .andRoute(RequestPredicates.GET("/posts"), postHandler::listAll);
   }
 }
 
@@ -36,12 +37,17 @@ class PostHandler {
 
   private static final Logger LOGGER = LoggerFactory.getLogger(PostHandler.class);
 
-  public Mono<ServerResponse> helloWorld(ServerRequest serverRequest) {
-    return ServerResponse.ok()
-        .contentType(MediaType.APPLICATION_JSON)
-        .body(
-            BodyInserters.fromValue(
-                new PostResponseDto(200, "kocu", "kocu", LocalDateTime.now().toString())));
+  public Mono<ServerResponse> listAll(ServerRequest serverRequest) {
+    return postService
+        .listAll()
+        .collectList()
+        .flatMap(
+            posts -> {
+              PostResponseDto postResponseDto =
+                  new PostResponseDto(
+                      PostResponseDto.fromPosts(posts), ResponseStatus.SUCCESS.getValue());
+              return ServerResponse.ok().body(BodyInserters.fromValue(postResponseDto));
+            });
   }
 
   public Mono<ServerResponse> insertNew(ServerRequest serverRequest) {
@@ -67,7 +73,19 @@ class PostHandler {
 
               return postService
                   .insertNew(dto, (User) authentication.getPrincipal())
-                  .flatMap(result -> ServerResponse.ok().body(BodyInserters.fromValue(result)));
+                  .flatMap(
+                      result ->
+                          ServerResponse.ok()
+                              .body(
+                                  BodyInserters.fromValue(
+                                      new PostResponseDto(
+                                          List.of(PostResponseDto.fromPost(result)),
+                                          ResponseStatus.SUCCESS.getValue()))));
+            })
+        .onErrorResume(
+            e -> {
+              LOGGER.error(e.getMessage());
+              return ServerResponse.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
             });
   }
 }
