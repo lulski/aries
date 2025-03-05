@@ -10,7 +10,7 @@ import reactor.core.publisher.Mono;
 @Service
 public class AriesUserDetailsService implements ReactiveUserDetailsService {
 
-  private UserRepository userRepository;
+  private final UserRepository userRepository;
 
   public AriesUserDetailsService(UserRepository userRepository) {
     this.userRepository = userRepository;
