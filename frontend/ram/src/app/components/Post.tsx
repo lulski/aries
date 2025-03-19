@@ -1,4 +1,13 @@
-import { Card, Image, Box, Text, Group } from "@mantine/core";
+import {
+  Card,
+  Image,
+  Box,
+  Text,
+  Group,
+  Title,
+  CardSection,
+  Divider,
+} from "@mantine/core";
 
 export default function Post({
   post,
@@ -7,23 +16,24 @@ export default function Post({
 }) {
   return (
     <>
-      <Card shadow="sm" padding="lg" radius="md" withBorder>
-        <Image
-          src="https://raw.githubusercontent.com/mantinedev/mantine/master/.demo/images/bg-8.png"
-          height={10}
-          w="auto"
-          radius="md"
-          fit="contain"
-        />
+      <Card w={400} shadow="sm" padding="lg" radius="md" withBorder>
+        <CardSection>
+          <Image src="https://raw.githubusercontent.com/mantinedev/mantine/master/.demo/images/bg-10.png" />
+        </CardSection>
 
         <Group justify="space-between" mt="md" mb="xs">
-          <Text fw={500}>{post.author}</Text>
+          <Title order={5}>{post.title}</Title>
         </Group>
 
         <Text size="sm" c="dimmed">
           {post.content}
         </Text>
+        <br />
+        <Text size="xs" c="dark" ta="right">
+          {post.author}
+        </Text>
       </Card>
+      <Divider my="md" />
     </>
   );
 }

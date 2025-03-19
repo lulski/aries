@@ -1,4 +1,6 @@
 import "@mantine/core/styles.css";
+import AppShellLayout from "@/app/components/AppShellLayout";
+("@/components/Layout");
 import "./globals.css";
 
 import React from "react";
@@ -14,7 +16,12 @@ import {
   Group,
   Image,
   Stack,
+  Flex,
+  AppShell,
+  Burger,
 } from "@mantine/core";
+import { useDisclosure } from "@mantine/hooks";
+import Layout from "@/app/components/AppShellLayout";
 
 const theme = createTheme({
   /** Your theme override here */
@@ -48,22 +55,22 @@ export default function RootLayout({
       />
       <body>
         <MantineProvider theme={theme}>
-          <Center>
-            <Stack className="parent">
-              <Group h="100">
-                <Button variant="default" component="a" href="/posts">
-                  Random rambling
-                </Button>
-                <Button variant="default" component="a" href="/about">
-                  About
-                </Button>
-                <Button variant="default" component="a" href="/guestbook">
-                  Guestbook
-                </Button>
-              </Group>
-              <Container>{children}</Container>
-            </Stack>
-          </Center>
+          {/* <Group>
+            <Flex>
+              <Button variant="default" component="a" href="/posts">
+                Random rambling
+              </Button>
+              <Button variant="default" component="a" href="/about">
+                About
+              </Button>
+              <Button variant="default" component="a" href="/guestbook">
+                Guestbook
+              </Button>
+            </Flex>
+
+            <Container>{children}</Container>
+          </Group> */}
+          <AppShellLayout>{children}</AppShellLayout>
         </MantineProvider>
       </body>
     </html>
