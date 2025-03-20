@@ -10,7 +10,7 @@ import {
 } from "@mantine/core";
 
 import AriesLayout from "@/app/components/AriesLayout";
-import { LayoutProps } from "@/app/types/AriesLayoutProperties";
+import { AriesLayoutProps } from "@/app/types/AriesLayoutProperties";
 
 const theme = createTheme({
   /** Your theme override here */
@@ -18,7 +18,7 @@ const theme = createTheme({
   //  primaryColor: "cyan",
 });
 
-const layoutProps: LayoutProps = {
+const layoutProps: AriesLayoutProps = {
   navbarItems: [
     { label: "Home", href: "/" },
     { label: "Rambling shits", href: "/posts" },
