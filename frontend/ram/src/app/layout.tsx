@@ -1,6 +1,4 @@
 import "@mantine/core/styles.css";
-import AppShellLayout from "@/app/components/AppShellLayout";
-("@/components/Layout");
 import "./globals.css";
 
 import React from "react";
@@ -9,25 +7,24 @@ import {
   ColorSchemeScript,
   MantineProvider,
   mantineHtmlProps,
-  Container,
-  Box,
-  Button,
-  Center,
-  Group,
-  Image,
-  Stack,
-  Flex,
-  AppShell,
-  Burger,
 } from "@mantine/core";
-import { useDisclosure } from "@mantine/hooks";
-import Layout from "@/app/components/AppShellLayout";
+
+import AriesLayout from "@/app/components/AriesLayout";
+import { LayoutProps } from "@/app/types/AriesLayoutProperties";
 
 const theme = createTheme({
   /** Your theme override here */
   //fontFamily: "Open Sans, sans-serif",
   //  primaryColor: "cyan",
 });
+
+const layoutProps: LayoutProps = {
+  navbarItems: [
+    { label: "Home", href: "/" },
+    { label: "Rambling shits", href: "/posts" },
+    { label: "Contact", href: "/contact" },
+  ],
+};
 
 export default function RootLayout({
   children,
@@ -55,22 +52,7 @@ export default function RootLayout({
       />
       <body>
         <MantineProvider theme={theme}>
-          {/* <Group>
-            <Flex>
-              <Button variant="default" component="a" href="/posts">
-                Random rambling
-              </Button>
-              <Button variant="default" component="a" href="/about">
-                About
-              </Button>
-              <Button variant="default" component="a" href="/guestbook">
-                Guestbook
-              </Button>
-            </Flex>
-
-            <Container>{children}</Container>
-          </Group> */}
-          <AppShellLayout>{children}</AppShellLayout>
+          <AriesLayout {...layoutProps}>{children}</AriesLayout>
         </MantineProvider>
       </body>
     </html>
