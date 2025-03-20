@@ -1,10 +1,20 @@
 "use client";
 
-import { AppShell, Burger, Container, Text } from "@mantine/core";
+import {
+  ActionIcon,
+  AppShell,
+  Box,
+  Burger,
+  Container,
+  Grid,
+  px,
+  Text,
+} from "@mantine/core";
 import { useDisclosure } from "@mantine/hooks";
 import { ReactNode } from "react";
 import Link from "next/link";
 import { AriesLayoutProps } from "@/app/types/AriesLayoutProperties";
+import { IconMoodSmileFilled } from "@tabler/icons-react";
 
 export default function AriesLayout({
   children,
@@ -24,9 +34,16 @@ export default function AriesLayout({
     >
       <AppShell.Header>
         <Burger opened={opened} onClick={toggle} hiddenFrom="sm" size="sm" />
-        <Container ta={"right"}>
-          <div>Logo</div>
-        </Container>
+        <Box ta={"right"}>
+          {" "}
+          <ActionIcon
+            size={42}
+            variant="default"
+            aria-label="ActionIcon with size as a number"
+          >
+            <IconMoodSmileFilled />
+          </ActionIcon>
+        </Box>
       </AppShell.Header>
 
       <AppShell.Navbar p="md">
