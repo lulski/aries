@@ -22,7 +22,9 @@
     "paths": {
       "@/*": ["./src/*"],
       "@/components/*": ["./src/app/components/*"],
-      "@/types/*": ["./src/app/types/*"]
+      "@/types/*": ["./src/app/types/*"],
+      "@/actions/*": ["./src/app/actions/*"],
+      "@/ui/*": ["./src/app/ui/*"]
     },
     "strict": false
   },
