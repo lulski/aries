@@ -69,4 +69,23 @@ public class UserService {
               return user;
             });
   }
+
+  /**
+   * return one User based on supplied username (case insensitive)
+   *
+   * @param username
+   * @return User instance
+   */
+  public Mono<User> findByUsernameAndPassword(String username, String password) {
+    return this.userRepository
+        .findTopByUsername(username.toLowerCase())
+        .flatMap(
+            user -> {
+              if (passwordEncoder.matches(password, user.getPassword())) {
+                return Mono.just(user);
+              } else {
+                return Mono.empty();
+              }
+            });
+  }
 }
