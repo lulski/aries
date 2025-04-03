@@ -71,6 +71,11 @@ class PostHandler {
               Authentication authentication = tuple.getT1();
               PostRequestDto dto = tuple.getT2();
 
+              LOGGER.info(
+                  ">>> user "
+                      + authentication.getPrincipal()
+                      + " is inserting new post "
+                      + dto.title());
               return postService
                   .insertNew(dto, (User) authentication.getPrincipal())
                   .flatMap(
