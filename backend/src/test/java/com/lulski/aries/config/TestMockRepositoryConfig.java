@@ -18,13 +18,14 @@ import org.springframework.boot.test.context.TestConfiguration;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Primary;
 import org.springframework.context.annotation.Profile;
+import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
 /** For use in environment that doesn't have database (GitHub). */
 @TestConfiguration
 @EnableAutoConfiguration(exclude = {MongoReactiveRepositoriesAutoConfiguration.class})
 @Profile("mock")
-public class TestRepositoryConfig {
+public class TestMockRepositoryConfig {
 
   private static final User mockAuthor =
       new User.UserBuilder()
@@ -52,7 +53,6 @@ public class TestRepositoryConfig {
    * @return UserRepository
    */
   @Bean
-  @Profile("mock")
   @Primary
   public UserRepository userRepository() {
     UserRepository userRepository = mock(UserRepository.class);
@@ -86,17 +86,31 @@ public class TestRepositoryConfig {
    * @return PostRepository
    */
   @Bean
-  @Profile("mock")
   @Primary
   public PostRepository postRepository() {
     PostRepository postRepository = mock(PostRepository.class);
+
     when(postRepository.save(any(Post.class)))
         .thenAnswer(
             invocation -> {
               Post argument = invocation.getArgument(0);
               return Mono.just(argument);
             });
+
     when(postRepository.findById(any(ObjectId.class))).thenReturn(Mono.just(mockPost));
+
+    var post1 = new Post();
+    post1.setId(new ObjectId());
+    post1.setTitle("post 1");
+    post1.setContent("content 1");
+
+    var post2 = new Post();
+    post2.setId(new ObjectId());
+    post2.setTitle("post 2");
+    post2.setContent("content 2");
+
+    when(postRepository.findAll()).thenReturn(Flux.just(post1, post2));
+
     return postRepository;
   }
 }
