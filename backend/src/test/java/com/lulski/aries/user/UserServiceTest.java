@@ -1,8 +1,6 @@
 package com.lulski.aries.user;
 
-import static org.junit.jupiter.api.Assertions.*;
-
-import com.lulski.aries.config.TestRepositoryConfig;
+import com.lulski.aries.config.TestMockRepositoryConfig;
 import java.util.Arrays;
 import java.util.Set;
 import org.junit.jupiter.api.Test;
@@ -15,7 +13,7 @@ import reactor.test.StepVerifier;
 
 @SpringBootTest
 @ActiveProfiles("mock")
-@Import(TestRepositoryConfig.class)
+@Import(TestMockRepositoryConfig.class)
 class UserServiceTest {
 
   @Autowired UserService userService;

@@ -5,7 +5,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 import com.lulski.aries.config.MongoDbContainerUtil;
 import com.lulski.aries.config.TestDbMongoConfig;
-import com.lulski.aries.config.TestRepositoryConfig;
+import com.lulski.aries.config.TestMockRepositoryConfig;
 import com.lulski.aries.config.TestWebSecurityConfig;
 import com.lulski.aries.config.TestcontainerMongoConfig;
 import java.util.Arrays;
@@ -36,7 +36,7 @@ import reactor.test.StepVerifier;
   TestcontainerMongoConfig.class,
   TestWebSecurityConfig.class,
   TestDbMongoConfig.class,
-  TestRepositoryConfig.class,
+  TestMockRepositoryConfig.class,
   UserTestConfiguration.class
 })
 @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
