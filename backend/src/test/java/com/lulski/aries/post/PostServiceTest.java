@@ -1,7 +1,7 @@
 package com.lulski.aries.post;
 
 import com.lulski.aries.config.MongoDbContainerUtil;
-import com.lulski.aries.config.TestRepositoryConfig;
+import com.lulski.aries.config.TestMockRepositoryConfig;
 import com.lulski.aries.user.User;
 import java.time.LocalDateTime;
 import java.util.Arrays;
@@ -16,11 +16,12 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.Import;
+import org.springframework.test.context.ActiveProfiles;
 import reactor.test.StepVerifier;
 
 @SpringBootTest
-@Import(TestRepositoryConfig.class)
-// @ActiveProfiles("test")
+@Import(TestMockRepositoryConfig.class)
+@ActiveProfiles("mock")
 public class PostServiceTest {
 
   private static final Logger logger = LoggerFactory.getLogger(PostServiceTest.class);
@@ -110,10 +111,12 @@ public class PostServiceTest {
 
   @Test
   void listAllPosts() {
-    StepVerifier.create(postService.listAll())
+    System.out.println("KILL ME NOWWW!");
+
+    StepVerifier.create(postService.listAll().collectList())
         .expectNextMatches(
-            p -> {
-              return p != null;
+            posts -> {
+              return posts.isEmpty() != true;
             })
         .verifyComplete();
   }
