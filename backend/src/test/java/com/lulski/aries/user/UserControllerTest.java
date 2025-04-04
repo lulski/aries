@@ -41,7 +41,7 @@ import reactor.test.StepVerifier;
 })
 @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
 @AutoConfigureWebTestClient(timeout = "100000000")
-@ActiveProfiles(value = {"test", "withDb"})
+@ActiveProfiles(value = {"test", "mock"})
 class UserControllerTest {
 
   private final Logger logger = LoggerFactory.getLogger(UserControllerTest.class);
