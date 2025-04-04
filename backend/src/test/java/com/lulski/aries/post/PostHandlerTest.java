@@ -4,10 +4,12 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.when;
 import static org.springframework.security.test.web.reactive.server.SecurityMockServerConfigurers.mockUser;
 
+import com.lulski.aries.config.TestMockRepositoryConfig;
 import com.lulski.aries.config.TestWebSecurityConfig;
 import com.lulski.aries.user.User;
 import java.util.Arrays;
 import java.util.Set;
+import org.bson.types.ObjectId;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.reactive.AutoConfigureWebTestClient;
@@ -18,11 +20,12 @@ import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.test.web.reactive.server.WebTestClient;
 import org.springframework.web.reactive.function.BodyInserters;
+import reactor.core.publisher.Mono;
 
 @SpringBootTest
 @AutoConfigureWebTestClient(timeout = "100000000")
-@ActiveProfiles("test")
-@Import(TestWebSecurityConfig.class)
+@ActiveProfiles("mock")
+@Import({TestWebSecurityConfig.class, TestMockRepositoryConfig.class})
 class PostHandlerTest {
 
   @Autowired private WebTestClient webTestClient;
@@ -40,6 +43,11 @@ class PostHandlerTest {
   @Test
   void insertNew() {
     PostRequestDto postRequestDto = new PostRequestDto("is this it", "modern age");
+    Post post = new Post();
+    post.setId(new ObjectId());
+    post.setTitle(postRequestDto.title());
+    post.setContent(postRequestDto.content());
+    when(postService.insertNew(any(), any())).thenReturn(Mono.just(post));
 
     User mockUser =
         new User.UserBuilder()
@@ -50,7 +58,6 @@ class PostHandlerTest {
             .build();
 
     webTestClient
-        //        .mutateWith(mockUser("test").password("test").authorities("USER"))
         .mutateWith(mockUser(mockUser))
         .post()
         .uri("/posts")
@@ -76,7 +83,6 @@ class PostHandlerTest {
             .build();
 
     webTestClient
-        //        .mutateWith(mockUser("test").password("test").authorities("USER"))
         .mutateWith(mockUser(mockUser))
         .post()
         .uri("/posts")
