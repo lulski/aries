@@ -1,8 +1,3 @@
-// import LoginForm from "@/components/LoginForm";
-
-// export default function LoginPage() {
-//   return <LoginForm></LoginForm>;
-// }
 "use client";
 import { Button, Group, Paper, PasswordInput, TextInput } from "@mantine/core";
 import { useState } from "react";
@@ -10,7 +5,7 @@ import { useForm } from "@mantine/form";
 
 export default function LoginPage() {
   const mustNotBeEmpty = (value) =>
-    value.trim() === "" ? "must not be empty" : null;
+    value.trim() === "" ? "Must be filled" : null;
 
   const form = useForm({
     mode: "uncontrolled",
@@ -24,8 +19,28 @@ export default function LoginPage() {
     },
   });
 
-  const handleSubmit = (values: typeof form.values) => {
+  const handleSubmit = async (values: typeof form.values) => {
     console.log(values);
+    try {
+      const res = await fetch("/api/authenticate", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(values),
+      });
+
+      const data = await res.json();
+
+      if (data.success) {
+        console.log("Logged in successfully:", data);
+        // handle redirect or session setup here
+      } else {
+        console.error("Login failed:", data.message);
+      }
+    } catch (err) {
+      console.error("Error during login:", err);
+    }
   };
 
   const [errorLabel, setErrorLabel] = useState(null);
