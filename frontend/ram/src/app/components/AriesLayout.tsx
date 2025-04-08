@@ -47,7 +47,7 @@ export default function AriesLayout({
       </AppShell.Header>
 
       <AppShell.Navbar p="md">
-        {navbarItems.map((item, index) => (
+        {navbarItems?.map((item, index) => (
           <Text size="md" key={index}>
             <Link href={item.href}>{item.label}</Link>
           </Text>
