@@ -1,7 +1,16 @@
 "use client";
-import { Button, Group, Paper, PasswordInput, TextInput } from "@mantine/core";
+import {
+  Box,
+  Button,
+  Group,
+  Paper,
+  PasswordInput,
+  TextInput,
+  Alert,
+} from "@mantine/core";
 import { useState } from "react";
 import { useForm } from "@mantine/form";
+import { IconCheck, IconX } from "@tabler/icons-react";
 
 export default function LoginPage() {
   const mustNotBeEmpty = (value) =>
@@ -19,6 +28,10 @@ export default function LoginPage() {
     },
   });
 
+  type AuthState = "idle" | "success" | "failed";
+
+  const [authState, setAuthState] = useState<AuthState>("idle");
+
   const handleSubmit = async (values: typeof form.values) => {
     console.log(values);
     try {
@@ -34,9 +47,11 @@ export default function LoginPage() {
 
       if (data.success) {
         console.log("Logged in successfully:", data);
+        setAuthState("success");
         // handle redirect or session setup here
       } else {
         console.error("Login failed:", data.message);
+        setAuthState("failed");
       }
     } catch (err) {
       console.error("Error during login:", err);
@@ -74,6 +89,27 @@ export default function LoginPage() {
           <Button type="submit">Submit</Button>
         </Group>
       </form>
+      {authState === "success" && (
+        <Alert
+          mt="md"
+          color="green"
+          icon={<IconCheck size={16} />}
+          title="Success"
+        >
+          You have been logged in!
+        </Alert>
+      )}
+
+      {authState === "failed" && (
+        <Alert
+          mt="md"
+          color="red"
+          icon={<IconX size={16} />}
+          title="Authentication Failed"
+        >
+          Invalid username or password.
+        </Alert>
+      )}
     </Paper>
   );
 }
