@@ -14,6 +14,8 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.jdbc.datasource.DataSourceTransactionManager;
+import org.springframework.security.crypto.factory.PasswordEncoderFactories;
+import org.springframework.security.crypto.password.PasswordEncoder;
 
 @Configuration
 public class BatchConfiguration {
@@ -31,7 +33,13 @@ public class BatchConfiguration {
 
   @Bean
   public UserRoleProcessor processor() {
-    return new UserRoleProcessor();
+    return new UserRoleProcessor(passwordEncoder());
+  }
+
+  @Bean
+  public PasswordEncoder passwordEncoder() {
+    return PasswordEncoderFactories.createDelegatingPasswordEncoder();
+
   }
 
   @Bean
