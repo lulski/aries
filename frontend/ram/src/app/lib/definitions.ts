@@ -12,3 +12,11 @@ export type LoginFormState = | {
     }
     message?: string
 } | undefined
+
+
+export type SessionData = {
+    username: string,
+    firstname: string,
+    lastname: string,
+    authorities: string[]
+  }
