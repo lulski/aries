@@ -21,3 +21,10 @@ export type SessionData = {
     lastname: string,
     authorities: string[],
   }
+
+export type PostData ={
+    id: string,
+    title: string,
+    content: string,
+    author: string,
+}

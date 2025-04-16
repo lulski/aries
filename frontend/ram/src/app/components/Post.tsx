@@ -8,12 +8,9 @@ import {
   CardSection,
   Divider,
 } from "@mantine/core";
+import { PostData } from "../lib/definitions";
 
-export default function Post({
-  post,
-}: {
-  post: { title: string; content: string; author: string };
-}) {
+export default function Post(post: PostData) {
   return (
     <>
       <Card w={400} shadow="sm" padding="lg" radius="md" withBorder>
