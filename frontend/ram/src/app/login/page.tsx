@@ -49,7 +49,7 @@ export default function LoginPage() {
         console.log("Logged in successfully:", data);
         setAuthState("success");
       } else {
-        console.error("Login failed:", data.message);
+        console.info("Login failed:", data.message);
         setAuthState("failed");
         setAuthResponseLabel(data.message);
       }
