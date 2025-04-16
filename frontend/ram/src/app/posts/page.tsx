@@ -22,7 +22,7 @@ export default async function posts() {
       <ul>
         {posts.map((post, index) => (
           <li key={index}>
-            <Post post={post}></Post>
+            <Post {...post}></Post>
           </li>
         ))}
       </ul>
