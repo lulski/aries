@@ -41,8 +41,10 @@ export async function POST(request: Request) {
   });
 
   if (!response.ok) {
+    const messages : string[] = ["invalid credentials"];
+
     return NextResponse.json(
-      { success: false, message: "Authentication failed" },
+      { success: false, message: messages },
       { status: 401 }
     );
   }
@@ -50,6 +52,7 @@ export async function POST(request: Request) {
 
   const data = await response.json();
   const session = await getIronSession<SessionData>(await cookies(), {password: SESSION_KEY, cookieName: COOKIE_NAME});
+  session.isAuthenticated = true;
   session.username = data.username;
   session.firstname = data.firstName;
   session.lastname = data.lastName;
