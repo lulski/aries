@@ -15,8 +15,9 @@ export type LoginFormState = | {
 
 
 export type SessionData = {
+    isAuthenticated: boolean,
     username: string,
     firstname: string,
     lastname: string,
-    authorities: string[]
+    authorities: string[],
   }

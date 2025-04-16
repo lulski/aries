@@ -14,8 +14,8 @@ export async function GET() {
         cookieName: COOKIE_NAME,
         });
 
-  if (!session) {
-    return NextResponse.json({ error: 'Not logged in' }, { status: 401 });
+  if (!session.isAuthenticated) {
+    return NextResponse.json({ error: 'Not authenticated' }, { status: 401 });
   }
 
   return NextResponse.json({ session });
