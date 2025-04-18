@@ -19,6 +19,7 @@ export async function getSessionData(): Promise<SessionData> {
     authorities: session.authorities,
   };
 
+  console.log(">>> plainSession: " + plainSession.isAuthenticated);
   return plainSession;
 }
 
