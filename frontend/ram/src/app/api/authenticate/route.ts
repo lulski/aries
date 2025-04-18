@@ -2,7 +2,6 @@ import { NextResponse } from "next/server";
 import { LoginFormSchema, LoginFormState } from "@/app/lib/definitions";
 import { cookies } from "next/headers";
 import { getIronSession } from "iron-session";
-import { log } from "console";
 import { SessionData } from "@/app/lib/definitions";
 
 export async function POST(request: Request) {
