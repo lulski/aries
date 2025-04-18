@@ -1,41 +1,46 @@
-// components/AuthGuard.tsx
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useState, createContext, useContext } from "react";
 import { useRouter } from "next/navigation";
 import { Loader, Center } from "@mantine/core";
-import { SessionData } from "../lib/definitions";
+import { SessionData } from "@/app/lib/definitions";
+import { SessionProvider } from "../context/SessionContext";
 
 type Props = {
-  children: (session: SessionData) => React.ReactNode;
+  children: React.ReactNode;
 };
 
-export default function AuthGuard({ children }: Props) {
+
+export default function AuthGuard({ children }: Props ) {
+  const [session, setSession] = useState<SessionData | null>(null);
   const [loading, setLoading] = useState(true);
   const router = useRouter();
-  const [session, setSession] = useState<SessionData | null>(null);
 
   useEffect(() => {
+    
     const checkAuth = async () => {
       try {
         const res = await fetch("/api/me");
 
+        //fail api call should trigger an error 
         if (!res.ok) throw new Error("Not authenticated");
 
-        const data = await res.json();
-        console.log("Session data:", data.session);
-        setSession(data.session);
+        const data:SessionData = await res.json();
 
+        console.log("Session data:", data);
+              
+        setSession(data);
         setLoading(false);
+                
       } catch (err) {
         router.replace("/login");
       }
     };
-
+    
     checkAuth();
   }, [router]);
 
-  if (loading) {
+  if (loading || !session) {
     return (
       <Center h="100vh">
         <Loader />
@@ -43,7 +48,7 @@ export default function AuthGuard({ children }: Props) {
     );
   }
 
-  if (!session?.isAuthenticated) return null;
-
-  return <>{children}</>;
+  return (<SessionProvider value={session}>
+    {children}
+  </SessionProvider>);
 }
