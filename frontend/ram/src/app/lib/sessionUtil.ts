@@ -10,7 +10,16 @@ export async function getSessionData(): Promise<SessionData> {
     password: SESSION_KEY,
     cookieName: COOKIE_NAME,
   });
-  return session;
+
+  const plainSession: SessionData = {
+    isAuthenticated: session.isAuthenticated,
+    username: session.username,
+    firstname: session.firstname,
+    lastname: session.lastname,
+    authorities: session.authorities,
+  };
+
+  return plainSession;
 }
 
 export async function getUsername(): Promise<string> {
