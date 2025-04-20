@@ -1,4 +1,5 @@
 import AuthGuard from "@/app/components/AuthGuard";
+import PostEdit from "@/app/components/PostEdit";
 import { SessionProvider } from "@/app/context/SessionContext";
 import { SessionData } from "@/app/lib/definitions";
 import { getSessionData } from "@/app/lib/sessionUtil";
@@ -11,11 +12,9 @@ export default async function NewPostPage() {
   return (
     <AuthGuard>
       <h1>Create a New Post {session.firstname} !</h1>
+      <PostEdit></PostEdit>
     </AuthGuard>
   );
-
-
-
 
   // const session: SessionData = await getSessionData();
 
@@ -27,5 +26,5 @@ export default async function NewPostPage() {
   //   // <SessionProvider value={session}>
   //     <h1>Create a New Post, {session.firstname}!</h1>
   //   // </SessionProvider>
-  // ); 
+  // );
 }
