@@ -10,8 +10,13 @@ import {
 import { useState } from "react";
 import { useForm } from "@mantine/form";
 import { IconCheck, IconX } from "@tabler/icons-react";
+import { useRouter, useSearchParams } from "next/navigation";
 
 export default function LoginPage() {
+  const router = useRouter();
+  const searchParams = useSearchParams();
+  const returnUrl = searchParams.get("returnUrl");
+  
   const mustNotBeEmpty = (value: string) =>
     value.trim() === "" ? "Must be filled" : null;
 
@@ -48,6 +53,7 @@ export default function LoginPage() {
       if (data.success) {
         console.log("Logged in successfully:", data);
         setAuthState("success");
+        router.push(returnUrl ? decodeURIComponent(returnUrl) : "/");
       } else {
         console.info("Login failed:", data.message);
         setAuthState("failed");
