@@ -4,11 +4,13 @@ import AuthGuard from "@/app/components/AuthGuard";
 import PostEdit from "@/app/components/PostEdit";
 import { Button, Group, SimpleGrid, Text, TextInput } from "@mantine/core";
 import { useForm } from "@mantine/form";
-import { redirect } from "next/navigation";
+import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 
 export default function NewPostPage() {
   console.log(">>> rendering NewPostPage");
+  const router = useRouter();
+
   const title: string = "";
   const content: string = "";
 
@@ -38,7 +40,9 @@ export default function NewPostPage() {
       const data = await res.json();
       console.log(data);
       if (data.success) {
-        redirect("/posts");
+        console.log(">>> redirecting to /posts");
+
+        router.push("/posts");
       } else {
         console.error(data.error);
       }
