@@ -10,17 +10,19 @@ import Underline from "@tiptap/extension-underline";
 import TextAlign from "@tiptap/extension-text-align";
 import Superscript from "@tiptap/extension-superscript";
 import SubScript from "@tiptap/extension-subscript";
-import { InputWrapper } from "@mantine/core";
+import { InputWrapper, Text } from "@mantine/core";
+import { error } from "console";
 
 
 interface PostEditProps {
   
   content: string;
   onChange: (content: string) => void;
+  error?: string|null;
 }
 
 
-export default function PostEdit({ content, onChange }: PostEditProps) {
+export default function PostEdit({ content, onChange, error }: PostEditProps) {
   const editor = useEditor({
     extensions: [
       StarterKit,
@@ -43,6 +45,7 @@ export default function PostEdit({ content, onChange }: PostEditProps) {
       label="Content:"
       description=""
       id="post-editor-wrapper"
+      error={error}
     >
     <RichTextEditor id="post-editor" editor={editor} styles={{content: {minHeight: 400}}}>
       <RichTextEditor.Toolbar sticky stickyOffset={60}>
@@ -92,6 +95,7 @@ export default function PostEdit({ content, onChange }: PostEditProps) {
 
       <RichTextEditor.Content />
     </RichTextEditor>
+
     </InputWrapper>
     </>
     
