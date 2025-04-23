@@ -33,6 +33,7 @@ export default function PostEdit({ content, onChange }: PostEditProps) {
     ],
     content,
     onUpdate: ({ editor }) => onChange(editor.getHTML()),
+    immediatelyRender: false,
   });
 
   return (
