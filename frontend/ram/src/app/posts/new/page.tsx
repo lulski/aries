@@ -10,8 +10,8 @@ import { useState } from "react";
 
 
 export default function NewPostPage() {
-  console.log(">>> fetching cookie");
-  const title = "";
+  console.log(">>> rendering NewPostPage");
+  const title: string = "";
   const content: string = "";
 
   const form = useForm({
@@ -20,6 +20,12 @@ export default function NewPostPage() {
       content: content,
       title: title,
     },
+    validate:{
+      title: (value) =>
+        value.trim() === ""? "Title is required" : null,
+      content: (value) =>
+        value.trim() === ""? "Content is required" : null,
+    }
   });
 
 
@@ -59,6 +65,7 @@ export default function NewPostPage() {
 
   return (
     <AuthGuard>
+      
       <form onSubmit={form.onSubmit(handleSubmit, handleError)}>
         <SimpleGrid cols={1} spacing={2} verticalSpacing={"lg"}>
         <TextInput
@@ -69,9 +76,14 @@ export default function NewPostPage() {
           {...form.getInputProps("title")}
         />
 
-
+   
         <PostEdit content={content} key={form.key("content")} 
           {...form.getInputProps("content")}></PostEdit>
+          {(errorLabel !== null) && (
+          <Text c={"red"} size="xs">
+            {errorLabel}
+          </Text>
+        )}
 
         <Group justify="flex-end" mt="md">
           <Button type="submit">Submit</Button>
