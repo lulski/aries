@@ -3,11 +3,9 @@
 import AuthGuard from "@/app/components/AuthGuard";
 import PostEdit from "@/app/components/PostEdit";
 import { Button, Group, SimpleGrid, Text, TextInput } from "@mantine/core";
-import { Form, useForm } from "@mantine/form";
-import { useEditor } from "@tiptap/react";
+import { useForm } from "@mantine/form";
 import { redirect } from "next/navigation";
-import { useState } from "react";
-
+import { useEffect, useState } from "react";
 
 export default function NewPostPage() {
   console.log(">>> rendering NewPostPage");
@@ -20,14 +18,12 @@ export default function NewPostPage() {
       content: content,
       title: title,
     },
-    validate:{
-      title: (value) =>
-        value.trim() === ""? "Title is required" : null,
-      content: (value) =>
-        value.trim() === ""? "Content is required" : null,
-    }
+    validate: {
+      title: (value) => (value.trim() === "" ? "Title is required" : null),
+      content: (value) => (value.trim() === "" ? "Content is required" : null),
+    },
+    validateInputOnChange: true,
   });
-
 
   const handleSubmit = async (values: typeof form.values) => {
     console.log(values);
@@ -51,45 +47,37 @@ export default function NewPostPage() {
     }
   };
 
-  const [errorLabel, setErrorLabel] = useState(null);
+  const [contentError, setContentError] = useState<string|null>(null);
 
-  const handleError = (validationErrors, values, event) => {
-    console.log(validationErrors, values, event);
-    if (validationErrors.title !== null) {
-      setErrorLabel(validationErrors.title);
-    }
-    if (validationErrors.content !== null) {
-      setErrorLabel(validationErrors.content);
-    }
-  };
+  useEffect(() => {
+    console.log(">>> useEffect:", contentError);
+    setContentError(form.errors.content as string | null);
+  }, [form.values.content, form.errors.content]);
+  
 
   return (
     <AuthGuard>
-      
-      <form onSubmit={form.onSubmit(handleSubmit, handleError)}>
+      <form onSubmit={form.onSubmit(handleSubmit)}>
         <SimpleGrid cols={1} spacing={2} verticalSpacing={"lg"}>
-        <TextInput
-          withAsterisk
-          label="Title:"
-          placeholder=""
-          key={form.key("title")}
-          {...form.getInputProps("title")}
-        />
+          <TextInput
+            withAsterisk
+            label="Title:"
+            placeholder=""
+            key={form.key("title")}
+            {...form.getInputProps("title")}
+          />
 
-   
-        <PostEdit content={content} key={form.key("content")} 
-          {...form.getInputProps("content")}></PostEdit>
-          {(errorLabel !== null) && (
-          <Text c={"red"} size="xs">
-            {errorLabel}
-          </Text>
-        )}
+          <PostEdit
+            content={form.values.content}
+            key={form.key("content")}
+            {...form.getInputProps("content")}
+            error={contentError}
+          ></PostEdit>
 
-        <Group justify="flex-end" mt="md">
-          <Button type="submit">Submit</Button>
-        </Group>
-          
-          </SimpleGrid>
+          <Group justify="flex-end" mt="md">
+            <Button type="submit">Submit</Button>
+          </Group>
+        </SimpleGrid>
       </form>
     </AuthGuard>
   );
