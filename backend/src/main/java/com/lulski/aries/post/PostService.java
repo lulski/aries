@@ -1,9 +1,16 @@
 package com.lulski.aries.post;
 
+import com.lulski.aries.post.exception.DatabaseAccessException;
+import com.lulski.aries.post.exception.NetworkTimeoutException;
+import com.lulski.aries.post.exception.PostNotFoundException;
 import com.lulski.aries.user.User;
 import java.time.LocalDateTime;
+
+import io.netty.handler.timeout.TimeoutException;
+import org.bson.types.ObjectId;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.dao.DataAccessException;
 import org.springframework.stereotype.Service;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
@@ -26,6 +33,15 @@ public class PostService {
               logger.error(">>> failed to fetch Post data: " + error.getMessage());
               return Flux.empty();
             });
+  }
+
+  public Mono<Post> getById(String id) {
+
+      return this.postRepository.findById(new ObjectId(id))
+              .switchIfEmpty(
+                  Mono.error(new PostNotFoundException(id))
+              ).onErrorMap(DataAccessException.class, DatabaseAccessException::new)
+              .onErrorMap(TimeoutException.class, NetworkTimeoutException::new);
   }
 
   public Mono<Post> insertNew(PostRequestDto postRequestDto, User user) {

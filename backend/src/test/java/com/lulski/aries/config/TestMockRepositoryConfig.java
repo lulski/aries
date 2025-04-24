@@ -27,6 +27,8 @@ import reactor.core.publisher.Mono;
 @Profile("mock")
 public class TestMockRepositoryConfig {
 
+    public static final String mockPostId = "1234b64f525959be00d07c0b";
+
   private static final User mockAuthor =
       new User.UserBuilder()
           .username("dummyUser")
@@ -38,7 +40,7 @@ public class TestMockRepositoryConfig {
           .build();
   private static final Post mockPost =
       new Post(
-          new ObjectId("1234b64f525959be00d07c0b"),
+          new ObjectId(mockPostId),
           "how to gitgood part two",
           "you just have to grind 3 hours everyday",
           mockAuthor.getUsername(),
