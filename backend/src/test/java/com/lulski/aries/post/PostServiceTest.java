@@ -120,4 +120,12 @@ public class PostServiceTest {
             })
         .verifyComplete();
   }
+
+  @Test
+  void getById() {
+
+    StepVerifier.create(postService.getById(TestMockRepositoryConfig.mockPostId))
+            .expectNextMatches(post -> post.getId().equals(new ObjectId(  TestMockRepositoryConfig.mockPostId)))
+            .verifyComplete();
+  }
 }

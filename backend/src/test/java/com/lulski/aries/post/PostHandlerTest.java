@@ -42,7 +42,7 @@ class PostHandlerTest {
 
   @Test
   void insertNew() {
-    PostRequestDto postRequestDto = new PostRequestDto("is this it", "modern age");
+    PostRequestDto postRequestDto = new PostRequestDto("is this it", "modern age", "");
     Post post = new Post();
     post.setId(new ObjectId());
     post.setTitle(postRequestDto.title());
@@ -67,12 +67,33 @@ class PostHandlerTest {
         .is2xxSuccessful();
   }
 
+
+  @Test
+  void getById() {
+    PostRequestDto postRequestDto = new PostRequestDto("", "", TestMockRepositoryConfig.mockPostId);
+
+    User mockUser =
+            new User.UserBuilder()
+                    .authorities(Set.of("USER"))
+                    .firstname("kocu")
+                    .lastname("gonzales")
+                    .password("Test")
+                    .build();
+
+    webTestClient
+            .mutateWith(mockUser(mockUser))
+            .get()
+            .uri("/posts/" + TestMockRepositoryConfig.mockPostId)
+            .exchange()
+            .expectStatus()
+            .is2xxSuccessful();
+  }
   @Test
   void testErrorHandler() {
 
     when(postService.insertNew(any(), any())).thenThrow(new RuntimeException("error happened"));
 
-    PostRequestDto postRequestDto = new PostRequestDto("is this it", "modern age");
+    PostRequestDto postRequestDto = new PostRequestDto("is this it", "modern age", "");
 
     User mockUser =
         new User.UserBuilder()
