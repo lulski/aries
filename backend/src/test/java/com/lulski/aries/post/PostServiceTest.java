@@ -121,7 +121,7 @@ public class PostServiceTest {
         StepVerifier.create(postService.listAll().collectList())
             .expectNextMatches(
                 posts -> {
-                    return posts.isEmpty()!=true;
+                    return !posts.isEmpty();
                 })
             .verifyComplete();
     }
