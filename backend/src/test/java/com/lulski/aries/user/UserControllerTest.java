@@ -124,7 +124,7 @@ class UserControllerTest {
         StepVerifier.create(monoUserSaveResponse)
             .expectNextMatches(
                 user -> {
-                    User savedUser = (User) user;
+                    User savedUser = user;
                     System.out.println(savedUser.getId());
                     userRepository.findTopByUsername(savedUser.getUsername());
                     return true;
