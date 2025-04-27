@@ -2,14 +2,7 @@ package com.lulski.aries.user;
 
 import static com.lulski.aries.util.Constant.PATH_USER;
 import static org.assertj.core.api.Assertions.assertThat;
-
-import com.lulski.aries.config.MongoDbContainerUtil;
-import com.lulski.aries.config.TestDbMongoConfig;
-import com.lulski.aries.config.TestMockRepositoryConfig;
-import com.lulski.aries.config.TestWebSecurityConfig;
-import com.lulski.aries.config.TestcontainerMongoConfig;
-import java.util.Arrays;
-import java.util.Set;
+import static org.springframework.security.test.web.reactive.server.SecurityMockServerConfigurers.mockUser;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.MethodOrderer;
@@ -28,113 +21,128 @@ import org.springframework.http.MediaType;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.web.reactive.server.WebTestClient;
 import org.springframework.web.reactive.function.BodyInserters;
+
+import com.lulski.aries.config.MongoDbContainerUtil;
+import com.lulski.aries.config.TestWebSecurityConfig;
+
+import java.util.Arrays;
+import java.util.Set;
 import reactor.core.publisher.Mono;
 import reactor.test.StepVerifier;
 
 @SpringBootTest()
-@Import({
-  TestcontainerMongoConfig.class,
-  TestWebSecurityConfig.class,
-  TestDbMongoConfig.class,
-  TestMockRepositoryConfig.class,
-  UserTestConfiguration.class
-})
 @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
 @AutoConfigureWebTestClient(timeout = "100000000")
-@ActiveProfiles(value = {"test", "mock"})
+@ActiveProfiles("mock")
+@Import(TestWebSecurityConfig.class)
 class UserControllerTest {
 
-  private final Logger logger = LoggerFactory.getLogger(UserControllerTest.class);
+    private final Logger logger = LoggerFactory.getLogger(UserControllerTest.class);
 
-  private final User dummyUser =
-      new User(
-          null, "dummyUser", "dummyPassword", "just a dummy", "not mandatory", "dummy@xyz.com");
-  @Autowired private WebTestClient webTestClient;
+    private final User dummyUser =
+        new User(
+            null, "dummyUser", "dummyPassword", "just a dummy", "not mandatory", "dummy@xyz.com");
+    @Autowired
+    private WebTestClient webTestClient;
 
-  @Autowired private UserRepository userRepository;
+    @Autowired
+    private UserRepository userRepository;
 
-  @Value("${spring.profiles.active}")
-  private String profile;
+    @Value("${spring.profiles.active}")
+    private String profile;
 
-  @Autowired private ApplicationContext cApplicationContext;
+    @Autowired
+    private ApplicationContext cApplicationContext;
 
-  @BeforeEach
-  void setUpDb() {
-    if ("testContainer".equals(profile)) {
-      System.out.println(">>> Starting testcontainer:mongodb");
-      MongoDbContainerUtil.getMongoDbContainer().start();
-    } else if ("mock".equals(profile)) {
-      logger.info("using mockBean");
+    @BeforeEach
+    void setUpDb() {
+        if ("testContainer".equals(profile)) {
+            System.out.println(">>> Starting testcontainer:mongodb");
+            MongoDbContainerUtil.getMongoDbContainer().start();
+        } else if ("mock".equals(profile)) {
+            logger.info("using mockBean");
+        }
     }
-  }
 
-  @AfterEach
-  void tearDownDb() {
-    if ("testcontainer".equals(profile)) {
-      System.out.println(">>> Stopping testcontainer:mongodb");
-      MongoDbContainerUtil.getMongoDbContainer().stop();
+    @AfterEach
+    void tearDownDb() {
+        if ("testcontainer".equals(profile)) {
+            System.out.println(">>> Stopping testcontainer:mongodb");
+            MongoDbContainerUtil.getMongoDbContainer().stop();
+        }
     }
-  }
 
-  @BeforeEach
-  void setUp() {
-    System.out.println(">>> beforeEach");
-  }
+    @BeforeEach
+    void setUp() {
+        System.out.println(">>> beforeEach");
+    }
 
-  @Test
-  void contextLoads() {
-    Arrays.stream(cApplicationContext.getBeanDefinitionNames())
-        .forEach(b -> System.out.println(">>> bean: " + b));
-  }
+    @Test
+    void contextLoads() {
+        Arrays.stream(cApplicationContext.getBeanDefinitionNames())
+            .forEach(b -> System.out.println(">>> bean: " + b));
+    }
 
-  @Test
-  @Order(1)
-  void createNewUser() {
-    UserRequestDto dto =
-        new UserRequestDto(
-            "bnana", "password", Set.of("ADMIN", "USER"), "berak", "nanah", "bnana@baba.com");
-    webTestClient
-        .post()
-        .uri(PATH_USER)
-        .accept(MediaType.ALL)
-        .body(BodyInserters.fromValue(dto))
-        .exchange()
-        .expectStatus()
-        .is2xxSuccessful()
-        .expectBody(UserControllerResponseDto.class)
-        .value(
-            serverResponse -> {
-              var item = serverResponse.items();
-            });
-  }
+    @Test
+    @Order(1)
+    void createNewUser() {
 
-  @Test
-  @Order(2)
-  void getUserByUsername() {
-    Mono<User> monoUserSaveResponse = userRepository.save(this.dummyUser).single();
+        User mockUser =
+            new User.UserBuilder()
+                .authorities(Set.of("USER"))
+                .firstname("mock")
+                .lastname("user")
+                .password("test")
+                .username("test")
+                .build();
 
-    StepVerifier.create(monoUserSaveResponse)
-        .expectNextMatches(
-            user -> {
-              User savedUser = (User) user;
-              System.out.println(savedUser.getId());
-              userRepository.findTopByUsername(savedUser.getUsername());
-              return true;
-            })
-        .expectComplete()
-        .verify();
+        UserRequestDto dto =
+            new UserRequestDto(
+                "bnana", "password", Set.of("ADMIN", "USER"), "berak", "nanah", "bnana@baba.com");
 
-    webTestClient
-        .get()
-        .uri(PATH_USER + "/" + this.dummyUser.getUsername())
-        .exchange()
-        .expectStatus()
-        .isOk()
-        .expectBody(UserControllerResponseDto.class)
-        .value(
-            serverResponse -> {
-              UserDto item = serverResponse.items().getFirst();
-              assertThat(item.username()).isEqualTo(this.dummyUser.getUsername());
-            });
-  }
+        webTestClient
+            .mutateWith(mockUser(mockUser))
+            .post()
+            .uri(PATH_USER)
+            .accept(MediaType.ALL)
+            .body(BodyInserters.fromValue(dto))
+            .exchange()
+            .expectStatus()
+            .is2xxSuccessful()
+            .expectBody(UserControllerResponseDto.class)
+            .value(
+                serverResponse -> {
+                    var item = serverResponse.items();
+                });
+    }
+
+    @Test
+    @Order(2)
+    void getUserByUsername() {
+        Mono<User> monoUserSaveResponse = userRepository.save(this.dummyUser).single();
+
+        StepVerifier.create(monoUserSaveResponse)
+            .expectNextMatches(
+                user -> {
+                    User savedUser = (User) user;
+                    System.out.println(savedUser.getId());
+                    userRepository.findTopByUsername(savedUser.getUsername());
+                    return true;
+                })
+            .expectComplete()
+            .verify();
+
+        webTestClient
+            .get()
+            .uri(PATH_USER + "/" + this.dummyUser.getUsername())
+            .exchange()
+            .expectStatus()
+            .isOk()
+            .expectBody(UserControllerResponseDto.class)
+            .value(
+                serverResponse -> {
+                    UserDto item = serverResponse.items().getFirst();
+                    assertThat(item.username()).isEqualTo(this.dummyUser.getUsername());
+                });
+    }
 }
