@@ -8,4 +8,5 @@ public record UserRequestDto(
     Set<String> authorities,
     String firstname,
     String lastname,
-    String email) {}
+    String email) {
+}
