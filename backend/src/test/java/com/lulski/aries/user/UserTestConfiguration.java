@@ -7,13 +7,13 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 @TestConfiguration
 public class UserTestConfiguration {
 
-  @Bean
-  UserService userService(UserRepository userRepository, PasswordEncoder passwordEncoder) {
-    return new UserService(userRepository, passwordEncoder);
-  }
+    @Bean
+    UserService userService(UserRepository userRepository, PasswordEncoder passwordEncoder) {
+        return new UserService(userRepository, passwordEncoder);
+    }
 
-  @Bean
-  UserController userController(UserRepository userRepository, UserService userService) {
-    return new UserController(userRepository, userService);
-  }
+    @Bean
+    UserController userController(UserRepository userRepository, UserService userService) {
+        return new UserController(userRepository, userService);
+    }
 }
