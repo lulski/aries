@@ -1,20 +1,9 @@
 "use client";
 
-import {
-  ActionIcon,
-  AppShell,
-  Box,
-  Burger,
-  Container,
-  Grid,
-  px,
-  Text,
-} from "@mantine/core";
+import { Anchor, AppShell, Burger, Group, Title } from "@mantine/core";
 import { useDisclosure } from "@mantine/hooks";
 import { ReactNode } from "react";
-import Link from "next/link";
 import { AriesLayoutProps } from "@/app/types/AriesLayoutProperties";
-import { IconMoodSmileFilled } from "@tabler/icons-react";
 
 export default function AriesLayout({
   children,
@@ -33,24 +22,21 @@ export default function AriesLayout({
       padding="md"
     >
       <AppShell.Header>
-        <Burger opened={opened} onClick={toggle} hiddenFrom="sm" size="sm" />
-        <Box ta={"right"}>
-          {" "}
-          <ActionIcon
-            size={42}
-            variant="default"
-            aria-label="ActionIcon with size as a number"
-          >
-            <IconMoodSmileFilled />
-          </ActionIcon>
-        </Box>
+        {/* <Burger opened={opened} onClick={toggle} hiddenFrom="sm" size="sm" /> */}
+
+        <Group h="100%" px="md" justify="space-between">
+          <Title>Coco Classico</Title>
+          <Anchor size="md" href="/login">
+            Login
+          </Anchor>
+        </Group>
       </AppShell.Header>
 
       <AppShell.Navbar p="md">
         {navbarItems?.map((item, index) => (
-          <Text size="md" key={index}>
-            <Link href={item.href}>{item.label}</Link>
-          </Text>
+          <Anchor size="md" key={index} href={item.href}>
+            {item.label}
+          </Anchor>
         ))}
       </AppShell.Navbar>
 
