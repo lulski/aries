@@ -41,7 +41,6 @@ export default function NewPostPage() {
       console.log(data);
       if (data.success) {
         console.log(">>> redirecting to /posts");
-
         router.push("/posts");
       } else {
         console.error(data.error);
@@ -51,13 +50,12 @@ export default function NewPostPage() {
     }
   };
 
-  const [contentError, setContentError] = useState<string|null>(null);
+  const [contentError, setContentError] = useState<string | null>(null);
 
   useEffect(() => {
     console.log(">>> useEffect:", contentError);
     setContentError(form.errors.content as string | null);
   }, [form.values.content, form.errors.content]);
-  
 
   return (
     <AuthGuard>
@@ -75,6 +73,7 @@ export default function NewPostPage() {
             content={form.values.content}
             key={form.key("content")}
             {...form.getInputProps("content")}
+            onChangeAction={form.getInputProps("content").onChange}
             error={contentError}
           ></PostEdit>
 
