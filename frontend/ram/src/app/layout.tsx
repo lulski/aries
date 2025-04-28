@@ -7,22 +7,36 @@ import {
   ColorSchemeScript,
   MantineProvider,
   mantineHtmlProps,
+  MantineColorsTuple,
 } from "@mantine/core";
 
 import AriesLayout from "@/app/components/AriesLayout";
 import { AriesLayoutProps } from "@/app/types/AriesLayoutProperties";
 
+const ariesColor: MantineColorsTuple = [
+  "#ffeaf3",
+  "#fcd4e1",
+  "#f4a7bf",
+  "#ec779c",
+  "#e64f7e",
+  "#e3366c",
+  "#e22862",
+  "#c91a52",
+  "#b41148",
+  "#9f003e",
+];
+
 const theme = createTheme({
-  /** Your theme override here */
-  //fontFamily: "Open Sans, sans-serif",
-  //  primaryColor: "cyan",
+  colors: { ariesColor },
+  fontFamily: "Open Sans, sans-serif",
+  primaryColor: "pink",
 });
 
 const layoutProps: AriesLayoutProps = {
   navbarItems: [
     { label: "Home", href: "/" },
-    { label: "Rambling shits", href: "/posts" },
-    { label: "Contact", href: "/contact" },
+    { label: "Posts", href: "/posts" },
+    { label: "About", href: "/about" },
   ],
 };
 
@@ -34,16 +48,6 @@ export default function RootLayout({
   return (
     <html lang="en" {...mantineHtmlProps}>
       <head>
-        <style>
-          {`
-            body {
-              background-color: #e5e5f7;
-              opacity: 0.8;
-              background-size: 10px 10px;
-              background-image: repeating-linear-gradient(45deg,hsl(237, 48.80%, 91.60%) 0,rgb(220, 221, 241) 1px, #e5e5f7 0, #e5e5f7 50%);
-            }
-          `}
-        </style>
         <ColorSchemeScript />
       </head>
       <meta
