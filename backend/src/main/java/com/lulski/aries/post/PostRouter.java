@@ -1,10 +1,5 @@
 package com.lulski.aries.post;
 
-import com.lulski.aries.post.exception.DatabaseAccessException;
-import com.lulski.aries.post.exception.NetworkTimeoutException;
-import com.lulski.aries.post.exception.PostNotFoundException;
-import com.lulski.aries.user.User;
-import com.lulski.aries.util.ResponseStatus;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -14,11 +9,21 @@ import org.springframework.security.authentication.AuthenticationCredentialsNotF
 import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Component;
 import org.springframework.web.reactive.function.BodyInserters;
-import org.springframework.web.reactive.function.server.*;
-import reactor.core.publisher.Mono;
+import org.springframework.web.reactive.function.server.RequestPredicates;
+import org.springframework.web.reactive.function.server.RouterFunction;
+import org.springframework.web.reactive.function.server.RouterFunctions;
+import org.springframework.web.reactive.function.server.ServerRequest;
+import org.springframework.web.reactive.function.server.ServerResponse;
+
+import com.lulski.aries.post.exception.DatabaseAccessException;
+import com.lulski.aries.post.exception.NetworkTimeoutException;
+import com.lulski.aries.post.exception.PostNotFoundException;
+import com.lulski.aries.user.User;
+import com.lulski.aries.util.ResponseStatus;
 
 import java.util.List;
 import java.util.Map;
+import reactor.core.publisher.Mono;
 
 @Component
 public class PostRouter {
@@ -27,8 +32,8 @@ public class PostRouter {
     @Bean
     RouterFunction<ServerResponse> route(PostHandler postHandler) {
         return RouterFunctions.route(RequestPredicates.POST("/posts"), postHandler::insertNew)
-                .andRoute(RequestPredicates.GET("/posts"), postHandler::listAll)
-                .andRoute(RequestPredicates.GET("/posts/{id:[a-fA-F0-9]{24}}"), postHandler::findById);
+            .andRoute(RequestPredicates.GET("/posts"), postHandler::listAll)
+            .andRoute(RequestPredicates.GET("/posts/{id:[a-fA-F0-9]{24}}"), postHandler::findById);
     }
 }
 
@@ -50,23 +55,23 @@ class PostHandler {
         String id = serverRequest.pathVariable("id");
 
         return postService.getById(id)
-                .flatMap(post -> ServerResponse.ok().body(BodyInserters.fromValue(PostResponseDto.fromPost(post))))
-                .onErrorResume(error -> {
-                    LOGGER.error(error.getMessage());
+            .flatMap(post -> ServerResponse.ok().body(BodyInserters.fromValue(PostResponseDto.fromPost(post))))
+            .onErrorResume(error -> {
+                LOGGER.error(error.getMessage());
 
-                    return switch (error) {
-                        case PostNotFoundException postNotFoundException -> ServerResponse.status(HttpStatus.NOT_FOUND)
-                                .bodyValue(Map.of("error", error.getMessage()));
-                        case DatabaseAccessException databaseAccessException ->
-                                ServerResponse.status(HttpStatus.INTERNAL_SERVER_ERROR)
-                                        .bodyValue(Map.of("error", "A database error occurred."));
-                        case NetworkTimeoutException networkTimeoutException ->
-                                ServerResponse.status(HttpStatus.GATEWAY_TIMEOUT)
-                                        .bodyValue(Map.of("error", "The request timed out. Please try again later."));
-                        default -> ServerResponse.status(HttpStatus.INTERNAL_SERVER_ERROR)
-                                .bodyValue(Map.of("error", "An unexpected error occurred."));
-                    };
-                });
+                return switch (error) {
+                    case PostNotFoundException postNotFoundException -> ServerResponse.status(HttpStatus.NOT_FOUND)
+                        .bodyValue(Map.of("error", error.getMessage()));
+                    case DatabaseAccessException databaseAccessException ->
+                        ServerResponse.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                            .bodyValue(Map.of("error", "A database error occurred."));
+                    case NetworkTimeoutException networkTimeoutException ->
+                        ServerResponse.status(HttpStatus.GATEWAY_TIMEOUT)
+                            .bodyValue(Map.of("error", "The request timed out. Please try again later."));
+                    default -> ServerResponse.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                        .bodyValue(Map.of("error", "An unexpected error occurred."));
+                };
+            });
     }
 
     public Mono<ServerResponse> insertNew(ServerRequest serverRequest) {

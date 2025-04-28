@@ -1,6 +1,5 @@
 package com.lulski.aries.auth;
 
-import com.lulski.aries.user.UserService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -12,41 +11,45 @@ import org.springframework.web.reactive.function.server.RouterFunction;
 import org.springframework.web.reactive.function.server.RouterFunctions;
 import org.springframework.web.reactive.function.server.ServerRequest;
 import org.springframework.web.reactive.function.server.ServerResponse;
+
+import com.lulski.aries.user.UserService;
+
 import reactor.core.publisher.Mono;
 
 @Component
 public class AuthRouter {
-  private static final Logger LOGGER = LoggerFactory.getLogger(AuthRouter.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(AuthRouter.class);
 
-  @Bean
-  RouterFunction<ServerResponse> authRoute(AuthHandler authHandler) {
-    return RouterFunctions.route(RequestPredicates.POST("/auth/login"), authHandler::login);
-  }
+    @Bean
+    RouterFunction<ServerResponse> authRoute(AuthHandler authHandler) {
+        return RouterFunctions.route(RequestPredicates.POST("/auth/login"), authHandler::login);
+    }
 }
 
 @Component
 class AuthHandler {
-  @Autowired UserService userService;
+    @Autowired
+    UserService userService;
 
-  private static final Logger LOGGER = LoggerFactory.getLogger(AuthHandler.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(AuthHandler.class);
 
-  public Mono<ServerResponse> login(ServerRequest serverRequest) {
-    return serverRequest
-        .bodyToMono(LoginRequestDto.class)
-        .flatMap(
-            loginRequestDto ->
-                userService.findByUsernameAndPassword(
-                    loginRequestDto.username(), loginRequestDto.password()))
-        .flatMap(
-            user ->
-                ServerResponse.ok()
-                    .body(
-                        BodyInserters.fromValue(
-                            new LoginResponseDto(
-                                user.getUsername(),
-                                user.getFirstName(),
-                                user.getLastName(),
-                                user.getAuthoritiesNames().toArray(new String[0])))))
-        .switchIfEmpty(ServerResponse.notFound().build());
-  }
+    public Mono<ServerResponse> login(ServerRequest serverRequest) {
+        return serverRequest
+            .bodyToMono(LoginRequestDto.class)
+            .flatMap(
+                loginRequestDto ->
+                    userService.findByUsernameAndPassword(
+                        loginRequestDto.username(), loginRequestDto.password()))
+            .flatMap(
+                user ->
+                    ServerResponse.ok()
+                        .body(
+                            BodyInserters.fromValue(
+                                new LoginResponseDto(
+                                    user.getUsername(),
+                                    user.getFirstName(),
+                                    user.getLastName(),
+                                    user.getAuthoritiesNames().toArray(new String[0])))))
+            .switchIfEmpty(ServerResponse.notFound().build());
+    }
 }
