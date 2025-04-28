@@ -61,4 +61,6 @@ gradle-app.setting
 #log files
 *.log
 
+#compile output
 */bin/
+*/out/

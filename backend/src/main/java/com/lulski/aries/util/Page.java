@@ -1,8 +1,7 @@
 package com.lulski.aries.util;
 
-import java.util.List;
-
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
+import java.util.List;
 
 /**
  * Util class to paginate json response
