@@ -1,6 +1,7 @@
 import Post from "@/components/Post";
+import { Button, Container, Group } from "@mantine/core";
+import { getSessionData } from "../lib/sessionUtil";
 
-//export default async function Page() {
 export default async function posts() {
   const API_POST_URL = process.env.API_POST_URL;
   const USERNAME = process.env.API_USERNAME;
@@ -16,16 +17,35 @@ export default async function posts() {
   const response = await data.json();
   const posts = response.postDto;
 
+  const sessionData = await getSessionData();
+  console.log("sessionData: " + sessionData);
+
   return (
-    <div>
-      <h1>List of posts</h1>
-      <ul>
-        {posts.map((post, index) => (
-          <li key={index}>
-            <Post {...post}></Post>
-          </li>
-        ))}
-      </ul>
-    </div>
+    <>
+      {sessionData.isAuthenticated &&
+        sessionData.authorities.includes("ADMIN") && (
+          <Container>
+            <Group justify="flex-end">
+              <Button
+                component="a"
+                href="/posts/new"
+                bottom={"10px"}
+                pos={"relative"}
+              >
+                Post New
+              </Button>
+            </Group>
+          </Container>
+        )}
+      <Container>
+        <ul>
+          {posts.map((post, index) => (
+            <li key={index}>
+              <Post {...post}></Post>
+            </li>
+          ))}
+        </ul>
+      </Container>
+    </>
   );
 }
