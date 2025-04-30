@@ -1,9 +1,10 @@
 "use client";
 
-import { Anchor, AppShell, Burger, Button, Group, Title } from "@mantine/core";
-import { useDisclosure, useToggle } from "@mantine/hooks";
+import { Anchor, AppShell, Group, Title } from "@mantine/core";
+import { useDisclosure } from "@mantine/hooks";
 import { ReactNode } from "react";
 import { AriesLayoutProps } from "@/app/types/AriesLayoutProperties";
+import ThemeToggleButton from "./ThemeToggleButton";
 import { theme } from "../theme";
 
 export default function AriesLayout({
@@ -11,7 +12,6 @@ export default function AriesLayout({
   navbarItems,
 }: AriesLayoutProps & { children: ReactNode }) {
   const [opened, { toggle }] = useDisclosure();
-  const [themeValue, themeToggle] = useToggle(["paleRed", "paleBlue"]);
 
   return (
     <AppShell
@@ -28,9 +28,9 @@ export default function AriesLayout({
 
         <Group h="100%" px="md" justify="space-between">
           <Title>Coco Classico</Title>
-          <Button color={themeValue} onClick={() => themeToggle()}>
-            {themeValue}
-          </Button>
+
+          <ThemeToggleButton />
+
           <Anchor size="md" href="/login">
             Login
           </Anchor>
