@@ -1,19 +1,16 @@
-"use client";
-
 import "@mantine/core/styles.css";
 import "./globals.css";
 
 import React from "react";
 import {
   ColorSchemeScript,
-  MantineProvider,
   mantineHtmlProps,
+  MantineProvider,
 } from "@mantine/core";
 
 import AriesLayout from "@/app/components/AriesLayout";
 import { AriesLayoutProps } from "@/app/types/AriesLayoutProperties";
 import { theme } from "./theme";
-import { useToggle } from "@mantine/hooks";
 
 export default function RootLayout({
   children,
@@ -31,14 +28,14 @@ export default function RootLayout({
   return (
     <html lang="en" {...mantineHtmlProps}>
       <head>
-        <ColorSchemeScript />
+        <ColorSchemeScript defaultColorScheme="auto" />
       </head>
       <meta
         name="viewport"
         content="minimum-scale=1, initial-scale=1, width=device-width, user-scalable=no"
       />
       <body>
-        <MantineProvider theme={theme} defaultColorScheme="light">
+        <MantineProvider theme={theme}>
           <AriesLayout {...layoutProps}>{children}</AriesLayout>
         </MantineProvider>
       </body>
