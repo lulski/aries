@@ -1,28 +1,18 @@
+"use client";
 import { Stack, Center, Box, Button, Image, Group } from "@mantine/core";
+import { useToggle } from "@mantine/hooks";
+import { AriesThemeSet } from "./theme";
 
 export default function Page() {
+  const [themeValue, themeToggle] = useToggle(AriesThemeSet.colors);
+
   return (
     <>
-      <style>
-        {`
-          .parent {
-            display: flex;
-            justify-content: center;
-            align-items: center;
-           // height: 100vh;
-          }
-          
-          .title{
-            text-align: center;
-            //border:1px solid;
-          }
-          
-        `}
-      </style>
-
-      <Stack className="">
+      <Stack>
         <Box w="100%">
-          <h1>how do I center a box</h1>
+          <Button color={themeValue} onClick={() => themeToggle()}>
+            how do I use theme
+          </Button>
         </Box>
         <Box w="100%">
           <Image
