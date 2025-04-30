@@ -7,4 +7,5 @@ export interface NavbarItem {
 
 export interface AriesLayoutProps {
   navbarItems?: NavbarItem[];
+  selectedTheme?: string;
 }
