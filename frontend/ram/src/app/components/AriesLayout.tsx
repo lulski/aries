@@ -1,17 +1,21 @@
 "use client";
 
-import { Anchor, AppShell, Group, Title } from "@mantine/core";
+import { Anchor, AppShell, Burger, Group, Title } from "@mantine/core";
 import { useDisclosure } from "@mantine/hooks";
 import { ReactNode } from "react";
 import { AriesLayoutProps } from "@/app/types/AriesLayoutProperties";
-import ThemeToggleButton from "./ThemeToggleButton";
-import { theme } from "../theme";
+import { ThemeToggleButton } from "./ThemeToggleButton/ThemeToggleButton";
 
-export default function AriesLayout({
-  children,
-  navbarItems,
-}: AriesLayoutProps & { children: ReactNode }) {
-  const [opened, { toggle }] = useDisclosure();
+export default function AriesLayout({ children }: { children: ReactNode }) {
+  const [navbarIsOpen, { toggle }] = useDisclosure();
+
+  const layoutProps: AriesLayoutProps = {
+    navbarItems: [
+      { label: "Home", href: "/" },
+      { label: "Posts", href: "/posts" },
+      { label: "About", href: "/about" },
+    ],
+  };
 
   return (
     <AppShell
@@ -19,14 +23,21 @@ export default function AriesLayout({
       navbar={{
         width: 300,
         breakpoint: "sm",
-        collapsed: { mobile: !opened },
+        collapsed: { mobile: !navbarIsOpen },
       }}
       padding="md"
     >
       <AppShell.Header>
-        {/* <Burger opened={opened} onClick={toggle} hiddenFrom="sm" size="sm" /> */}
-
         <Group h="100%" px="md" justify="space-between">
+          {
+            <Burger
+              opened={navbarIsOpen}
+              onClick={toggle}
+              hiddenFrom="sm"
+              size="sm"
+            />
+          }
+
           <Title>Coco Classico</Title>
 
           <ThemeToggleButton />
@@ -38,7 +49,7 @@ export default function AriesLayout({
       </AppShell.Header>
 
       <AppShell.Navbar p="md">
-        {navbarItems?.map((item, index) => (
+        {layoutProps.navbarItems?.map((item, index) => (
           <Anchor size="md" key={index} href={item.href}>
             {item.label}
           </Anchor>
