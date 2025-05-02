@@ -9,7 +9,6 @@ import {
 } from "@mantine/core";
 
 import AriesLayout from "@/app/components/AriesLayout";
-import { AriesLayoutProps } from "@/app/types/AriesLayoutProperties";
 import { theme } from "./theme";
 
 export default function RootLayout({
@@ -17,14 +16,6 @@ export default function RootLayout({
 }: {
   children: React.ReactNode;
 }) {
-  const layoutProps: AriesLayoutProps = {
-    navbarItems: [
-      { label: "Home", href: "/" },
-      { label: "Posts", href: "/posts" },
-      { label: "About", href: "/about" },
-    ],
-  };
-
   return (
     <html lang="en" {...mantineHtmlProps}>
       <head>
@@ -36,7 +27,7 @@ export default function RootLayout({
       />
       <body>
         <MantineProvider theme={theme}>
-          <AriesLayout {...layoutProps}>{children}</AriesLayout>
+          <AriesLayout>{children}</AriesLayout>
         </MantineProvider>
       </body>
     </html>
