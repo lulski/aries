@@ -15,6 +15,7 @@ export default function AriesLayout({ children }: { children: ReactNode }) {
       { label: "Home", href: "/" },
       { label: "Posts", href: "/posts" },
       { label: "About", href: "/about" },
+      { label: "Login", href: "/login" },
     ],
   };
 
@@ -40,7 +41,7 @@ export default function AriesLayout({ children }: { children: ReactNode }) {
             />
             <Group>
               <Stack gap={0}>
-                <Title order={5} hiddenFrom="xs">
+                <Title order={5} hiddenFrom="xs" suppressHydrationWarning>
                   Coco Classico
                 </Title>
                 <Title order={3} visibleFrom="xs" hiddenFrom="sm">
@@ -66,9 +67,6 @@ export default function AriesLayout({ children }: { children: ReactNode }) {
               {item.label}
             </Anchor>
           ))}
-          <Anchor size="md" href="/login">
-            Login
-          </Anchor>
         </AppShell.Navbar>
 
         <AppShell.Main>{children}</AppShell.Main>
