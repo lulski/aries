@@ -61,21 +61,7 @@ export default function NewPostPage() {
     <AuthGuard>
       <form onSubmit={form.onSubmit(handleSubmit)}>
         <SimpleGrid cols={1} spacing={2} verticalSpacing={"lg"}>
-          <TextInput
-            withAsterisk
-            label="Title:"
-            placeholder=""
-            key={form.key("title")}
-            {...form.getInputProps("title")}
-          />
-
-          <PostEdit
-            content={form.values.content}
-            key={form.key("content")}
-            {...form.getInputProps("content")}
-            onChangeAction={form.getInputProps("content").onChange}
-            error={contentError}
-          ></PostEdit>
+          <PostEdit form={form} error={contentError}></PostEdit>
 
           <Group justify="flex-end" mt="md">
             <Button type="submit">Submit</Button>
