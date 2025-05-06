@@ -1,4 +1,5 @@
 import { LoginFormSchema, SessionData } from "@/app/lib/definitions";
+import { fetchPost } from "@/app/lib/fetchPost";
 import { getIronSession } from "iron-session";
 import { cookies } from "next/headers";
 import { NextResponse } from "next/server";
@@ -8,8 +9,6 @@ export async function POST(request: Request) {
   const API_URL = process.env.API_POST_URL;
   const USERNAME = process.env.API_USERNAME;
   const PASSWORD = process.env.API_PASSWORD;
-  const SESSION_KEY = process.env.SESSION_KEY;
-  const COOKIE_NAME = process.env.COOKIE_NAME;
 
   const body = await request.json();
   console.log("Received from client:", body);
