@@ -28,7 +28,8 @@ export default function Post(post: PostData) {
         withBorder
         component={Link}
         href={`/posts/${post.id}`}
-        styles={{ root: { marginBottom: 10 } }} // Adds 10px to the bottom
+        styles={{ root: { marginBottom: 10 } }}
+        id={post.id}
       >
         <CardSection>
           {/* <Image src="https://raw.githubusercontent.com/mantinedev/mantine/master/.demo/images/bg-10.png" /> */}
