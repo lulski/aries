@@ -10,20 +10,19 @@ import Underline from "@tiptap/extension-underline";
 import TextAlign from "@tiptap/extension-text-align";
 import Superscript from "@tiptap/extension-superscript";
 import SubScript from "@tiptap/extension-subscript";
-import { InputWrapper, Text } from "@mantine/core";
+import { InputWrapper, Text, TextInput } from "@mantine/core";
 import { error } from "console";
+import { UseFormReturnType } from "@mantine/form";
 
 interface PostEditProps {
-  content: string;
-  onChangeAction: (content: string) => void;
+  form: UseFormReturnType<{
+    title: string;
+    content: string;
+  }>;
   error?: string | null;
 }
 
-export default function PostEdit({
-  content,
-  onChangeAction,
-  error,
-}: PostEditProps) {
+export default function PostEdit({ form, error }: PostEditProps) {
   const editor = useEditor({
     extensions: [
       StarterKit,
@@ -34,13 +33,19 @@ export default function PostEdit({
       Highlight,
       TextAlign.configure({ types: ["heading", "paragraph"] }),
     ],
-    content,
-    onUpdate: ({ editor }) => onChangeAction(editor.getHTML()),
+    content: form.values.content,
+    onUpdate: ({ editor }) => form.setFieldValue("content", editor.getHTML()),
     immediatelyRender: false,
   });
 
   return (
     <>
+      <TextInput
+        withAsterisk
+        label="Title:"
+        placeholder=""
+        {...form.getInputProps("title")}
+      />
       <InputWrapper
         label="Content:"
         description=""
