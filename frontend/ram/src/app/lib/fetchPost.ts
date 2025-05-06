@@ -16,8 +16,8 @@ export async function fetchPost(id: string) {
       throw new Error(`HTTP error! status: ${response.status}`);
     }
 
-    const post = await response.json();
-    return { success: true, data: post };
+    const data = await response.json();
+    return { success: true, data: data };
   } catch (error) {
     console.error("Error fetching post:", error);
     return {
