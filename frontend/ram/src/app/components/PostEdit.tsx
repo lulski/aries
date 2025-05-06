@@ -11,7 +11,6 @@ import TextAlign from "@tiptap/extension-text-align";
 import Superscript from "@tiptap/extension-superscript";
 import SubScript from "@tiptap/extension-subscript";
 import { InputWrapper, Text, TextInput } from "@mantine/core";
-import { error } from "console";
 import { UseFormReturnType } from "@mantine/form";
 
 interface PostEditProps {
