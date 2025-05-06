@@ -12,10 +12,10 @@ export default function AriesLayout({ children }: { children: ReactNode }) {
 
   const layoutProps: AriesLayoutProps = {
     navbarItems: [
-      { label: "Home", href: "/" },
-      { label: "Posts", href: "/posts" },
-      { label: "About", href: "/about" },
-      { label: "Login", href: "/login" },
+      { label: "main", href: "/" },
+      { label: "memo", href: "/posts" },
+      { label: "who_am_i", href: "/about" },
+      { label: "clicky", href: "/login" },
     ],
   };
 
