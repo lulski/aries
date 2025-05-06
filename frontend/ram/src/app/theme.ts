@@ -1,5 +1,14 @@
 // theme.ts
-import { MantineColorsTuple, createTheme } from '@mantine/core';
+import { MantineColorsTuple, createTheme, DefaultMantineColor } from '@mantine/core';
+
+export const AriesThemeSet = {
+  colors: [
+    'paleBlue',
+    'paleRed',
+    'yellow',
+  ] as const satisfies ReadonlyArray<DefaultMantineColor>,
+}
+
 
 const paleBlue: MantineColorsTuple = [
     "#ecf4ff",
@@ -28,15 +37,16 @@ const paleBlue: MantineColorsTuple = [
     "#9f003e"
   ];
 
-export const theme = createTheme({
-  colors: {
-    paleBlue: paleBlue,
-    paleRed: paleRed
+  export const createAriesTheme = (primaryColor: typeof AriesThemeSet.colors[number]) => 
+    createTheme({
+      colors: {
+        paleBlue,
+        paleRed,
+      },
+      primaryColor ,
+    });
+  
 
-  },
-  primaryColor: 'paleRed',
-});
 
-export const AriesThemeSet = {
-  colors: ['paleBlue', 'paleRed'],
-}
+
+  
