@@ -9,6 +9,7 @@ import {
 } from "@mantine/core";
 
 import AriesLayout from "@/app/components/AriesLayout";
+import { ThemeProvider } from "./context/ThemeContext";
 
 export default function RootLayout({
   children,
@@ -26,7 +27,9 @@ export default function RootLayout({
       />
       <body>
         <MantineProvider defaultColorScheme="auto">
-          <AriesLayout>{children}</AriesLayout>
+          <ThemeProvider>
+            <AriesLayout>{children}</AriesLayout>
+          </ThemeProvider>
         </MantineProvider>
       </body>
     </html>
