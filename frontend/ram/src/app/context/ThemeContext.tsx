@@ -7,7 +7,7 @@ import React, {
   useEffect,
   useCallback,
 } from "react";
-import { MantineProvider } from "@mantine/core";
+import { LoadingOverlay, MantineProvider } from "@mantine/core";
 import { AriesThemeSet, createAriesTheme } from "../theme";
 
 type ThemeContextType = {
@@ -57,7 +57,13 @@ export const ThemeProvider: React.FC<{ children: ReactNode }> = ({
   };
 
   if (isLoading) {
-    return null; // or a loading spinner
+    return (
+      <LoadingOverlay
+        zIndex={1000}
+        overlayProps={{ radius: "sm", blur: 2 }}
+        visible={true}
+      />
+    );
   }
 
   return (
