@@ -2,7 +2,7 @@
 
 import PostEdit from "@/app/components/PostEdit";
 import { PostData } from "@/app/lib/definitions";
-import { Text } from "@mantine/core";
+import { LoadingOverlay, Text } from "@mantine/core";
 import { useForm } from "@mantine/form";
 
 import { useParams } from "next/navigation";
@@ -70,7 +70,13 @@ export default function editPost() {
   };
 
   if (isLoading) {
-    return <Text>Loading...</Text>;
+    return (
+      <LoadingOverlay
+        zIndex={1000}
+        overlayProps={{ radius: "sm", blur: 2 }}
+        visible={true}
+      />
+    );
   }
 
   if (error) {
@@ -80,7 +86,6 @@ export default function editPost() {
   return (
     <form onSubmit={form.onSubmit(handleSubmit)}>
       <PostEdit form={form}></PostEdit>
-      {/* <pre>{JSON.stringify(form.values, null, 2)}</pre> */}
     </form>
   );
 }
