@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from "react";
 import { useRouter, usePathname } from "next/navigation";
-import { Loader, Center } from "@mantine/core";
+import { Loader, Center, LoadingOverlay } from "@mantine/core";
 import { SessionData } from "@/app/lib/definitions";
 import { SessionProvider } from "../context/SessionContext";
 
@@ -26,7 +26,7 @@ export default function AuthGuard({ children }: Props) {
         const data: SessionData = await res.json();
 
         console.log("Session data:", data);
-        
+
         setSession(data);
         setLoading(false);
       } catch (err) {
@@ -35,21 +35,19 @@ export default function AuthGuard({ children }: Props) {
         router.replace(`/login?returnUrl=${returnUrl}`);
       }
     };
-    
+
     checkAuth();
   }, [router, pathname]);
 
   if (loading || !session) {
     return (
-      <Center h="100vh">
-        <Loader />
-      </Center>
+      <LoadingOverlay
+        zIndex={1000}
+        overlayProps={{ radius: "sm", blur: 2 }}
+        visible={true}
+      />
     );
   }
 
-  return (
-    <SessionProvider value={session}>
-      {children}
-    </SessionProvider>
-  );
+  return <SessionProvider value={session}>{children}</SessionProvider>;
 }
