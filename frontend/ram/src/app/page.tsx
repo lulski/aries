@@ -1,5 +1,13 @@
 "use client";
-import { Stack, Center, Box, Button, Image, Group } from "@mantine/core";
+import {
+  Stack,
+  Center,
+  Box,
+  Button,
+  Image,
+  Group,
+  useMantineColorScheme,
+} from "@mantine/core";
 import { useToggle } from "@mantine/hooks";
 import { AriesThemeSet } from "./theme";
 
@@ -9,11 +17,7 @@ export default function Page() {
   return (
     <>
       <Stack>
-        <Box w="100%">
-          <Button color={themeValue} onClick={() => themeToggle()}>
-            how do I use theme
-          </Button>
-        </Box>
+        <Box w="100%"></Box>
         <Box w="100%">
           <Image
             radius="md"
