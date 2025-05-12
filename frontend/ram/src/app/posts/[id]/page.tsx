@@ -2,7 +2,7 @@ import Post from "@/app/components/Post";
 import { PostData, SessionData } from "@/app/lib/definitions";
 import { fetchPost } from "@/app/lib/fetchPost";
 import { getSessionData } from "@/app/lib/sessionUtil";
-import { Button } from "@mantine/core";
+import { Button, Group } from "@mantine/core";
 import link from "next/link";
 
 export default async function getPostById({
@@ -17,12 +17,14 @@ export default async function getPostById({
 
   return (
     <>
-      {sessionData.isAuthenticated &&
-        sessionData.authorities.includes("ADMIN") && (
-          <Button component={link} href={`/posts/${id}/edit`}>
-            Edit Post
-          </Button>
-        )}
+      <Group justify="flex-end" mb={"10px"}>
+        {sessionData.isAuthenticated &&
+          sessionData.authorities.includes("ADMIN") && (
+            <Button component={link} href={`/posts/${id}/edit`}>
+              Edit Post
+            </Button>
+          )}
+      </Group>
       <Post {...post} />
     </>
   );
