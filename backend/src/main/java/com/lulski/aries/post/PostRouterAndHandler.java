@@ -28,8 +28,8 @@ import com.lulski.aries.util.ResponseStatus;
 import reactor.core.publisher.Mono;
 
 @Component
-public class PostRouter {
-        private static final Logger LOGGER = LoggerFactory.getLogger(PostRouter.class);
+public class PostRouterAndHandler {
+        private static final Logger LOGGER = LoggerFactory.getLogger(PostRouterAndHandler.class);
 
         /**
          * Configures the routing for post-related HTTP endpoints.
