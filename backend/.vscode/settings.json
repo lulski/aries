@@ -1,0 +1,14 @@
+{
+  "java.compile.nullAnalysis.mode": "automatic",
+  "files.exclude": {
+    "out/": true,
+    "bin/": true,
+    "build/": true
+  },
+  "search.exclude": {
+    "out/": true,
+    "bin/": true,
+    "build/": true
+  },
+  "java.configuration.updateBuildConfiguration": "interactive"
+}
