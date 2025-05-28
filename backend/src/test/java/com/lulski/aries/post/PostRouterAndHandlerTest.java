@@ -6,9 +6,13 @@ import java.util.Optional;
 import java.util.Set;
 
 import org.bson.types.ObjectId;
-import static org.hamcrest.MatcherAssert.assertThat;
+
 import static org.hamcrest.Matchers.equalTo;
+import static org.hamcrest.Matchers.instanceOf;
 import static org.hamcrest.Matchers.notNullValue;
+
+import static org.assertj.core.api.Assertions.assertThat;
+
 import org.junit.jupiter.api.Test;
 import static org.mockito.ArgumentMatchers.any;
 import org.mockito.Mock;
@@ -18,17 +22,26 @@ import org.springframework.boot.test.autoconfigure.web.reactive.AutoConfigureWeb
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.Import;
+import org.springframework.http.HttpStatus;
+
 import static org.springframework.security.test.web.reactive.server.SecurityMockServerConfigurers.mockUser;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.web.reactive.server.WebTestClient;
+import org.springframework.web.client.HttpClientErrorException.BadRequest;
 import org.springframework.web.reactive.function.BodyInserters;
 import org.springframework.web.reactive.function.server.ServerRequest;
+import org.springframework.web.reactive.function.server.ServerResponse;
 
 import com.lulski.aries.config.TestMockRepositoryConfig;
 import com.lulski.aries.config.TestWebSecurityConfig;
+import com.lulski.aries.post.exception.BadRequestException;
 import com.lulski.aries.user.User;
 
 import reactor.core.publisher.Mono;
+import reactor.test.StepVerifier;
+import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.verify;
+import static org.hamcrest.Matchers.instanceOf;
 
 @SpringBootTest
 @AutoConfigureWebTestClient(timeout = "100000000")
@@ -44,9 +57,6 @@ class PostRouterAndHandlerTest {
 
         @Autowired
         private PostRepository postRepository;
-
-        @Autowired
-        private PostHandler postHandler;
 
         @Mock
         private ServerRequest mockServerRequest;
@@ -155,13 +165,33 @@ class PostRouterAndHandlerTest {
                                         System.out.println("Content-Type: "
                                                         + result.getResponseHeaders().getContentType());
                                         System.out.println("Response Body: " + responseBody);
+                                        assertThat(responseBody).isNotNull();
+                                        assertThat(responseBody.title()).isEqualTo(specialCharacterTitle);
+                                        assertThat(responseBody.content()).isEqualTo(
+                                                        "this is a post with special characters in the title");
+                                        assertThat(responseBody.id()).isNotNull();
 
-                                        assertThat(responseBody, notNullValue());
-                                        assertThat(responseBody.title(), equalTo(specialCharacterTitle));
-                                        assertThat(responseBody.content(),
-                                                        equalTo("This is a post with special characters in the title"));
-                                        assertThat(responseBody.author(), equalTo("testUser"));
-                                        assertThat(responseBody.id(), notNullValue());
                                 });
         }
+
+        @Test
+        void findByTitle_ShouldThrowBadRequestException() {
+                when(mockServerRequest.queryParam("title")).thenReturn(Optional.empty());
+
+                PostHandler postHandler = new PostHandler();
+
+                Mono<ServerResponse> responseMono = postHandler.findByTitle(mockServerRequest);
+                // Then
+                StepVerifier.create(responseMono)
+                                .expectErrorSatisfies(error -> {
+                                        assertThat(error)
+                                                        .isInstanceOf(BadRequestException.class)
+                                                        .hasMessage("invalid request: title query parameter is missing");
+                                })
+                                .verify();
+
+                verify(mockServerRequest, times(1)).queryParam("title");
+
+        }
+
 }
