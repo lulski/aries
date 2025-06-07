@@ -1,8 +1,7 @@
-export async function fetchPost(id: string) {
-  const API_POST_URL = process.env.API_POST_URL;
+export async function fetchPost(fetchPostUrl: string) {
   const USERNAME = process.env.API_USERNAME;
   const PASSWORD = process.env.API_PASSWORD;
-  const fetchPostUrl = API_POST_URL + "/" + id;
+  //const fetchPostUrl = API_POST_URL + "?id=" + id;
 
   try {
     const response = await fetch(fetchPostUrl, {
@@ -26,4 +25,16 @@ export async function fetchPost(id: string) {
         error instanceof Error ? error.message : "An unknown error occurred",
     };
   }
+}
+
+export async function fetchPostById(id: string) {
+  const API_POST_URL = process.env.API_POST_URL;
+  const fetchPostUrl = API_POST_URL + "?id=" + id;
+  fetchPost(fetchPostUrl);
+}
+
+export async function fetchPostByTitle(title: string) {
+  const API_POST_URL = process.env.API_POST_URL;
+  const fetchPostUrl = API_POST_URL + "?title=" + title;
+  return fetchPost(fetchPostUrl);
 }

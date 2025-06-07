@@ -27,7 +27,7 @@ export default function Post(post: PostData) {
         radius="md"
         withBorder
         component={Link}
-        href={`/posts/${post.id}`}
+        href={`/posts/${post.title}`}
         styles={{ root: { marginBottom: 10 } }}
         id={post.id}
       >

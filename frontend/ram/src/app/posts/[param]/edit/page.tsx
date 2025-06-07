@@ -2,7 +2,7 @@
 
 import PostEdit from "@/app/components/PostEdit";
 import { PostData } from "@/app/lib/definitions";
-import { LoadingOverlay, Text } from "@mantine/core";
+import { Button, Group, LoadingOverlay, Text } from "@mantine/core";
 import { useForm } from "@mantine/form";
 
 import { useParams } from "next/navigation";
@@ -86,6 +86,9 @@ export default function editPost() {
   return (
     <form onSubmit={form.onSubmit(handleSubmit)}>
       <PostEdit form={form}></PostEdit>
+      <Group justify="flex-end" mt="md">
+        <Button type="submit">Submit</Button>
+      </Group>
     </form>
   );
 }
