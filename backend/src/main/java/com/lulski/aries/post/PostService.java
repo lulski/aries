@@ -30,13 +30,13 @@ public class PostService {
 
     /**
      * Retrieves all posts from the repository.
-     * 
+     * <p>
      * This method fetches all posts stored in the database. If an error occurs during
      * the retrieval process, it logs the error and returns an empty Flux. It also maps
      * specific exceptions to custom exception types for better error handling.
      *
      * @return A Flux<Post> containing all posts in the repository. If an error occurs,
-     *         an empty Flux is returned.
+     * an empty Flux is returned.
      * @throws DatabaseAccessException if there's an error accessing the database,
      *                                 wrapped from DataAccessException.
      * @throws NetworkTimeoutException if there's a network timeout while accessing
@@ -44,19 +44,19 @@ public class PostService {
      */
     public Flux<Post> listAll() {
         return this.postRepository
-                .findAll()
-                .onErrorResume(
-                        error -> {
-                            LOGGER.error(">>> failed to fetch Post data: " + error.getMessage());
-                            return Flux.empty();
-                        })
-                .onErrorMap(DataAccessException.class, DatabaseAccessException::new)
-                .onErrorMap(TimeoutException.class, NetworkTimeoutException::new);
+            .findAll()
+            .onErrorResume(
+                error -> {
+                    LOGGER.error(">>> failed to fetch Post data: " + error.getMessage());
+                    return Flux.empty();
+                })
+            .onErrorMap(DataAccessException.class, DatabaseAccessException::new)
+            .onErrorMap(TimeoutException.class, NetworkTimeoutException::new);
     }
 
     /**
      * Retrieves a Post by its unique identifier.
-     * 
+     * <p>
      * This method searches for a post in the repository with the given ID.
      * If no post is found, it throws a PostNotFoundException. It also handles
      * database access and network timeout errors.
@@ -71,15 +71,15 @@ public class PostService {
     public Mono<Post> getById(String id) {
 
         return this.postRepository.findById(new ObjectId(id))
-                .switchIfEmpty(
-                        Mono.error(new PostNotFoundException(id)))
-                .onErrorMap(DataAccessException.class, DatabaseAccessException::new)
-                .onErrorMap(TimeoutException.class, NetworkTimeoutException::new);
+            .switchIfEmpty(
+                Mono.error(new PostNotFoundException(id)))
+            .onErrorMap(DataAccessException.class, DatabaseAccessException::new)
+            .onErrorMap(TimeoutException.class, NetworkTimeoutException::new);
     }
 
     /**
      * Retrieves a Post with an exact matching title.
-     * 
+     * <p>
      * This method searches for a post in the repository with a title that exactly
      * matches the provided string.
      * If no post is found, it throws a PostNotFoundException. It also handles
@@ -93,11 +93,11 @@ public class PostService {
      *                                 the database.
      */
     public Mono<Post> getByTitle(String title) {
-        return this.postRepository.findByTitle(title)
-                .switchIfEmpty(
-                        Mono.error(new PostNotFoundException(title)))
-                .onErrorMap(DataAccessException.class, DatabaseAccessException::new)
-                .onErrorMap(TimeoutException.class, NetworkTimeoutException::new);
+        return this.postRepository.findTopByTitle(title)
+            .switchIfEmpty(
+                Mono.error(new PostNotFoundException(title)))
+            .onErrorMap(DataAccessException.class, DatabaseAccessException::new)
+            .onErrorMap(TimeoutException.class, NetworkTimeoutException::new);
     }
 
     /**
@@ -107,7 +107,6 @@ public class PostService {
      *                       information for creating a new post.
      * @param user           The user who is creating the post.
      * @return A {@link Mono} containing the newly created post.
-     *
      * @throws DatabaseAccessException If there is an error accessing the database.
      * @throws NetworkTimeoutException If there is a network timeout while accessing
      *                                 the database.
@@ -125,11 +124,11 @@ public class PostService {
 
     /**
      * Archives a post by setting its isArchived field to true.
-     * 
+     * <p>
      * This method performs a repository lookup for the supplied post using its ID,
      * then sets the isArchived field to true. If the post is not found, it throws a
      * RuntimeException.
-     * 
+     *
      * @param post The Post object to be archived. It must contain a valid ID for
      *             lookup.
      * @return A Mono<Post> containing the archived post if successful.
@@ -138,16 +137,16 @@ public class PostService {
      */
     public Mono<Post> archivePost(Post post) {
         return postRepository
-                .findById(post.getId())
-                .doOnNext(p -> LOGGER.info(">>> found post with id : " + p.getId()))
-                .switchIfEmpty(
-                        Mono.error(new RuntimeException("No post with Id: " + post.getId() + " is found")))
-                .flatMap(
-                        found -> {
-                            found.setIsArchived(true);
-                            return postRepository.save(found);
-                        })
-                .doOnSuccess(p -> LOGGER.info("post Id: " + p.getId() + " is archived"))
-                .doOnError(err -> LOGGER.error("unable to complete operation for p: " + err.getMessage()));
+            .findById(post.getId())
+            .doOnNext(p -> LOGGER.info(">>> found post with id : " + p.getId()))
+            .switchIfEmpty(
+                Mono.error(new RuntimeException("No post with Id: " + post.getId() + " is found")))
+            .flatMap(
+                found -> {
+                    found.setIsArchived(true);
+                    return postRepository.save(found);
+                })
+            .doOnSuccess(p -> LOGGER.info("post Id: " + p.getId() + " is archived"))
+            .doOnError(err -> LOGGER.error("unable to complete operation for p: " + err.getMessage()));
     }
 }
