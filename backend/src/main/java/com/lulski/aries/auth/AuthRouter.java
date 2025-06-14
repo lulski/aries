@@ -28,10 +28,9 @@ public class AuthRouter {
 
 @Component
 class AuthHandler {
+    private static final Logger LOGGER = LoggerFactory.getLogger(AuthHandler.class);
     @Autowired
     UserService userService;
-
-    private static final Logger LOGGER = LoggerFactory.getLogger(AuthHandler.class);
 
     public Mono<ServerResponse> login(ServerRequest serverRequest) {
         return serverRequest

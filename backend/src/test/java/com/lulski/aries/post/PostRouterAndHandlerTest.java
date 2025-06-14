@@ -53,7 +53,7 @@ class PostRouterAndHandlerTest {
     @Mock
     private ServerRequest mockServerRequest;
 
-    private User mockUser = new User.UserBuilder()
+    private final User mockUser = new User.UserBuilder()
         .authorities(Set.of("USER"))
         .firstname("kocu")
         .lastname("gonzales")

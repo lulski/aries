@@ -6,11 +6,11 @@ public enum ResponseStatus {
 
     private final String value;
 
-    public String getValue() {
-        return value;
-    }
-
     ResponseStatus(String value) {
         this.value = value;
+    }
+
+    public String getValue() {
+        return value;
     }
 }

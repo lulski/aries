@@ -11,8 +11,6 @@ import org.springframework.web.reactive.function.server.ServerResponse;
 
 import reactor.core.publisher.Mono;
 
-import com.lulski.aries.post.PostHandler;
-
 @Component
 public class PostRouter {
 
@@ -34,28 +32,28 @@ public class PostRouter {
      *
      * @param postHandler The handler that processes the requests for each route
      * @return A RouterFunction that maps incoming requests to their respective
-     *         handler methods
+     * handler methods
      */
     @Bean
     RouterFunction<ServerResponse> route(PostHandler postHandler) {
         return RouterFunctions.route(RequestPredicates.POST("/posts"), postHandler::insertNew)
-                .andRoute(RequestPredicates.GET("/posts")
-                        .and(RequestPredicates.queryParam("title", this::isValidTitle)),
-                        postHandler::findByTitle)
-                .andRoute(RequestPredicates.GET("/posts")
-                        .and(RequestPredicates.queryParam("id", this::isValidId)),
-                        postHandler::findById)
-                .andRoute(RequestPredicates.GET("/posts").and(req -> req.queryParams().isEmpty()),
-                        postHandler::listAll)
-                .andRoute(RequestPredicates.GET("/posts"), this::handleInvalidQueryParams);
+            .andRoute(RequestPredicates.GET("/posts")
+                    .and(RequestPredicates.queryParam("title", this::isValidTitle)),
+                postHandler::findByTitle)
+            .andRoute(RequestPredicates.GET("/posts")
+                    .and(RequestPredicates.queryParam("id", this::isValidId)),
+                postHandler::findById)
+            .andRoute(RequestPredicates.GET("/posts").and(req -> req.queryParams().isEmpty()),
+                postHandler::listAll)
+            .andRoute(RequestPredicates.GET("/posts"), this::handleInvalidQueryParams);
     }
 
     private boolean isValidTitle(String title) {
-        return title != null && !title.trim().isEmpty() && title.length() <= 100;
+        return title!=null && !title.trim().isEmpty() && title.length() <= 100;
     }
 
     private boolean isValidId(String id) {
-        return id != null && id.matches("^[0-9a-fA-F]{24}$");
+        return id!=null && id.matches("^[0-9a-fA-F]{24}$");
     }
 
     private Mono<ServerResponse> handleInvalidQueryParams(ServerRequest request) {
