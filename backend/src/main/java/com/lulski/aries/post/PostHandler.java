@@ -45,9 +45,7 @@ public class PostHandler {
         return postService.getById(id)
             .flatMap(post -> ServerResponse.ok()
                 .body(BodyInserters.fromValue(PostResponseDto.fromPost(post))))
-            .onErrorResume(error -> {
-                return this.handleError(error);
-            });
+            .onErrorResume(this::handleError);
     }
 
     public Mono<ServerResponse> findByTitle(ServerRequest serverRequest) {
@@ -83,9 +81,7 @@ public class PostHandler {
                     .body(BodyInserters.fromValue(new PostResponseDto(
                         List.of(PostResponseDto.fromPost(result)),
                         ResponseStatus.SUCCESS.getValue()))));
-        }).onErrorResume(e -> {
-            return handleError(e);
-        });
+        }).onErrorResume(this::handleError);
     }
 
     private Mono<ServerResponse> handleError(Throwable error) {
