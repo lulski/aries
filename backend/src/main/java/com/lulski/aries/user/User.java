@@ -84,6 +84,11 @@ public class User implements UserDetails {
         return this.authorities;
     }
 
+    public void setAuthorities(Set<String> authorities) {
+        this.authorities =
+            authorities.stream().map(SimpleGrantedAuthority::new).collect(Collectors.toSet());
+    }
+
     public Set<String> getAuthoritiesNames() {
         if (this.authorities==null) {
             return Collections.emptySet();
@@ -92,11 +97,6 @@ public class User implements UserDetails {
         return this.authorities.stream()
             .map(SimpleGrantedAuthority::getAuthority)
             .collect(Collectors.toSet());
-    }
-
-    public void setAuthorities(Set<String> authorities) {
-        this.authorities =
-            authorities.stream().map(SimpleGrantedAuthority::new).collect(Collectors.toSet());
     }
 
     @Override
