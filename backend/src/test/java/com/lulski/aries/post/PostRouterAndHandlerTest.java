@@ -26,7 +26,10 @@ import com.lulski.aries.post.exception.BadRequestException;
 import com.lulski.aries.user.User;
 
 import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
+import java.time.format.FormatStyle;
 import java.util.Arrays;
+import java.util.Locale;
 import java.util.Optional;
 import java.util.Set;
 import reactor.core.publisher.Mono;
@@ -135,9 +138,9 @@ class PostRouterAndHandlerTest {
         String specialCharacterTitle = "Special%Character";
         Post expectedPost = new Post(new ObjectId(),
             specialCharacterTitle, "This is a post with special characters in the title",
-            "testUser", LocalDateTime.now(), null, true, false);
+            "testUser", LocalDateTime.now().minusDays(1), LocalDateTime.now(), true, false);
 
-        when(postRepository.findByTitle(specialCharacterTitle)).thenReturn(Mono.just(expectedPost));
+        when(postRepository.findTopByTitle(specialCharacterTitle)).thenReturn(Mono.just(expectedPost));
 
         when(mockServerRequest.queryParam("title")).thenReturn(Optional.of(specialCharacterTitle));
 
@@ -159,6 +162,14 @@ class PostRouterAndHandlerTest {
                 assertThat(responseBody.content()).isEqualTo(
                     "This is a post with special characters in the title");
                 assertThat(responseBody.id()).isNotNull();
+                assertThat(responseBody.createdOn()
+                    .equals(LocalDateTime.now().minusDays(1)
+                        .format(DateTimeFormatter.ofLocalizedDate(FormatStyle.MEDIUM)
+                            .withLocale(Locale.ENGLISH))));
+                assertThat(responseBody.modifiedOn()
+                    .equals(LocalDateTime.now()
+                        .format(DateTimeFormatter.ofLocalizedDate(FormatStyle.MEDIUM)
+                            .withLocale(Locale.ENGLISH))));
 
             });
     }
