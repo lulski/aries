@@ -15,6 +15,7 @@ public interface PostRepository extends ReactiveMongoRepository<Post, ObjectId> 
 
     Flux<Post> findAllByAuthor(String author);
 
-    Mono<Post> findByTitle(String title);
+    Mono<Post> findTopByTitle(String title);
+
 
 }
