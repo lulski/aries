@@ -13,11 +13,26 @@ import { PostData } from "../lib/definitions";
 import sanitizeHtml from "sanitize-html";
 import Link from "next/link";
 
-export default function Post(post: PostData) {
+type PostProps = {
+  post: PostData;
+  allowHtmlMarkup: boolean;
+};
+
+export default function Post({ post, allowHtmlMarkup }: PostProps) {
+  let displayContent;
+
   const sanitizedContent = sanitizeHtml(post.content, {
     allowedTags: [],
-    allowedAttributes: {},
+    allowedAttributes: {
+      a: ["href", "target", "rel"],
+    },
   });
+  console.log("allowHtmlMarkup: " + allowHtmlMarkup);
+  if (allowHtmlMarkup) {
+    displayContent = post.content;
+  } else {
+    displayContent = sanitizedContent;
+  }
 
   return (
     <>
@@ -39,10 +54,13 @@ export default function Post(post: PostData) {
           <Title order={5}>{post.title}</Title>
         </Group>
 
-        <Box size="sm" dangerouslySetInnerHTML={{ __html: sanitizedContent }} />
+        <Box size="sm" dangerouslySetInnerHTML={{ __html: displayContent }} />
         <br />
         <Text size="xs" ta="right">
           {post.author}
+        </Text>
+        <Text size="xs" ta="right">
+          {post.createdOn}
         </Text>
       </Card>
     </>
