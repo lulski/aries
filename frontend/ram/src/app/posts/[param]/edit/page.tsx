@@ -37,9 +37,8 @@ export default function editPost() {
     async function loadPost() {
       try {
         console.info(">>> params", params);
-        console.info(">>> fetching post data for edit: ", params.id);
 
-        const response = await fetch(`/api/posts/${params.id}`);
+        const response = await fetch(`/api/posts/${params.param}`);
         if (!response.ok) {
           throw new Error(`HTTP error! status: ${response.status}`);
         }
