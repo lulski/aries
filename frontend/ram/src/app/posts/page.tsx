@@ -1,6 +1,7 @@
 import Post from "@/components/Post";
 import { Button, Container, Group } from "@mantine/core";
 import { getSessionData } from "../lib/sessionUtil";
+import PostInline from "../components/PostInline";
 
 export default async function posts() {
   const API_POST_URL = process.env.API_POST_URL;
@@ -41,7 +42,7 @@ export default async function posts() {
         <ul>
           {posts.map((post, index) => (
             <li key={index}>
-              <Post {...post}></Post>
+              <PostInline {...post}></PostInline>
             </li>
           ))}
         </ul>

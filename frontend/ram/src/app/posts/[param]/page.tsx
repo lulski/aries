@@ -35,7 +35,7 @@ export default async function viewPost({ params }: { params: Params }) {
             </Button>
           )}
       </Group>
-      <Post {...post} />
+      <Post {...{post, allowHtmlMarkup: true}} />
     </>
   );
 }
