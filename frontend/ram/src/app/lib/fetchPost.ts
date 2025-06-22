@@ -1,7 +1,6 @@
 export async function fetchPost(fetchPostUrl: string) {
   const USERNAME = process.env.API_USERNAME;
   const PASSWORD = process.env.API_PASSWORD;
-  //const fetchPostUrl = API_POST_URL + "?id=" + id;
 
   try {
     const response = await fetch(fetchPostUrl, {
