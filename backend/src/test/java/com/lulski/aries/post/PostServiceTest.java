@@ -108,9 +108,7 @@ public class PostServiceTest {
 
     @Test
     void listAllPosts() {
-        System.out.println("KILL ME NOWWW!");
-
-        StepVerifier.create(postService.listAll().collectList())
+        StepVerifier.create(postService.listAll(1,2).collectList())
             .expectNextMatches(
                 posts -> {
                     return !posts.isEmpty();

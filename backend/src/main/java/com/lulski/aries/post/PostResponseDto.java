@@ -6,7 +6,8 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
 
-public record PostResponseDto(List<PostDto> postDto, String message) {
+public record PostResponseDto(List<PostDto> postDto, String message, int page, int size, long total) {
+
     public static PostDto fromPost(Post post) {
         return new PostDto(post.getTitle(), post.getContent(), post.getAuthor(), post.getId().toString(),
             post.getCreatedOn().format(DateTimeFormatter.ofLocalizedDate(FormatStyle.MEDIUM).withLocale(Locale.ENGLISH))

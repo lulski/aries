@@ -21,6 +21,7 @@ import com.lulski.aries.util.ResponseStatus;
 
 import java.util.List;
 import java.util.Map;
+
 import reactor.core.publisher.Mono;
 
 @Component
@@ -30,12 +31,28 @@ public class PostHandler {
     @Autowired
     PostService postService;
 
-    public Mono<ServerResponse> listAll(ServerRequest serverRequest) {
-        return postService.listAll().collectList().flatMap(posts -> {
-            PostResponseDto postResponseDto = new PostResponseDto(PostResponseDto.fromPosts(posts),
-                ResponseStatus.SUCCESS.getValue());
-            return ServerResponse.ok().body(BodyInserters.fromValue(postResponseDto));
-        });
+    public Mono<ServerResponse> listAllPaginated(ServerRequest serverRequest) {
+        int page = serverRequest.queryParam("page").map(Integer::parseInt).orElse(0);
+        int size = serverRequest.queryParam("size").map(Integer::parseInt).orElse(10);
+
+        Mono<List<Post>> postsMono = postService.listAll(page, size).collectList();
+        Mono<Long> totalMono = postService.countAllPosts();
+
+        return Mono.zip(postsMono, totalMono)
+                .flatMap(tuple -> {
+                    List<Post> posts = tuple.getT1();
+                    long total = tuple.getT2();
+
+                    PostResponseDto responseDto = new PostResponseDto(
+                            PostResponseDto.fromPosts(posts),
+                            ResponseStatus.SUCCESS.getValue(),
+                            page,
+                            size,
+                            total
+                    );
+
+                    return ServerResponse.ok().body(BodyInserters.fromValue(responseDto));
+                });
     }
 
     public Mono<ServerResponse> findById(ServerRequest serverRequest) {
@@ -77,10 +94,16 @@ public class PostHandler {
             LOGGER.info(">>> user " + authentication.getPrincipal() + " is inserting new post "
                 + dto.title());
             return postService.insertNew(dto, (User) authentication.getPrincipal())
-                .flatMap(result -> ServerResponse.ok()
-                    .body(BodyInserters.fromValue(new PostResponseDto(
-                        List.of(PostResponseDto.fromPost(result)),
-                        ResponseStatus.SUCCESS.getValue()))));
+                .flatMap(post -> {
+                    PostResponseDto postResponseDto = new PostResponseDto(
+                            List.of(PostResponseDto.fromPost(post)),
+                            ResponseStatus.SUCCESS.getValue(),
+                            0,
+                            1,
+                            1
+                            );
+                    return ServerResponse.ok().body(BodyInserters.fromValue(postResponseDto));
+                });
         }).onErrorResume(this::handleError);
     }
 

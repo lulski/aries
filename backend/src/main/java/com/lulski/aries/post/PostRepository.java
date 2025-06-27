@@ -1,6 +1,7 @@
 package com.lulski.aries.post;
 
 import org.bson.types.ObjectId;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.mongodb.repository.ReactiveMongoRepository;
 import org.springframework.stereotype.Repository;
 
@@ -17,5 +18,7 @@ public interface PostRepository extends ReactiveMongoRepository<Post, ObjectId> 
 
     Mono<Post> findTopByTitle(String title);
 
+    Flux<Post> findAllBy(Pageable pageable);
 
+    Mono<Long> count();
 }

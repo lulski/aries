@@ -1,7 +1,6 @@
 package com.lulski.aries.config;
 
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.anyString;
+import static org.mockito.ArgumentMatchers.*;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 import org.bson.types.ObjectId;
@@ -10,6 +9,9 @@ import org.springframework.boot.autoconfigure.data.mongo.MongoReactiveRepositori
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Primary;
 import org.springframework.context.annotation.Profile;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Component;
 
 import com.lulski.aries.post.Post;
@@ -116,7 +118,11 @@ public class TestMockRepositoryConfig {
         post2.setTitle("post 2");
         post2.setContent("content 2");
 
-        when(postRepository.findAll()).thenReturn(Flux.just(post1, post2));
+
+        when(postRepository.findAllBy(any(Pageable.class)
+        )).thenReturn(Flux.just(post1, post2));
+//        Pageable pageable = PageRequest.of(page, size, Sort.by(Sort.Direction.DESC, "createdOn"));
+
 
         when(postRepository.save(any())).thenAnswer(invocationOnMock -> {
             Post post = invocationOnMock.getArgument(0);

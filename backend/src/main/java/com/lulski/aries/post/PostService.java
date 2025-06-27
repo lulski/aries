@@ -4,6 +4,9 @@ import org.bson.types.ObjectId;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.dao.DataAccessException;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
 import com.lulski.aries.post.exception.DatabaseAccessException;
@@ -42,9 +45,11 @@ public class PostService {
      * @throws NetworkTimeoutException if there's a network timeout while accessing
      *                                 the database, wrapped from TimeoutException.
      */
-    public Flux<Post> listAll() {
+    public Flux<Post> listAll(int page, int size) {
+        Pageable pageable = PageRequest.of(page, size, Sort.by(Sort.Direction.DESC, "createdOn"));
+
         return this.postRepository
-            .findAll()
+            .findAllBy(pageable)
             .onErrorResume(
                 error -> {
                     LOGGER.error(">>> failed to fetch Post data: " + error.getMessage());
@@ -52,6 +57,10 @@ public class PostService {
                 })
             .onErrorMap(DataAccessException.class, DatabaseAccessException::new)
             .onErrorMap(TimeoutException.class, NetworkTimeoutException::new);
+    }
+
+    public Mono<Long> countAllPosts() {
+        return postRepository.count();
     }
 
     /**
