@@ -26,10 +26,10 @@ export async function GET(
   }
 
   if (response.success) {
-    return NextResponse.json(response.data);
+    return NextResponse.json(response);
   } else {
     return NextResponse.json(
-      { success: false, message: response.error },
+      { success: false, message: response },
       { status: 400 }
     );
   }
