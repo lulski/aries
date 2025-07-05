@@ -1,17 +1,10 @@
 "use client";
 
-import { Button, Container, Group, Pagination } from "@mantine/core";
-import { getSessionData } from "../lib/sessionUtil";
+import { Container, Pagination } from "@mantine/core";
+import { useSearchParams } from "next/navigation";
+import { Usable, useEffect, useState } from "react";
 import PostInline from "../components/PostInline";
-import { get } from "http";
-import Link from "next/link";
-import React from "react";
-import { Usable } from "react";
-import {
-  fetchPaginatedPosts,
-  fetchPost,
-  PostApiResponse,
-} from "../lib/fetchPost";
+import { PostApiResponse } from "../lib/fetchPost";
 
 async function getPosts(
   currentPage: number,
@@ -38,50 +31,50 @@ export default function Posts({
 }: {
   searchParams: Usable<{ page?: string; size?: string }>;
 }) {
-  const unwrappedSearchParams = React.use(searchParams);
-  const page = unwrappedSearchParams.page || "1"; // Default to '1' if no page param
-  const size = unwrappedSearchParams.size || "10"; // Default to '10' if no size param
+  const searchParam = useSearchParams();
+  const page = searchParam.get("page") || "1";
+  const size = searchParam.get("size") || "10";
   console.log(`page: ${page}, size: ${size}`);
 
-  const data = getPosts(parseInt(page), parseInt(size));
+  const [posts, setPosts] = useState<PostApiResponse | null>(null);
 
-  // TODO: IMPLEMENT PAGINATION
-  // const totalPages = data.total / size;
+  useEffect(() => {
+    getPosts(parseInt(page), parseInt(size)).then(setPosts);
+  }, [page, size]);
 
-  // // const sessionData = await getSessionData();
-  // // console.log("sessionData: " + sessionData);
+  if (!posts) return <div>Loading...</div>;
 
-  // return (
-  //   <>
-  //     {/* {sessionData.isAuthenticated &&
-  //       sessionData.authorities.includes("ADMIN") && (
-  //         <Container>
-  //           <Group justify="flex-end">
-  //             <Button
-  //               component="a"
-  //               href="/posts/new"
-  //               bottom={"10px"}
-  //               pos={"relative"}
-  //             >
-  //               Post New
-  //             </Button>
-  //           </Group>
-  //         </Container>
-  //       )} */}
-  //     <Container>
-  //       <ul>
-  //         {posts.map((post, index) => (
-  //           <li key={index}>
-  //             <PostInline {...post}></PostInline>
-  //           </li>
-  //         ))}
-  //       </ul>
-  //       <Pagination
-  //         total={totalPages}
-  //         value={page}
-  //         component={Link}
-  //       ></Pagination>
-  //     </Container>
-  //   </>
-  // );
+  return (
+    <>
+      {/* {sessionData.isAuthenticated &&
+        sessionData.authorities.includes("ADMIN") && (
+          <Container>
+            <Group justify="flex-end">
+              <Button
+                component="a"
+                href="/posts/new"
+                bottom={"10px"}
+                pos={"relative"}
+              >
+                Post New
+              </Button>
+            </Group>
+          </Container>
+        )} */}
+      <Container>
+        <ul>
+          {posts.postDto.map((post, index) => (
+            <li key={index}>
+              <PostInline {...post}></PostInline>
+            </li>
+          ))}
+        </ul>
+        <Pagination
+          total={Math.ceil(posts.total / parseInt(size))}
+          value={page ? parseInt(page) : 1}
+          // component={Link}
+        ></Pagination>
+      </Container>
+    </>
+  );
 }
