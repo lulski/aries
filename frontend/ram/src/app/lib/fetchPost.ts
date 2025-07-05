@@ -4,10 +4,11 @@ export interface Post {
   content: string;
   createdOn: string;
   modifiefOn: string;
+  author: string;
 }
 
 export interface PostApiResponse {
-  postDto: Post;
+  postDto: Post[];
   message: string;
   page: number;
   size: number;
