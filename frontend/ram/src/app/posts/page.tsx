@@ -1,8 +1,11 @@
 "use client";
 
-import { Container, Pagination } from "@mantine/core";
+import { Container } from "@mantine/core";
 import { useSearchParams } from "next/navigation";
 import { Usable, useEffect, useState } from "react";
+import AriesPagination, {
+  AriesPaginationProps,
+} from "../components/Pagination/AriesPagination";
 import PostInline from "../components/PostInline";
 import { PostApiResponse } from "../lib/fetchPost";
 
@@ -37,9 +40,21 @@ export default function Posts({
   console.log(`page: ${page}, size: ${size}`);
 
   const [posts, setPosts] = useState<PostApiResponse | null>(null);
+  const [pagination, setPagination] = useState<AriesPaginationProps | null>(
+    null
+  );
 
   useEffect(() => {
-    getPosts(parseInt(page), parseInt(size)).then(setPosts);
+    getPosts(parseInt(page), parseInt(size)).then((response) => {
+      setPosts(response);
+
+      const pagination: AriesPaginationProps = {
+        total: response.total ? response.total : 0,
+        page: page ? parseInt(page) : 1,
+        size: size ? parseInt(size) : 10,
+      };
+      setPagination(pagination);
+    });
   }, [page, size]);
 
   if (!posts) return <div>Loading...</div>;
@@ -69,11 +84,7 @@ export default function Posts({
             </li>
           ))}
         </ul>
-        <Pagination
-          total={Math.ceil(posts.total / parseInt(size))}
-          value={page ? parseInt(page) : 1}
-          // component={Link}
-        ></Pagination>
+        {pagination && posts.total > 0 && <AriesPagination {...pagination} />}
       </Container>
     </>
   );
