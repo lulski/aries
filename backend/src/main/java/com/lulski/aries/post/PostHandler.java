@@ -38,7 +38,7 @@ public class PostHandler {
         // as Spring Data uses 0-based indexing.
         int adjustedPage = Math.max(0, page -1 );
 
-        Mono<List<Post>> postsMono = postService.listAll(page, size).collectList();
+        Mono<List<Post>> postsMono = postService.listAll(adjustedPage, size).collectList();
         Mono<Long> totalMono = postService.countAllPosts();
 
         return Mono.zip(postsMono, totalMono)
@@ -49,7 +49,7 @@ public class PostHandler {
                     PostResponseDto responseDto = new PostResponseDto(
                             PostResponseDto.fromPosts(posts),
                             ResponseStatus.SUCCESS.getValue(),
-                            adjustedPage,
+                            page,
                             size,
                             total
                     );
