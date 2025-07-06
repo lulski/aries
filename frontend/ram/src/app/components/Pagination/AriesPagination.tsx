@@ -1,5 +1,6 @@
 "use client";
 import { Pagination } from "@mantine/core";
+import { usePathname, useRouter, useSearchParams } from "next/navigation";
 
 export interface AriesPaginationProps {
   total: number;
@@ -12,12 +13,22 @@ export default function AriesPagination({
   page,
   size,
 }: AriesPaginationProps) {
+  const searchParams = useSearchParams();
+  const router = useRouter();
+  const pathname = usePathname();
+
+  const handlePageChange = (page: number) => {
+    const params = new URLSearchParams(searchParams);
+    params.set("page", page.toString());
+
+    router.push(`${pathname}?${params.toString()}`);
+  };
+
   return (
     <Pagination
       total={Math.ceil(total / size)}
       value={page}
-      size={size}
-      // component={Link}
+      onChange={handlePageChange}
     ></Pagination>
   );
 }
