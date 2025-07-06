@@ -1,0 +1,14 @@
+{
+	"folders": [
+		{
+			"path": "frontend/ram"
+		},
+		{
+			"path": "backend"
+		}
+	],
+	"settings": {
+		"typescript.tsdk": "node_modules/typescript/lib",
+		"java.compile.nullAnalysis.mode": "automatic"
+	}
+}
