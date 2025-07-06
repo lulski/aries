@@ -34,6 +34,9 @@ public class PostHandler {
     public Mono<ServerResponse> listAllPaginated(ServerRequest serverRequest) {
         int page = serverRequest.queryParam("page").map(Integer::parseInt).orElse(0);
         int size = serverRequest.queryParam("size").map(Integer::parseInt).orElse(10);
+        //adjust frontend supplied page value (eg: posts?page=1&size=1)
+        // as Spring Data uses 0-based indexing.
+        int adjustedPage = Math.max(0, page -1 );
 
         Mono<List<Post>> postsMono = postService.listAll(page, size).collectList();
         Mono<Long> totalMono = postService.countAllPosts();
@@ -46,7 +49,7 @@ public class PostHandler {
                     PostResponseDto responseDto = new PostResponseDto(
                             PostResponseDto.fromPosts(posts),
                             ResponseStatus.SUCCESS.getValue(),
-                            page,
+                            adjustedPage,
                             size,
                             total
                     );
