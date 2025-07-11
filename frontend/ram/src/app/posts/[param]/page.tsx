@@ -10,7 +10,7 @@ type Params = {
 };
 
 export default async function viewPost({ params }: { params: Params }) {
-  const { param } = params;
+  const { param } = await params;
 
   const isNumeric = /^\d+$/.test(param);
 
@@ -22,7 +22,7 @@ export default async function viewPost({ params }: { params: Params }) {
     // fetch by slug
     response = await fetchPostByTitle(param);
   }
-  const post: PostData = response.data;
+  const post: PostData = response;
   const sessionData: SessionData = await getSessionData();
 
   return (
@@ -35,7 +35,7 @@ export default async function viewPost({ params }: { params: Params }) {
             </Button>
           )}
       </Group>
-      <Post {...{post, allowHtmlMarkup: true}} />
+      <Post {...{ post, allowHtmlMarkup: true }} />
     </>
   );
 }
