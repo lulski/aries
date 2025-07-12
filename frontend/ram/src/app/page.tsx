@@ -1,17 +1,9 @@
 "use client";
-import {
-  Stack,
-  Center,
-  Box,
-  Button,
-  Image,
-  Group,
-  useMantineColorScheme,
-} from "@mantine/core";
+import { Box, Image, Stack } from "@mantine/core";
 import { useToggle } from "@mantine/hooks";
 import { AriesThemeSet } from "./theme";
 
-export default function Page() {
+export default function Aries() {
   const [themeValue, themeToggle] = useToggle(AriesThemeSet.colors);
 
   return (
