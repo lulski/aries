@@ -22,6 +22,7 @@ public class AuthRouter {
 
     @Bean
     RouterFunction<ServerResponse> authRoute(AuthHandler authHandler) {
+        LOGGER.info("receiving request: " + authHandler.toString());
         return RouterFunctions.route(RequestPredicates.POST("/auth/login"), authHandler::login);
     }
 }
@@ -33,22 +34,21 @@ class AuthHandler {
     UserService userService;
 
     public Mono<ServerResponse> login(ServerRequest serverRequest) {
+        LOGGER.info("login request received" + serverRequest.headers().toString());
         return serverRequest
-            .bodyToMono(LoginRequestDto.class)
-            .flatMap(
-                loginRequestDto ->
-                    userService.findByUsernameAndPassword(
-                        loginRequestDto.username(), loginRequestDto.password()))
-            .flatMap(
-                user ->
-                    ServerResponse.ok()
-                        .body(
-                            BodyInserters.fromValue(
-                                new LoginResponseDto(
-                                    user.getUsername(),
-                                    user.getFirstName(),
-                                    user.getLastName(),
-                                    user.getAuthoritiesNames().toArray(new String[0])))))
-            .switchIfEmpty(ServerResponse.notFound().build());
+                .bodyToMono(LoginRequestDto.class)
+                .flatMap(
+                        loginRequestDto -> userService.findByUsernameAndPassword(
+                                loginRequestDto.username(), loginRequestDto.password()))
+                .flatMap(
+                        user -> ServerResponse.ok()
+                                .body(
+                                        BodyInserters.fromValue(
+                                                new LoginResponseDto(
+                                                        user.getUsername(),
+                                                        user.getFirstName(),
+                                                        user.getLastName(),
+                                                        user.getAuthoritiesNames().toArray(new String[0])))))
+                .switchIfEmpty(ServerResponse.notFound().build());
     }
 }

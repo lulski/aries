@@ -39,8 +39,7 @@ class UserControllerTest {
 
     private final Logger logger = LoggerFactory.getLogger(UserControllerTest.class);
 
-    private final User dummyUser =
-        new User(
+    private final User dummyUser = new User(
             null, "dummyUser", "dummyPassword", "just a dummy", "not mandatory", "dummy@xyz.com");
     @Autowired
     private WebTestClient webTestClient;
@@ -80,15 +79,14 @@ class UserControllerTest {
     @Test
     void contextLoads() {
         Arrays.stream(cApplicationContext.getBeanDefinitionNames())
-            .forEach(b -> System.out.println(">>> bean: " + b));
+                .forEach(b -> System.out.println(">>> bean: " + b));
     }
 
     @Test
     @Order(1)
     void createNewUser() {
 
-        User mockUser =
-            new User.UserBuilder()
+        User mockUser = new User.UserBuilder()
                 .authorities(Set.of("USER"))
                 .firstname("mock")
                 .lastname("user")
@@ -96,24 +94,24 @@ class UserControllerTest {
                 .username("test")
                 .build();
 
-        UserRequestDto dto =
-            new UserRequestDto(
+        UserRequestDto dto = new UserRequestDto(
                 "bnana", "password", Set.of("ADMIN", "USER"), "berak", "nanah", "bnana@baba.com");
 
         webTestClient
-            .mutateWith(mockUser(mockUser))
-            .post()
-            .uri(PATH_USER)
-            .accept(MediaType.ALL)
-            .body(BodyInserters.fromValue(dto))
-            .exchange()
-            .expectStatus()
-            .is2xxSuccessful()
-            .expectBody(UserControllerResponseDto.class)
-            .value(
-                serverResponse -> {
-                    var item = serverResponse.items();
-                });
+                .mutateWith(mockUser(mockUser))
+                .post()
+                .uri(PATH_USER)
+                .accept(MediaType.ALL)
+                .body(BodyInserters.fromValue(dto))
+                .exchange()
+                .expectStatus()
+                .is2xxSuccessful()
+                .expectBody(UserControllerResponseDto.class)
+                .value(
+                        serverResponse -> {
+                            var item = serverResponse.items();
+                            assertThat(item).isNotEmpty();
+                        });
     }
 
     @Test
@@ -122,27 +120,27 @@ class UserControllerTest {
         Mono<User> monoUserSaveResponse = userRepository.save(this.dummyUser).single();
 
         StepVerifier.create(monoUserSaveResponse)
-            .expectNextMatches(
-                user -> {
-                    User savedUser = user;
-                    System.out.println(savedUser.getId());
-                    userRepository.findTopByUsername(savedUser.getUsername());
-                    return true;
-                })
-            .expectComplete()
-            .verify();
+                .expectNextMatches(
+                        user -> {
+                            User savedUser = user;
+                            System.out.println(savedUser.getId());
+                            userRepository.findTopByUsername(savedUser.getUsername());
+                            return true;
+                        })
+                .expectComplete()
+                .verify();
 
         webTestClient
-            .get()
-            .uri(PATH_USER + "/" + this.dummyUser.getUsername())
-            .exchange()
-            .expectStatus()
-            .isOk()
-            .expectBody(UserControllerResponseDto.class)
-            .value(
-                serverResponse -> {
-                    UserDto item = serverResponse.items().getFirst();
-                    assertThat(item.username()).isEqualTo(this.dummyUser.getUsername());
-                });
+                .get()
+                .uri(PATH_USER + "/" + this.dummyUser.getUsername())
+                .exchange()
+                .expectStatus()
+                .isOk()
+                .expectBody(UserControllerResponseDto.class)
+                .value(
+                        serverResponse -> {
+                            UserDto item = serverResponse.items().getFirst();
+                            assertThat(item.username()).isEqualTo(this.dummyUser.getUsername());
+                        });
     }
 }
