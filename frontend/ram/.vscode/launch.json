@@ -2,31 +2,6 @@
   "version": "0.2.0",
   "configurations": [
     {
-      "name": "Next.js: debug server-side",
-      "type": "node-terminal",
-      "request": "launch",
-      "command": "npm run dev"
-    },
-    {
-      "name": "Next.js: debug client-side",
-      "type": "chrome",
-      "request": "launch",
-      "url": "http://localhost:3000"
-    },
-    {
-      "name": "Next.js: debug client-side (Firefox)",
-      "type": "firefox",
-      "request": "launch",
-      "url": "http://localhost:3000",
-      "reAttach": true,
-      "pathMappings": [
-        {
-          "url": "webpack://_N_E",
-          "path": "${workspaceFolder}/ram"
-        }
-      ]
-    },
-    {
       "name": "Next.js: debug full stack",
       "type": "node",
       "request": "launch",
@@ -38,8 +13,28 @@
         "killOnServerStop": true,
         "pattern": "- Local:.+(https?://.+)",
         "uriFormat": "%s",
-        "webRoot": "${workspaceFolder}"
+        "webRoot": "${workspaceFolder}/ram"
       }
+    },
+    {
+      "type": "node",
+      "name": "vscode-jest-tests.v2.ram",
+      "request": "launch",
+      "args": [
+        "test",
+        "--",
+        "--runInBand",
+        "--watchAll=false",
+        "--testNamePattern",
+        "${jest.testNamePattern}",
+        "--runTestsByPath",
+        "${jest.testFile}"
+      ],
+      "cwd": "c:\\projects\\aries\\frontend\\ram",
+      "console": "integratedTerminal",
+      "internalConsoleOptions": "neverOpen",
+      "disableOptimisticBPs": true,
+      "runtimeExecutable": "npm"
     }
   ]
 }
