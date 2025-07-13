@@ -37,6 +37,8 @@ export default function Posts({
   const searchParam = useSearchParams();
   const page = searchParam.get("page") || "1";
   const size = searchParam.get("size") || "10";
+  const [error, setError] = useState<string | null>(null);
+
   console.log(`page: ${page}, size: ${size}`);
 
   const [posts, setPosts] = useState<PostApiResponse | null>(null);
@@ -45,18 +47,26 @@ export default function Posts({
   );
 
   useEffect(() => {
-    getPosts(parseInt(page), parseInt(size)).then((response) => {
-      setPosts(response);
+    getPosts(parseInt(page), parseInt(size))
+      .then((response) => {
+        setPosts(response);
 
-      const pagination: AriesPaginationProps = {
-        total: response.total ? response.total : 0,
-        page: page ? parseInt(page) : 1,
-        size: size ? parseInt(size) : 10,
-      };
-      setPagination(pagination);
-    });
+        const pagination: AriesPaginationProps = {
+          total: response.total ? response.total : 0,
+          page: page ? parseInt(page) : 1,
+          size: size ? parseInt(size) : 10,
+        };
+        setPagination(pagination);
+        setError(null);
+      })
+      .catch((err) => {
+        setError(err.message);
+        setPosts(null);
+        setPagination(null);
+      });
   }, [page, size]);
 
+  if (error) return <div>Error: {error}</div>;
   if (!posts) return <div>Loading...</div>;
 
   return (
