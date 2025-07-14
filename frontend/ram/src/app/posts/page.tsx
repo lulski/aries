@@ -1,12 +1,13 @@
 "use client";
 
-import { Container } from "@mantine/core";
+import { Button, Container, Group } from "@mantine/core";
 import { useSearchParams } from "next/navigation";
 import { Usable, useEffect, useState } from "react";
 import AriesPagination, {
   AriesPaginationProps,
 } from "../components/Pagination/AriesPagination";
 import PostInline from "../components/PostInline";
+import { SessionData } from "../lib/definitions";
 import { PostApiResponse } from "../lib/fetchPost";
 
 async function getPosts(
@@ -66,26 +67,54 @@ export default function Posts({
       });
   }, [page, size]);
 
+  const [sessionData, setSessionData] = useState<SessionData | null>(null);
+  useEffect(() => {
+    const getSession = async () => {
+      const res = await fetch("/api/me");
+      if (!res.ok) {
+        console.info("user is not logged in");
+        setSessionData(null);
+      } else {
+        const { session } = await res.json();
+        setSessionData(session);
+      }
+    };
+
+    getSession();
+  }, []);
+
+  const [showNewButton, setShowNewButton] = useState<boolean | null>(null);
+  useEffect(() => {
+    console.log(">>>");
+    if (
+      sessionData?.isAuthenticated &&
+      sessionData.authorities.includes("ADMIN")
+    ) {
+      setShowNewButton(true);
+    } else {
+      setShowNewButton(false);
+    }
+  }, [sessionData]);
+
   if (error) return <div>Error: {error}</div>;
   if (!posts) return <div>Loading...</div>;
 
   return (
     <>
-      {/* {sessionData.isAuthenticated &&
-        sessionData.authorities.includes("ADMIN") && (
-          <Container>
-            <Group justify="flex-end">
-              <Button
-                component="a"
-                href="/posts/new"
-                bottom={"10px"}
-                pos={"relative"}
-              >
-                Post New
-              </Button>
-            </Group>
-          </Container>
-        )} */}
+      {showNewButton && (
+        <Container>
+          <Group justify="flex-end">
+            <Button
+              component="a"
+              href="/posts/new"
+              bottom={"10px"}
+              pos={"relative"}
+            >
+              New Post
+            </Button>
+          </Group>
+        </Container>
+      )}
       <Container>
         <ul>
           {posts.postDto.map((post, index) => (
