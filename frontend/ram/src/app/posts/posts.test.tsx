@@ -45,25 +45,58 @@ const mockPosts = {
   total: 10,
 };
 
+const mockAdminSession = {
+  session: {
+    isAuthenticated: true,
+    username: "mock",
+    firstname: "lulski",
+    lastname: "gonzales",
+    authorities: ["ADMIN", "USER"],
+  },
+};
+
+const mockNonAdminSession = {
+  session: {
+    isAuthenticated: true,
+    username: "mock",
+    firstname: "lulski",
+    lastname: "gonzales",
+    authorities: ["ADMIN", "USER"],
+  },
+};
+
 beforeEach(() => {
   (fetch as jest.Mock).mockClear();
 });
 
 test("renders loading state initially", async () => {
-  (fetch as jest.Mock).mockResolvedValueOnce({
-    ok: true,
-    json: async () => mockPosts,
-  });
+  (fetch as jest.Mock)
+    .mockResolvedValueOnce({
+      //mock /api/posts
+      ok: true,
+      json: async () => mockPosts,
+    })
+    .mockResolvedValueOnce({
+      //mock /api/me
+      ok: true,
+      json: async () => mockAdminSession,
+    });
 
   render(<Posts searchParams={{} as any} />);
   expect(screen.getByText("Loading...")).toBeInTheDocument();
 });
 
 test("renders posts and pagination after fetch", async () => {
-  (fetch as jest.Mock).mockResolvedValueOnce({
-    ok: true,
-    json: async () => mockPosts,
-  });
+  (fetch as jest.Mock)
+    .mockResolvedValueOnce({
+      ok: true,
+      json: async () => mockPosts,
+    })
+    .mockResolvedValueOnce({
+      //mock /api/me
+      ok: true,
+      json: async () => mockAdminSession,
+    });
 
   render(<Posts searchParams={{} as any} />);
   await waitFor(() => {
@@ -71,15 +104,23 @@ test("renders posts and pagination after fetch", async () => {
     expect(screen.getByTestId("pagination")).toBeInTheDocument();
     expect(screen.getByTestId("container")).toBeInTheDocument();
   });
+  //console.log(screen.debug());
+
   expect(screen.getByText("Post 1")).toBeInTheDocument();
   expect(screen.getByText("Post 2")).toBeInTheDocument();
 });
 
 test("does not render pagination if posts.total is 0", async () => {
-  (fetch as jest.Mock).mockResolvedValueOnce({
-    ok: true,
-    json: async () => ({ ...mockPosts, total: 0 }),
-  });
+  (fetch as jest.Mock)
+    .mockResolvedValueOnce({
+      ok: true,
+      json: async () => ({ ...mockPosts, total: 0 }),
+    })
+    .mockResolvedValueOnce({
+      //mock /api/me
+      ok: true,
+      json: async () => mockAdminSession,
+    });
 
   render(<Posts searchParams={{} as any} />);
   await waitFor(() => {
@@ -88,9 +129,15 @@ test("does not render pagination if posts.total is 0", async () => {
 });
 
 test("handles fetch error", async () => {
-  (fetch as jest.Mock).mockResolvedValueOnce({
-    ok: false,
-  });
+  (fetch as jest.Mock)
+    .mockResolvedValueOnce({
+      ok: false,
+    })
+    .mockResolvedValueOnce({
+      //mock /api/me
+      ok: true,
+      json: async () => mockNonAdminSession,
+    });
 
   // Suppress error output
   jest.spyOn(console, "error").mockImplementation(() => {});
