@@ -114,9 +114,10 @@ describe("Posts Component", () => {
 
     render(<Posts searchParams={{} as any} />);
     await waitFor(() => {
+      const containers = screen.getAllByTestId("container");
+      expect(containers[1]).toBeInTheDocument(); //container[0] is wrapping `New Post` button
       expect(screen.getAllByTestId("post-inline")).toHaveLength(2);
       expect(screen.getByTestId("pagination")).toBeInTheDocument();
-      expect(screen.getByTestId("container")).toBeInTheDocument();
     });
 
     expect(screen.getByText("Post 1")).toBeInTheDocument();
