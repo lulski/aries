@@ -1,4 +1,4 @@
-import { fetchPaginatedPosts, PostApiResponse } from "@/app/lib/fetchPost";
+import { fetchPaginatedPosts, savePost } from "@/app/lib/postsApiCall";
 import { NextResponse } from "next/server";
 import { z } from "zod";
 
@@ -46,26 +46,9 @@ export async function POST(request: Request) {
     );
   }
 
-  const response = await fetch(API_URL, {
-    method: "POST",
-    headers: {
-      Authorization:
-        "Basic " + Buffer.from(`${USERNAME}:${PASSWORD}`).toString("base64"),
-      "Content-Type": "application/json",
-    },
-    body: JSON.stringify(body),
-  });
+  const response = await savePost(body);
 
-  if (!response.ok) {
-    const messages: string[] = ["invalid credentials"];
-
-    return NextResponse.json(
-      { success: false, message: messages },
-      { status: 401 }
-    );
-  }
-
-  const data = await response.json();
+  const data = response;
 
   return NextResponse.json({ success: true, data });
 }

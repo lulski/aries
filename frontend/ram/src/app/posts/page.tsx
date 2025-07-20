@@ -7,7 +7,7 @@ import AriesPagination, {
   AriesPaginationProps,
 } from "../components/Pagination/AriesPagination";
 import PostInline from "../components/PostInline";
-import { PostApiResponse } from "../lib/fetchPost";
+import { PostApiResponse } from "../lib/postsApiCall";
 
 async function getPosts(
   currentPage: number,

@@ -3,7 +3,7 @@ export interface Post {
   title: string;
   content: string;
   createdOn: string;
-  modifiefOn: string;
+  modifiedOn: string;
   author: string;
 }
 
@@ -47,7 +47,7 @@ export async function fetchPost(
 
 export async function fetchPostById(id: string) {
   const fetchPostUrl = API_POST_URL + "?id=" + id;
-  fetchPost(fetchPostUrl);
+  return fetchPost(fetchPostUrl);
 }
 
 export async function fetchPostByTitle(title: string) {
@@ -71,6 +71,27 @@ export async function fetchPaginatedPosts(
 
   if (!response.ok) {
     throw new Error("Failed to fetch posts");
+  }
+
+  return response.json();
+}
+
+export async function savePost(body: string): Promise<PostApiResponse> {
+  const fetchUrl = `${API_POST_URL}`;
+
+  const response = await fetch(fetchUrl, {
+    method: "POST",
+    headers: {
+      Authorization:
+        "Basic " +
+        Buffer.from(`${API_USERNAME}:${API_PASSWORD}`).toString("base64"),
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify(body),
+  });
+
+  if (!response.ok) {
+    throw new Error("Failed to save posts");
   }
 
   return response.json();
