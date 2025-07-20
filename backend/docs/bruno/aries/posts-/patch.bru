@@ -1,0 +1,33 @@
+meta {
+  name: patch
+  type: http
+  seq: 5
+}
+
+patch {
+  url: http://localhost:8181/api/v1/posts
+  body: json
+  auth: basic
+}
+
+params:query {
+  ~email: milunes@gmail.com
+}
+
+headers {
+  Content-Type: application/json
+  User-Agent: insomnia/10.2.0
+  X-CSRF-TOKEN: undefined
+}
+
+auth:basic {
+  username: system
+  password: system123
+}
+
+body:json {
+  {
+    "title":"hello world10000",
+    "content": "kmn"
+  }
+}

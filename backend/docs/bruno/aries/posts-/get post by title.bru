@@ -1,0 +1,25 @@
+meta {
+  name: get post by title
+  type: http
+  seq: 2
+}
+
+get {
+  url: http://localhost:8181/api/v1/posts?title=one
+  body: none
+  auth: basic
+}
+
+params:query {
+  title: one
+}
+
+headers {
+  User-Agent: insomnia/10.2.0
+  X-CSRF-TOKEN: undefined
+}
+
+auth:basic {
+  username: system
+  password: system123
+}

@@ -1,0 +1,35 @@
+meta {
+  name: update user
+  type: http
+  seq: 2
+}
+
+patch {
+  url: http://localhost:8181/api/v1/users/:username
+  body: json
+  auth: basic
+}
+
+params:query {
+  ~undefined: undefined
+}
+
+params:path {
+  username: tbelmont
+}
+
+headers {
+  Content-Type: application/json
+  User-Agent: insomnia/10.2.0
+}
+
+auth:basic {
+  username: kocu
+  password: kocu
+}
+
+body:json {
+  {
+    "email": "tbelmont@xyz.com"
+  }
+}

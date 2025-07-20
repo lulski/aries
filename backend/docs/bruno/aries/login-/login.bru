@@ -1,0 +1,33 @@
+meta {
+  name: login
+  type: http
+  seq: 2
+}
+
+post {
+  url: http://localhost:8181/api/v1/auth/login
+  body: json
+  auth: basic
+}
+
+params:query {
+  undefined: undefined
+}
+
+headers {
+  Content-Type: application/json
+  User-Agent: insomnia/10.2.0
+  X-CSRF-TOKEN: undefined
+}
+
+auth:basic {
+  username: kocu
+  password: kocu
+}
+
+body:json {
+  {
+    "username":"kocu",
+    "password": "kocu"
+  }
+}

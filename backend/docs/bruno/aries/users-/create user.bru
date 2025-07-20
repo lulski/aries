@@ -1,0 +1,38 @@
+meta {
+  name: create user
+  type: http
+  seq: 2
+}
+
+post {
+  url: http://localhost:8181/api/v1/users
+  body: json
+  auth: basic
+}
+
+params:query {
+  email: tbelmont@xyz.com
+}
+
+headers {
+  Content-Type: application/json
+  User-Agent: insomnia/10.2.0
+  X-CSRF-TOKEN: Invalid CSRF Token
+}
+
+auth:basic {
+  username: system
+  password: system123
+}
+
+body:json {
+  {
+  	"username": "kocu",
+  	"password": "kocu",
+  	"firstname": "lulski",
+  	"lastname": "gonzales",
+  	"authorities": [
+  		"USER","ADMIN"
+  	]
+  }
+}
