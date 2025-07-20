@@ -34,6 +34,6 @@
     "**/*.tsx",
     ".next/types/**/*.ts",
     "end.d.ts"
-  ],
+, "src/app/api/posts/[param]/route.test.ts.back"  ],
   "exclude": ["node_modules"]
 }
