@@ -1,0 +1,24 @@
+meta {
+  name: delete user
+  type: http
+  seq: 2
+}
+
+delete {
+  url: http://localhost:8181/api/v1/users/:username
+  body: json
+  auth: none
+}
+
+params:query {
+  undefined: undefined
+}
+
+params:path {
+  username: berak
+}
+
+headers {
+  Content-Type: application/json
+  User-Agent: insomnia/10.2.0
+}

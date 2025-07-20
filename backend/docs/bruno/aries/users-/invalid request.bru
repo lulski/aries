@@ -1,0 +1,29 @@
+meta {
+  name: invalid request
+  type: http
+  seq: 4
+}
+
+post {
+  url: http://localhost:8181/api/v1/users
+  body: json
+  auth: none
+}
+
+params:query {
+  email: tbelmont@xyz.com
+}
+
+headers {
+  Content-Type: application/json
+  User-Agent: insomnia/10.2.0
+}
+
+body:json {
+  {
+    "username": "hogrady",
+    "firstName": "haylee",
+    "lastName": "o'grady",
+    "email": "hogrady@xyz.com"
+  }
+}
