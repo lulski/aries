@@ -28,11 +28,6 @@ export default function editPost() {
     },
   });
 
-  //debug
-  // useEffect(() => {
-  //   console.log("Current form values:", form.values);
-  // }, [form.values]);
-
   useEffect(() => {
     async function loadPost() {
       try {
@@ -64,8 +59,9 @@ export default function editPost() {
     loadPost();
   }, [params.id]);
 
-  const handleSubmit = (values: typeof form.values) => {
+  const handleSubmit = async (values: typeof form.values) => {
     console.log(values);
+    console.log("todo: ");
   };
 
   if (isLoading) {

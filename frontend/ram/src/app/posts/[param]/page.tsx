@@ -1,6 +1,6 @@
 import Post from "@/app/components/Post";
 import { PostData, SessionData } from "@/app/lib/definitions";
-import { fetchPostById, fetchPostByTitle } from "@/app/lib/fetchPost";
+import { fetchPostById, fetchPostByTitle } from "@/app/lib/postsApiCall";
 import { getSessionData } from "@/app/lib/sessionUtil";
 import { Button, Group } from "@mantine/core";
 import link from "next/link";
