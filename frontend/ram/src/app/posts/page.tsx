@@ -15,9 +15,9 @@ async function getPosts(
   size: number
 ): Promise<PostApiResponse> {
   const API_BFF_POST_URL = "/api/posts";
-  console.log(
-    `Fetching posts from: ${API_BFF_POST_URL}?page=${currentPage}&size=${size}`
-  );
+  // console.log(
+  //   `Fetching posts from: ${API_BFF_POST_URL}?page=${currentPage}&size=${size}`
+  // );
   const fetchUrl = `${API_BFF_POST_URL}?page=${currentPage}&size=${size}`;
   const response = await fetch(fetchUrl);
 
@@ -26,7 +26,7 @@ async function getPosts(
   }
   const responseJson: PostApiResponse = await response.json();
 
-  console.log("Fetched posts:", responseJson);
+  // console.log("Fetched posts:", responseJson);
   return responseJson;
 }
 
@@ -40,7 +40,7 @@ export default function Posts({
   const size = searchParam.get("size") || "10";
   const [error, setError] = useState<string | null>(null);
 
-  console.log(`page: ${page}, size: ${size}`);
+  // console.log(`page: ${page}, size: ${size}`);
 
   const [posts, setPosts] = useState<PostApiResponse | null>(null);
   const [pagination, setPagination] = useState<AriesPaginationProps | null>(
@@ -85,7 +85,6 @@ export default function Posts({
 
   const [showNewButton, setShowNewButton] = useState<boolean | null>(null);
   useEffect(() => {
-    console.log(">>>");
     if (
       sessionData?.isAuthenticated &&
       sessionData.authorities.includes("ADMIN")
