@@ -1,41 +1,76 @@
 # Project Aries
 
-CRUD website project. Made using these ingredients:
+Aries is a full-stack CRUD web application featuring a reactive backend and a modern frontend.
 
-- Backend
-    - SpringBoot
-    - WebFlux
-    - Spring Security
-- Frontend
-    - Next.js
-    - Mantine UI
-- Database
-    - mongodb
+## Tech Stack
+
+- **Backend**
+  - Spring Boot
+  - WebFlux (Reactive)
+  - Spring Security
+  - MongoDB integration
+- **Frontend**
+  - Next.js (React)
+  - Mantine UI
+- **Database**
+  - MongoDB
 
 ---
 
-pre-requisites:
+## Prerequisites
 
-- JRE > v21
-- mongodb running on localhost:27017
-- npm
+- Java 17+ (JRE 21 recommended)
+- MongoDB running on `localhost:27017`
+- Node.js & npm
 
-## How to run backend dev
+## Getting Started
 
-  ```
-    cd ./aries/backend
-    ./gradlew bootRun
-  ```
+### Run the Backend (Development)
 
-## How to run frontend
+```sh
+cd ./aries/backend
+./gradlew bootRun
+```
 
-  ```
-    cd ./aries/frontend/ram
-    npm run dev
-  ```
+### Run the Frontend
 
-### Backend To-do:
+```sh
+cd ./aries/frontend
+npm install
+npm run dev
+```
 
-### Frontend To-do:
+> **Note:** If your frontend is in a subfolder (e.g., `frontend/ram`), adjust the path accordingly.
 
+### Run the Seeder (Optional: Populate Database)
 
+```sh
+cd ./aries/seeder
+./gradlew bootRun
+```
+
+## Project Structure
+
+- `backend/` — Spring Boot WebFlux backend API
+- `frontend/` — Next.js frontend app
+- `seeder/` — Spring Batch database seeder
+
+---
+
+## Backend To-do
+
+- [ ] Add more API endpoints
+- [ ] Improve authentication/authorization
+- [ ] Add integration tests
+
+## Frontend To-do
+
+- [ ] Implement user registration
+- [ ] Add post editing/deletion
+- [ ] Improve UI/UX
+
+---
+
+## License
+
+MIT License. See [LICENSE](./LICENSE) for details.
