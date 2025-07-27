@@ -21,7 +21,7 @@ const API_PASSWORD = process.env.API_PASSWORD;
 
 export async function fetchPost(
   fetchPostUrl: string
-): Promise<PostApiResponse> {
+): Promise<PostApiResponse | null> {
   const USERNAME = process.env.API_USERNAME;
   const PASSWORD = process.env.API_PASSWORD;
 
@@ -58,7 +58,7 @@ export async function fetchPostByTitle(title: string) {
 export async function fetchPaginatedPosts(
   currentPage: number,
   size: number
-): Promise<PostApiResponse> {
+): Promise<PostApiResponse | null> {
   const fetchUrl = `${API_POST_URL}?page=${currentPage}&size=${size}`;
 
   const response = await fetch(fetchUrl, {
@@ -81,6 +81,27 @@ export async function savePost(body: string): Promise<PostApiResponse> {
 
   const response = await fetch(fetchUrl, {
     method: "POST",
+    headers: {
+      Authorization:
+        "Basic " +
+        Buffer.from(`${API_USERNAME}:${API_PASSWORD}`).toString("base64"),
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify(body),
+  });
+
+  if (!response.ok) {
+    throw new Error("Failed to save posts");
+  }
+
+  return response.json();
+}
+
+export async function updatePost(body: string): Promise<PostApiResponse> {
+  const fetchUrl = `${API_POST_URL}`;
+
+  const response = await fetch(fetchUrl, {
+    method: "PATCH",
     headers: {
       Authorization:
         "Basic " +

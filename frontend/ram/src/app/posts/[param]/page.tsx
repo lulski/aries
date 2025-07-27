@@ -1,4 +1,4 @@
-import Post from "@/app/components/Post";
+import Post from "@/app/components/Post/Post";
 import { PostData, SessionData } from "@/app/lib/definitions";
 import { fetchPostById, fetchPostByTitle } from "@/app/lib/postsApiCall";
 import { getSessionData } from "@/app/lib/sessionUtil";

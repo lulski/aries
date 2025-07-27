@@ -1,21 +1,9 @@
-import {
-  Card,
-  Image,
-  Box,
-  Text,
-  Group,
-  Title,
-  CardSection,
-  Divider,
-  NavLink,
-} from "@mantine/core";
-import { PostData } from "../lib/definitions";
-import sanitizeHtml from "sanitize-html";
+import { Card, CardSection, Group, Text, Title } from "@mantine/core";
 import Link from "next/link";
+import sanitizeHtml from "sanitize-html";
+import { PostData } from "../../lib/definitions";
 
 export default function PostInline(post: PostData) {
-  let displayContent;
-
   const sanitizedContent = sanitizeHtml(post.content, {
     allowedTags: [],
     allowedAttributes: {},

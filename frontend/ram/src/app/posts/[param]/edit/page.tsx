@@ -1,11 +1,12 @@
 "use client";
 
-import PostEdit from "@/app/components/PostEdit";
+import PostEdit from "@/app/components/Post/PostEdit";
 import { PostData } from "@/app/lib/definitions";
 import { Button, Group, LoadingOverlay, Text } from "@mantine/core";
 import { useForm } from "@mantine/form";
 
-import { useParams } from "next/navigation";
+import { useParams, usePathname } from "next/navigation";
+import router from "next/router";
 import { useEffect, useState } from "react";
 
 export default function editPost() {
@@ -13,6 +14,7 @@ export default function editPost() {
   const [postData, setPostData] = useState<PostData | null>(null);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const originalTitleUrl = usePathname().replace("/edit", "");
 
   const form = useForm({
     mode: "controlled", //
@@ -55,13 +57,36 @@ export default function editPost() {
         setIsLoading(false);
       }
     }
-
     loadPost();
   }, [params.id]);
 
   const handleSubmit = async (values: typeof form.values) => {
-    console.log(values);
-    console.log("todo: ");
+    const originalTitle = originalTitleUrl.replace("/posts/", "");
+    const patchUrl = `/api/posts/${originalTitle}`;
+
+    const valuesToBeSubmitted = {
+      ...values,
+      originalTitle: decodeURI(originalTitle),
+    };
+    console.info("patching: " + patchUrl + ", with : " + valuesToBeSubmitted);
+    try {
+      const res = await fetch(patchUrl, {
+        method: "PATCH",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(valuesToBeSubmitted),
+      });
+      const data = await res.json();
+      console.log(data);
+      if (data.success) {
+        router.push(originalTitleUrl);
+      } else {
+        console.error(data.error);
+      }
+    } catch (error) {
+      console.error("API call failure");
+    }
   };
 
   if (isLoading) {

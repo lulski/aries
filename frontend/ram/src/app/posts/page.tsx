@@ -6,7 +6,7 @@ import { Usable, useEffect, useState } from "react";
 import AriesPagination, {
   AriesPaginationProps,
 } from "../components/Pagination/AriesPagination";
-import PostInline from "../components/PostInline";
+import PostInline from "../components/Post/PostInline";
 import { PostApiResponse } from "../lib/postsApiCall";
 
 async function getPosts(

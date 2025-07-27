@@ -2,21 +2,22 @@
 
 import "@mantine/tiptap/styles.css";
 
-import { RichTextEditor, Link } from "@mantine/tiptap";
+import { InputWrapper, TextInput } from "@mantine/core";
+import { UseFormReturnType } from "@mantine/form";
+import { Link, RichTextEditor } from "@mantine/tiptap";
+import Highlight from "@tiptap/extension-highlight";
+import SubScript from "@tiptap/extension-subscript";
+import Superscript from "@tiptap/extension-superscript";
+import TextAlign from "@tiptap/extension-text-align";
+import Underline from "@tiptap/extension-underline";
 import { useEditor } from "@tiptap/react";
 import { StarterKit } from "@tiptap/starter-kit";
-import Highlight from "@tiptap/extension-highlight";
-import Underline from "@tiptap/extension-underline";
-import TextAlign from "@tiptap/extension-text-align";
-import Superscript from "@tiptap/extension-superscript";
-import SubScript from "@tiptap/extension-subscript";
-import { InputWrapper, Text, TextInput } from "@mantine/core";
-import { UseFormReturnType } from "@mantine/form";
 
 interface PostEditProps {
   form: UseFormReturnType<{
     title: string;
     content: string;
+    // originalTitle: string;
   }>;
   error?: string | null;
 }
