@@ -34,12 +34,15 @@ public class PostService {
     /**
      * Retrieves all posts from the repository.
      * <p>
-     * This method fetches all posts stored in the database. If an error occurs during
-     * the retrieval process, it logs the error and returns an empty Flux. It also maps
+     * This method fetches all posts stored in the database. If an error occurs
+     * during
+     * the retrieval process, it logs the error and returns an empty Flux. It also
+     * maps
      * specific exceptions to custom exception types for better error handling.
      *
-     * @return A Flux<Post> containing all posts in the repository. If an error occurs,
-     * an empty Flux is returned.
+     * @return A Flux<Post> containing all posts in the repository. If an error
+     *         occurs,
+     *         an empty Flux is returned.
      * @throws DatabaseAccessException if there's an error accessing the database,
      *                                 wrapped from DataAccessException.
      * @throws NetworkTimeoutException if there's a network timeout while accessing
@@ -49,14 +52,14 @@ public class PostService {
         Pageable pageable = PageRequest.of(page, size, Sort.by(Sort.Direction.DESC, "createdOn"));
 
         return this.postRepository
-            .findAllBy(pageable)
-            .onErrorResume(
-                error -> {
-                    LOGGER.error(">>> failed to fetch Post data: " + error.getMessage());
-                    return Flux.empty();
-                })
-            .onErrorMap(DataAccessException.class, DatabaseAccessException::new)
-            .onErrorMap(TimeoutException.class, NetworkTimeoutException::new);
+                .findAllBy(pageable)
+                .onErrorResume(
+                        error -> {
+                            LOGGER.error(">>> failed to fetch Post data: " + error.getMessage());
+                            return Flux.empty();
+                        })
+                .onErrorMap(DataAccessException.class, DatabaseAccessException::new)
+                .onErrorMap(TimeoutException.class, NetworkTimeoutException::new);
     }
 
     public Mono<Long> countAllPosts() {
@@ -80,10 +83,10 @@ public class PostService {
     public Mono<Post> getById(String id) {
 
         return this.postRepository.findById(new ObjectId(id))
-            .switchIfEmpty(
-                Mono.error(new PostNotFoundException(id)))
-            .onErrorMap(DataAccessException.class, DatabaseAccessException::new)
-            .onErrorMap(TimeoutException.class, NetworkTimeoutException::new);
+                .switchIfEmpty(
+                        Mono.error(new PostNotFoundException(id)))
+                .onErrorMap(DataAccessException.class, DatabaseAccessException::new)
+                .onErrorMap(TimeoutException.class, NetworkTimeoutException::new);
     }
 
     /**
@@ -103,10 +106,10 @@ public class PostService {
      */
     public Mono<Post> getByTitle(String title) {
         return this.postRepository.findTopByTitle(title)
-            .switchIfEmpty(
-                Mono.error(new PostNotFoundException(title)))
-            .onErrorMap(DataAccessException.class, DatabaseAccessException::new)
-            .onErrorMap(TimeoutException.class, NetworkTimeoutException::new);
+                .switchIfEmpty(
+                        Mono.error(new PostNotFoundException(title)))
+                .onErrorMap(DataAccessException.class, DatabaseAccessException::new)
+                .onErrorMap(TimeoutException.class, NetworkTimeoutException::new);
     }
 
     /**
@@ -146,16 +149,30 @@ public class PostService {
      */
     public Mono<Post> archivePost(Post post) {
         return postRepository
-            .findById(post.getId())
-            .doOnNext(p -> LOGGER.info(">>> found post with id : " + p.getId()))
-            .switchIfEmpty(
-                Mono.error(new RuntimeException("No post with Id: " + post.getId() + " is found")))
-            .flatMap(
-                found -> {
-                    found.setIsArchived(true);
-                    return postRepository.save(found);
-                })
-            .doOnSuccess(p -> LOGGER.info("post Id: " + p.getId() + " is archived"))
-            .doOnError(err -> LOGGER.error("unable to complete operation for p: " + err.getMessage()));
+                .findById(post.getId())
+                .doOnNext(p -> LOGGER.info(">>> found post with id : " + p.getId()))
+                .switchIfEmpty(
+                        Mono.error(new RuntimeException("No post with Id: " + post.getId() + " is found")))
+                .flatMap(
+                        found -> {
+                            found.setIsArchived(true);
+                            return postRepository.save(found);
+                        })
+                .doOnSuccess(p -> LOGGER.info("post Id: " + p.getId() + " is archived"))
+                .doOnError(err -> LOGGER.error("unable to complete operation for p: " + err.getMessage()));
+    }
+
+    public Mono<Post> updatePost(PostRequestDto dto, User user) {
+        return postRepository.findById(new ObjectId(dto.id()))
+                .doOnNext(p -> LOGGER.info(">>> found post with Id: " + p.getId()))
+                .switchIfEmpty(Mono.error(new RuntimeException("No post with Id: " + dto.id())))
+                .flatMap(existingPost -> {
+                    existingPost.setAuthor(user.getUsername());
+                    existingPost.setModifiedOn(LocalDateTime.now());
+                    existingPost.setTitle(dto.title());
+                    existingPost.setContent(dto.content());
+                    return postRepository.save(existingPost);
+                });
+
     }
 }
