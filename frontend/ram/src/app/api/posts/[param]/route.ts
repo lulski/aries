@@ -1,7 +1,7 @@
 import {
   fetchPostById,
   fetchPostByTitle,
-  savePost,
+  updatePost,
 } from "@/app/lib/postsApiCall";
 import { error } from "console";
 import { NextRequest, NextResponse } from "next/server";
@@ -34,12 +34,8 @@ export async function GET(
   }
 }
 
-export async function PATCH(
-  request: NextRequest,
-  { params }: { params: { param: string } }
-) {
-  const { param } = params;
-  console.info(">>> PATCH post with param: ", param);
+export async function PATCH(request: NextRequest) {
+  console.info(">>> PATCH post with param: ");
 
   const body = await request.json();
   console.log("Received from client:", body);
@@ -63,7 +59,16 @@ export async function PATCH(
     );
   }
 
-  const response = await savePost(body);
+  const response = await updatePost(body);
+
+  if (response) {
+    return NextResponse.json(response);
+  } else {
+    return NextResponse.json(
+      { success: false, message: response },
+      { status: 400 }
+    );
+  }
 }
 
 function isNumeric(arg: string): boolean {

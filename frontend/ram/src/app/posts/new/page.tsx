@@ -1,8 +1,8 @@
 "use client";
 
 import AuthGuard from "@/app/components/AuthGuard";
-import PostEdit from "@/app/components/PostEdit";
-import { Button, Group, SimpleGrid, Text, TextInput } from "@mantine/core";
+import PostEdit from "@/app/components/Post/PostEdit";
+import { Button, Group, SimpleGrid } from "@mantine/core";
 import { useForm } from "@mantine/form";
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";

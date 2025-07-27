@@ -1,17 +1,6 @@
-import {
-  Card,
-  Image,
-  Box,
-  Text,
-  Group,
-  Title,
-  CardSection,
-  Divider,
-  NavLink,
-} from "@mantine/core";
-import { PostData } from "../lib/definitions";
+import { Box, Card, CardSection, Group, Text, Title } from "@mantine/core";
 import sanitizeHtml from "sanitize-html";
-import Link from "next/link";
+import { PostData } from "../../lib/definitions";
 
 type PostProps = {
   post: PostData;
@@ -41,8 +30,6 @@ export default function Post({ post, allowHtmlMarkup }: PostProps) {
         padding="lg"
         radius="md"
         withBorder
-        component={Link}
-        href={`/posts/${post.title}`}
         styles={{ root: { marginBottom: 10 } }}
         id={post.id}
       >
