@@ -127,13 +127,14 @@ public class TestMockRepositoryConfig {
 
         when(postRepository.save(any())).thenAnswer(invocationOnMock -> {
             Post post = invocationOnMock.getArgument(0);
-            if (post != null) {
+            if (post != null && post.getId() == null) {
                 post.setId(new ObjectId());
+                return Mono.just(post);
+            } else if (post != null && post.getId() != null) {
                 return Mono.just(post);
             } else {
                 return Mono.just(post1);
             }
-
         });
 
         when(postRepository.findTopByTitle(anyString())).thenAnswer(invocationOnMock -> {
