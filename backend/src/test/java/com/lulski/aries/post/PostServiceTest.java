@@ -23,27 +23,27 @@ import java.util.Arrays;
 import reactor.test.StepVerifier;
 
 @SpringBootTest
-@Import({TestMockRepositoryConfig.class, TestWebSecurityConfig.class})
+@Import({ TestMockRepositoryConfig.class, TestWebSecurityConfig.class })
 @ActiveProfiles("mock")
 public class PostServiceTest {
 
     private static final Logger logger = LoggerFactory.getLogger(PostServiceTest.class);
     private final User author = new User(
-        new ObjectId("6795b64f525959be00d07c0b"),
-        "rbelmont",
-        "dummyPassword",
-        "Richter",
-        "Belmont",
-        "rbelmont@xyz.com");
+            new ObjectId("6795b64f525959be00d07c0b"),
+            "rbelmont",
+            "dummyPassword",
+            "Richter",
+            "Belmont",
+            "rbelmont@xyz.com");
     private final Post post = new Post(
-        new ObjectId("1234b64f525959be00d07c0b"),
-        "how to gitgood part two",
-        "you just have to grind 3 hours everyday",
-        author.getUsername(),
-        LocalDateTime.now(),
-        LocalDateTime.now(),
-        false,
-        false);
+            new ObjectId("1234b64f525959be00d07c0b"),
+            "how to gitgood part two",
+            "you just have to grind 3 hours everyday",
+            author.getUsername(),
+            LocalDateTime.now(),
+            LocalDateTime.now(),
+            false,
+            false);
     @Autowired
     private PostService postService;
     @Value("${spring.profiles.active}")
@@ -56,7 +56,7 @@ public class PostServiceTest {
     @Test
     void contextLoads() {
         Arrays.stream(cApplicationContext.getBeanDefinitionNames())
-            .forEach(b -> System.out.println(">>> bean: " + b));
+                .forEach(b -> System.out.println(">>> bean: " + b));
     }
 
     @BeforeEach
@@ -80,54 +80,76 @@ public class PostServiceTest {
     @Test
     void createNewPostThenArchiveIt() {
         Arrays.stream(cApplicationContext.getBeanDefinitionNames())
-            .forEach(b -> System.out.println(">>> bean: " + b));
+                .forEach(b -> System.out.println(">>> bean: " + b));
 
         Post postToBeArchived = new Post(
-            new ObjectId("1234b64f525959be00d07c0b"),
-            "test archiving a post",
-            "Help keep the library tidy by returning your dishes to the cafe",
-            author.getUsername(),
-            LocalDateTime.now(),
-            LocalDateTime.now(),
-            false,
-            false);
+                new ObjectId("1234b64f525959be00d07c0b"),
+                "test archiving a post",
+                "Help keep the library tidy by returning your dishes to the cafe",
+                author.getUsername(),
+                LocalDateTime.now(),
+                LocalDateTime.now(),
+                false,
+                false);
 
         postRepository.save(postToBeArchived).block();
 
         StepVerifier.create(postService.archivePost(postToBeArchived).single())
-            .expectNextMatches(p -> p.getIsArchived()==true)
-            .verifyComplete();
+                .expectNextMatches(p -> p.getIsArchived() == true)
+                .verifyComplete();
     }
 
     @Test
     void createNewPost() {
         StepVerifier.create(postRepository.save(post).single())
-            .expectNextMatches(p -> p.getId()!=null)
-            .verifyComplete();
+                .expectNextMatches(p -> p.getId() != null)
+                .verifyComplete();
     }
 
     @Test
     void listAllPosts() {
-        StepVerifier.create(postService.listAll(1,2).collectList())
-            .expectNextMatches(
-                posts -> {
-                    return !posts.isEmpty();
-                })
-            .verifyComplete();
+        StepVerifier.create(postService.listAll(1, 2).collectList())
+                .expectNextMatches(
+                        posts -> {
+                            return !posts.isEmpty();
+                        })
+                .verifyComplete();
     }
 
     @Test
     void getById_ThenReturnAPost() {
 
         StepVerifier.create(postService.getById(TestMockRepositoryConfig.mockPostId))
-            .expectNextMatches(post -> post.getId().equals(new ObjectId(TestMockRepositoryConfig.mockPostId)))
-            .verifyComplete();
+                .expectNextMatches(post -> post.getId().equals(new ObjectId(TestMockRepositoryConfig.mockPostId)))
+                .verifyComplete();
     }
 
     @Test
     void getByTitle_ThenReturnAPost() {
         StepVerifier.create(postService.getByTitle("how to gitgood part two"))
-            .expectNextMatches(post -> post.getTitle().equals("how to gitgood part two"))
-            .verifyComplete();
+                .expectNextMatches(post -> post.getTitle().equals("how to gitgood part two"))
+                .verifyComplete();
+    }
+
+    @Test
+    void shouldUpdatePostWithNewTitleAndContent() {
+        var updateDto = new PostRequestDto("how to gitgood part two has been updated", "just use AI",
+                "1234b64f525959be00d07c0b");
+
+        Post expected = new Post(
+                new ObjectId("1234b64f525959be00d07c0b"),
+                "how to gitgood part two has been updated",
+                "just use AI",
+                author.getUsername(),
+                LocalDateTime.now(),
+                LocalDateTime.now(),
+                false,
+                false);
+
+        StepVerifier.create(postService.updatePost(updateDto, this.author))
+                .expectNextMatches(updatedPost -> updatedPost.getTitle().equals(expected.getTitle()) &&
+                        updatedPost.getContent().equals(expected.getContent()) &&
+                        updatedPost.getAuthor().equals(expected.getAuthor()))
+                .verifyComplete();
     }
 }
