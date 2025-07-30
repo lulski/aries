@@ -17,7 +17,7 @@ interface PostEditProps {
   form: UseFormReturnType<{
     title: string;
     content: string;
-    // originalTitle: string;
+    id: string;
   }>;
   error?: string | null;
 }
@@ -40,6 +40,7 @@ export default function PostEdit({ form, error }: PostEditProps) {
 
   return (
     <>
+      <input type="hidden" name="id" {...form.getInputProps("id")} />
       <TextInput
         withAsterisk
         label="Title:"
