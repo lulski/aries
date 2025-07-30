@@ -5,22 +5,22 @@ import { PostData } from "@/app/lib/definitions";
 import { Button, Group, LoadingOverlay, Text } from "@mantine/core";
 import { useForm } from "@mantine/form";
 
-import { useParams, usePathname } from "next/navigation";
-import router from "next/router";
+import { useParams, usePathname, useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 
 export default function editPost() {
   const params = useParams();
-  const [postData, setPostData] = useState<PostData | null>(null);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const originalTitleUrl = usePathname().replace("/edit", "");
+  const router = useRouter();
 
   const form = useForm({
     mode: "controlled", //
     initialValues: {
       title: "",
       content: "",
+      id: "",
     },
     validate: {
       title: (value) =>
@@ -42,10 +42,10 @@ export default function editPost() {
 
         const data: PostData = await response.json();
         console.log("Fetched post data:", data);
-        setPostData(data);
         form.setValues({
           title: data.title,
           content: data.content,
+          id: data.id,
         });
       } catch (error) {
         setError(
@@ -79,8 +79,9 @@ export default function editPost() {
       });
       const data = await res.json();
       console.log(data);
-      if (data.success) {
-        router.push(originalTitleUrl);
+      if (res.ok) {
+        const newTitle = encodeURI(data.postDto[0].title);
+        router.push(`/posts/${newTitle}`);
       } else {
         console.error(data.error);
       }
