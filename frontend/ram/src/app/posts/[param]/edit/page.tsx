@@ -1,5 +1,6 @@
 "use client";
 
+import AuthGuard from "@/app/components/AuthGuard";
 import PostEdit from "@/app/components/Post/PostEdit";
 import { PostData } from "@/app/lib/definitions";
 import { Button, Group, LoadingOverlay, Text } from "@mantine/core";
@@ -43,8 +44,8 @@ export default function editPost() {
         const data: PostData = await response.json();
         console.log("Fetched post data:", data);
         form.setValues({
-          title: data.title,
-          content: data.content,
+          title: data.title.trim(),
+          content: data.content.trim(),
           id: data.id,
         });
       } catch (error) {
@@ -66,6 +67,8 @@ export default function editPost() {
 
     const valuesToBeSubmitted = {
       ...values,
+      title: values.title.trim(),
+      content: values.content.trim(),
       originalTitle: decodeURI(originalTitle),
     };
     console.info("patching: " + patchUrl + ", with : " + valuesToBeSubmitted);
@@ -105,11 +108,13 @@ export default function editPost() {
   }
 
   return (
-    <form onSubmit={form.onSubmit(handleSubmit)}>
-      <PostEdit form={form}></PostEdit>
-      <Group justify="flex-end" mt="md">
-        <Button type="submit">Submit</Button>
-      </Group>
-    </form>
+    <AuthGuard>
+      <form onSubmit={form.onSubmit(handleSubmit)}>
+        <PostEdit form={form}></PostEdit>
+        <Group justify="flex-end" mt="md">
+          <Button type="submit">Submit</Button>
+        </Group>
+      </form>
+    </AuthGuard>
   );
 }
