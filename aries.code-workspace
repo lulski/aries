@@ -16,6 +16,6 @@
   "settings": {
     "typescript.tsdk": "node_modules/typescript/lib",
     "java.compile.nullAnalysis.mode": "automatic",
-    "jest.disabledWorkspaceFolders": ["backend"]
+    "jest.disabledWorkspaceFolders": ["backend,seeder,terraform"]
   }
 }
