@@ -32,6 +32,10 @@ build/
 ### VS Code ###
 #.vscode/
 
+#### Terraform ###
+.terraform
+*.tfstate
+*.tfstate.backup
 
 .gradle
 **/build/
@@ -63,3 +67,4 @@ gradle-app.setting
 
 */bin/
 */out/
+
