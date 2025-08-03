@@ -5,6 +5,12 @@
     },
     {
       "path": "backend"
+    },
+    {
+      "path": "seeder"
+    },
+    {
+      "path": "terraform"
     }
   ],
   "settings": {
