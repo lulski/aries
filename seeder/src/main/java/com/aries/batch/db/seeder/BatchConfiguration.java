@@ -22,9 +22,10 @@ public class BatchConfiguration {
 
   @Bean
   public FlatFileItemReader<User> reader() {
+    String usersCsvPath = System.getenv().getOrDefault("USERS_CSV_PATH", "users.csv");
     return new FlatFileItemReaderBuilder<User>()
         .name("userRoleReader")
-        .resource(new ClassPathResource("users.csv"))
+        .resource(new ClassPathResource(usersCsvPath))
         .delimited()
         .names("username", "password", "firstName", "lastName", "email", "authorities")
         .targetType(User.class)
