@@ -13,21 +13,13 @@ tasks.withType(JavaCompile).configureEach {
 tasks.withType(GroovyCompile).configureEach {
     groovyOptions.parameters = true
 }
-// jar {
-//     archiveBaseName.set("ariesbackend")
-//     archiveVersion.set("0.0.1")
-//     archiveClassifier.set("") // Optional: remove classifier like "-plain"
-// }
 
-// bootJar {
-//     archiveBaseName.set("ariesbackend")
-//     archiveVersion.set("0.0.1")
-//     archiveClassifier.set("") 
-// }
-
+bootJar {
+    archiveFileName.set("aries-backend.jar")
+}
 
 group = 'com.lulski'
-version = '0.0.1-SNAPSHOT'
+version = '1.0.0'
 
 java {
     toolchain {
