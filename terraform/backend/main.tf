@@ -31,11 +31,18 @@ resource "aws_security_group" "instance" {
   }
 }
 
+resource "aws_key_pair" "aries" {
+  key_name   = "aries-key"
+  public_key = file("~/.ssh/aries-key.pub")
+}
+
 # setup EC2 instances that can be controlled by AWS auto scaling group
 resource "aws_launch_template" "aries" {
   instance_type = "t2.micro"
   image_id      = "ami-010876b9ddd38475e"
   name_prefix   = "aries-backend"
+
+  key_name = aws_key_pair.aries.key_name
 
   user_data = base64encode(<<-EOF
               #!/bin/bash
@@ -43,15 +50,15 @@ resource "aws_launch_template" "aries" {
               nohup busybox httpd -f -p ${var.server_port} &
               EOF
 
-# user_data = base64encode(<<-EOF
-#               #!/bin/bash
-#               sudo yum update -y
-#               sudo amazon-linux-extras install java-openjdk11 -y
-#               # Download your Spring Boot JAR from S3 (replace with your bucket and jar name)
-#               aws s3 cp s3://your-bucket-name/your-app.jar /home/ec2-user/app.jar
-#               # Run the Spring Boot JAR
-#               nohup java -jar /home/ec2-user/app.jar --server.port=${var.server_port} > /home/ec2-user/app.log 2>&1 &
-#               EOF              
+    # user_data = base64encode(<<-EOF
+    #               #!/bin/bash
+    #               sudo yum update -y
+    #               sudo amazon-linux-extras install java-openjdk11 -y
+    #               # Download your Spring Boot JAR from S3 (replace with your bucket and jar name)
+    #               aws s3 cp s3://your-bucket-name/your-app.jar /home/ec2-user/app.jar
+    #               # Run the Spring Boot JAR
+    #               nohup java -jar /home/ec2-user/app.jar --server.port=${var.server_port} > /home/ec2-user/app.log 2>&1 &
+    #               EOF              
   )
 
   network_interfaces {
