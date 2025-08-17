@@ -20,6 +20,17 @@ provider "aws" {
 #   }
 # }
 
+terraform {
+  backend "s3" {
+    bucket = "aries-tf-state"
+    key    = "global/backend/terraform.tfstate"
+    region = "ap-southeast-2"
+
+    dynamodb_table = "aries-tf-state-locks"
+    encrypt        = true
+  }
+}
+
 resource "aws_security_group" "instance" {
   name = "aries-backend-instance"
 
@@ -27,6 +38,21 @@ resource "aws_security_group" "instance" {
     from_port   = var.server_port
     to_port     = var.server_port
     protocol    = "tcp"
+    cidr_blocks = ["0.0.0.0/0"]
+  }
+
+  # Allow SSH
+  ingress {
+    from_port   = 22
+    to_port     = 22
+    protocol    = "tcp"
+    cidr_blocks = ["0.0.0.0/0"] # safer than 0.0.0.0/0
+  }
+
+  egress {
+    from_port   = 0
+    to_port     = 0
+    protocol    = "-1"
     cidr_blocks = ["0.0.0.0/0"]
   }
 }
@@ -82,7 +108,7 @@ data "aws_subnets" "default" {
   }
 }
 
-#setup auto-scaling group to manage those EC2 instances https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/autoscaling_group
+# NOT NEEDED ATM,setup auto-scaling group to manage those EC2 instances https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/autoscaling_group
 resource "aws_autoscaling_group" "aries" {
   launch_template {
     id      = aws_launch_template.aries.id
@@ -94,8 +120,8 @@ resource "aws_autoscaling_group" "aries" {
   target_group_arns = [aws_lb_target_group.asg.arn]
   health_check_type = "ELB"
 
-  min_size = 2
-  max_size = 4
+  min_size = 1
+  max_size = 2
 
   tag {
     key                 = "Name"
@@ -139,6 +165,15 @@ resource "aws_security_group" "alb" {
     to_port     = 80
     protocol    = "tcp"
     cidr_blocks = ["0.0.0.0/0"]
+  }
+
+
+  # SSH access
+  ingress {
+    from_port   = 22
+    to_port     = 22
+    protocol    = "tcp"
+    cidr_blocks = ["0.0.0.0/0"] # safer
   }
 
   # Allow all outbound request
