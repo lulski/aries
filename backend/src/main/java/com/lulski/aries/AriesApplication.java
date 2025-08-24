@@ -11,13 +11,6 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 public class AriesApplication {
 
     public static void main(String[] args) {
-
         SpringApplication.run(AriesApplication.class, args);
-        // System.out.println(">>> breakpoint");
-        /*
-         * String[] beanNames = context.getBeanDefinitionNames();
-         * Arrays.stream(beanNames).forEach(System.out::println);
-         */
-
     }
 }
