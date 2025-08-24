@@ -70,3 +70,4 @@ gradle-app.setting
 */out/
 
 terraform.tfstate.*.backup
+secrets.tfvars
