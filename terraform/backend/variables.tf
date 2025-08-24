@@ -1,7 +1,7 @@
 variable "server_port" {
   description = "The port the server will use for HTTP requests"
   type        = number
-  default     = 8080
+  default     = 8181
 }
 
 variable "SPRING_DATA_MONGO_DB_URI" {
