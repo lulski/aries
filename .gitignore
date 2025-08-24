@@ -69,3 +69,4 @@ gradle-app.setting
 */bin/
 */out/
 
+terraform.tfstate.*.backup
