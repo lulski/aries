@@ -73,8 +73,12 @@ resource "aws_launch_template" "aries" {
   user_data = base64encode(<<-EOF
               #!/bin/bash
 
+              #install JRE
               sudo apt-get update
               sudo apt-get install -y openjdk-21-jre-headless
+
+              #inject database connection string
+              echo 'SPRING_DATA_MONGO_DB_URI="${var.SPRING_DATA_MONGO_DB_URI}"' | sudo tee -a /etc/environment
 
               echo -e "Aries Backend:\n" > index.html
               echo -e "Java version: $(java -version 2>&1 | head -n 1)" >> index.html
@@ -111,6 +115,13 @@ data "aws_subnets" "default" {
   filter {
     name   = "vpc-id"
     values = [data.aws_vpc.default.id]
+  }
+}
+
+data "aws_instances" "aries_asg" {
+  filter {
+    name   = "tag:Name"
+    values = ["aries-backend"]
   }
 }
 
