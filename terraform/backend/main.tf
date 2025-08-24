@@ -72,7 +72,13 @@ resource "aws_launch_template" "aries" {
 
   user_data = base64encode(<<-EOF
               #!/bin/bash
-              echo "Hello, World" > index.html
+
+              sudo apt-get update
+              sudo apt-get install -y openjdk-21-jre-headless
+
+              echo -e "Aries Backend:\n" > index.html
+              echo -e "Java version: $(java -version 2>&1 | head -n 1)" >> index.html
+
               nohup busybox httpd -f -p ${var.server_port} &
               EOF
 
