@@ -76,6 +76,12 @@ resource "aws_launch_template" "aries" {
               #install JRE
               sudo apt-get update
               sudo apt-get install -y openjdk-21-jre-headless
+              sudo apt-get install -y unzip curl
+
+              # Install AWS CLI v2
+              curl "https://awscli.amazonaws.com/awscli-exe-linux-x86_64.zip" -o "awscliv2.zip"
+              unzip awscliv2.zip
+              ./aws/install
 
               #inject database connection string
               echo 'SPRING_DATA_MONGO_DB_URI="${var.SPRING_DATA_MONGO_DB_URI}"' | sudo tee -a /etc/environment
@@ -83,25 +89,24 @@ resource "aws_launch_template" "aries" {
               echo -e "Aries Backend:\n" > index.html
               echo -e "Java version: $(java -version 2>&1 | head -n 1)" >> index.html
 
-              nohup busybox httpd -f -p ${var.server_port} &
-              EOF
+              #Download Aries-jar
+              aws s3 cp s3://aries-springboot-jar/aries_jar /home/ubuntu/aries-backend.jar
 
-    # user_data = base64encode(<<-EOF
-    #               #!/bin/bash
-    #               sudo yum update -y
-    #               sudo amazon-linux-extras install java-openjdk11 -y
-    #               # Download your Spring Boot JAR from S3 (replace with your bucket and jar name)
-    #               aws s3 cp s3://your-bucket-name/your-app.jar /home/ec2-user/app.jar
-    #               # Run the Spring Boot JAR
-    #               nohup java -jar /home/ec2-user/app.jar --server.port=${var.server_port} > /home/ec2-user/app.log 2>&1 &
-    #               EOF              
+              #run 
+              nohup java -jar /home/ubuntu/aries-backend.jar --server.port=${var.server_port} > /home/ubuntu/app.log 2>&1 &
+
+              #nohup busybox httpd -f -p ${var.server_port} &
+              EOF        
   )
+
+  iam_instance_profile {
+    name = aws_iam_instance_profile.ec2_profile.name
+  }
 
   network_interfaces {
     security_groups             = [aws_security_group.instance.id]
     associate_public_ip_address = true
   }
-
   lifecycle {
     create_before_destroy = true
   }
@@ -235,4 +240,3 @@ resource "aws_lb_listener_rule" "asg" {
     target_group_arn = aws_lb_target_group.asg.arn
   }
 }
-
