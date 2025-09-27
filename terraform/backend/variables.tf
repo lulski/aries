@@ -9,3 +9,10 @@ variable "SPRING_DATA_MONGO_DB_URI" {
   type        = string
   sensitive   = true
 }
+
+
+variable "region" {
+  description = "AWS region"
+  type = string
+  default = "ap-southeast-2"
+}
