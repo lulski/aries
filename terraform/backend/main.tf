@@ -46,7 +46,7 @@ resource "aws_security_group" "instance" {
     from_port   = 22
     to_port     = 22
     protocol    = "tcp"
-    cidr_blocks = ["0.0.0.0/0"] # safer than 0.0.0.0/0
+    cidr_blocks = ["0.0.0.0/0"]
   }
 
   egress {
@@ -93,7 +93,7 @@ resource "aws_launch_template" "aries" {
               aws s3 cp s3://aries-springboot-jar/aries_jar /home/ubuntu/aries-backend.jar
 
               #run 
-              nohup java -jar /home/ubuntu/aries-backend.jar --server.port=${var.server_port} > /home/ubuntu/app.log 2>&1 &
+              nohup java -jar /home/ubuntu/aries-backend.jar --server.port=${var.server_port} -Dspring.profiles.active=prod > /home/ubuntu/app.log 2>&1 &
 
               #nohup busybox httpd -f -p ${var.server_port} &
               EOF        
@@ -143,7 +143,7 @@ resource "aws_autoscaling_group" "aries" {
   health_check_type = "ELB"
 
   min_size = 1
-  max_size = 2
+  max_size = 1
 
   tag {
     key                 = "Name"
@@ -162,7 +162,7 @@ resource "aws_lb" "aries" {
 
 #setup AWS load balancer listener
 resource "aws_lb_listener" "http" {
-  port              = 80
+  port              = var.server_port
   protocol          = "HTTP"
   load_balancer_arn = aws_lb.aries.arn
 
@@ -183,8 +183,8 @@ resource "aws_security_group" "alb" {
 
   # Allow inbound HTTP requests
   ingress {
-    from_port   = 80
-    to_port     = 80
+    from_port   = var.server_port
+    to_port     = var.server_port
     protocol    = "tcp"
     cidr_blocks = ["0.0.0.0/0"]
   }
