@@ -93,7 +93,7 @@ resource "aws_launch_template" "aries" {
               aws s3 cp s3://aries-springboot-jar/aries_jar /home/ubuntu/aries-backend.jar
 
               #run 
-              nohup java -jar /home/ubuntu/aries-backend.jar --server.port=${var.server_port} -Dspring.profiles.active=prod > /home/ubuntu/app.log 2>&1 &
+              nohup java -jar /home/ubuntu/aries-backend.jar --server.port=${var.server_port} --spring.profiles.active=prod > /home/ubuntu/app.log 2>&1 &
 
               #nohup busybox httpd -f -p ${var.server_port} &
               EOF        
