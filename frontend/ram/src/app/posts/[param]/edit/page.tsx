@@ -17,7 +17,7 @@ export default function editPost() {
   const router = useRouter();
 
   const form = useForm({
-    mode: "controlled", //
+    mode: "controlled",
     initialValues: {
       title: "",
       content: "",

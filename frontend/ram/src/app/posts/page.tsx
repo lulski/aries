@@ -2,12 +2,19 @@
 
 import { Button, Container, Group } from "@mantine/core";
 import { useSearchParams } from "next/navigation";
-import { Usable, useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import AriesPagination, {
   AriesPaginationProps,
 } from "../components/Pagination/AriesPagination";
 import PostInline from "../components/Post/PostInline";
 import { PostApiResponse } from "../lib/postsApiCall";
+
+type PageProps = {
+  searchParams?: Promise<{
+    page?: string;
+    size?: string;
+  }>;
+};
 
 async function getPosts(
   currentPage: number,
@@ -29,11 +36,7 @@ async function getPosts(
   return responseJson;
 }
 
-export default function Posts({
-  searchParams,
-}: {
-  searchParams: Usable<{ page?: string; size?: string }>;
-}) {
+export default function Posts({ searchParams }: PageProps) {
   const searchParam = useSearchParams();
   const page = searchParam.get("page") || "1";
   const size = searchParam.get("size") || "10";

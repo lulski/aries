@@ -9,9 +9,9 @@ import { z } from "zod";
 
 export async function GET(
   request: NextRequest,
-  { params }: { params: { param: string } }
+  { params }: { params: Promise<{ param: string }> }
 ) {
-  const { param } = params;
+  const { param } = await params;
 
   console.info(">>> GET post with param: ", param);
 

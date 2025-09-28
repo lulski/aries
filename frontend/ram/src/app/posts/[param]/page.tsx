@@ -5,11 +5,12 @@ import { getSessionData } from "@/app/lib/sessionUtil";
 import { Button, Group } from "@mantine/core";
 import link from "next/link";
 
-type Params = {
-  param: string;
+type PageProps = {
+  params: Promise<{
+    param: string;
+  }>;
 };
-
-export default async function viewPost({ params }: { params: Params }) {
+export default async function viewPost({ params }: PageProps) {
   const { param } = await params;
 
   const isNumeric = /^\d+$/.test(param);
