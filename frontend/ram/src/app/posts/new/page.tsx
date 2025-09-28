@@ -19,6 +19,7 @@ export default function NewPostPage() {
     initialValues: {
       content: content,
       title: title,
+      id: "",
     },
     validate: {
       title: (value) => (value.trim() === "" ? "Title is required" : null),
