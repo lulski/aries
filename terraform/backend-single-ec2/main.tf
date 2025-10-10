@@ -28,13 +28,6 @@ resource "aws_security_group" "instance" {
     cidr_blocks = ["0.0.0.0/0"]
   }
 
-  ingress {
-    from_port   = var.server_port_frontend
-    to_port     = var.server_port_frontend
-    protocol    = "tcp"
-    cidr_blocks = ["0.0.0.0/0"]
-  }
-
   # Allow SSH
   ingress {
     from_port   = 22
@@ -95,53 +88,6 @@ resource "aws_instance" "backend" {
     Name = "aries-backend"
   }
 }
-
-resource "aws_instance" "frontend" {
-  depends_on             = [aws_s3_bucket.aries]
-  instance_type          = "t3.micro"
-  ami                    = "ami-010876b9ddd38475e"
-  vpc_security_group_ids = [aws_security_group.instance.id]
-  key_name               = aws_key_pair.aries.key_name
-
-  iam_instance_profile = aws_iam_instance_profile.ec2_profile.id
-
-  user_data = base64encode(<<-EOF
-                #!/bin/bash
-                # Install Next.js prerequisites (Node.js LTS, npm, PM2)
-
-                # 1. Update and Install Dependencies
-                # Use apt-get for non-interactive installation (-y flag)
-                sudo apt update -y
-                sudo apt install -y curl gnupg2 ca-certificates lsb-release
-
-                # 2. Install Node.js and npm using NodeSource PPA (LTS version)
-                # Replace '20.x' with your desired LTS version if needed, 
-                # but NodeSource's latest LTS line is generally a good choice.
-                LTS_VERSION="20.x"
-
-                # Add the NodeSource repository
-                curl -fsSL https://deb.nodesource.com/setup_${LTS_VERSION} | sudo -E bash -
-
-                # Install Node.js (which includes npm)
-                sudo apt install -y nodejs
-
-                # 3. Install PM2 globally to manage the Next.js process in the background
-                sudo npm install -g pm2
-
-                # 4. Save PM2's process list and set it to auto-start on reboot
-                # This command is often required for PM2 to persist its processes.
-                # It generates a startup script for your init system (e.g., systemd).
-                pm2 startup systemd -u ubuntu --hp /home/ubuntu
-                EOF        
-  )
-
-  user_data_replace_on_change = true
-
-  tags = {
-    Name = "aries-frontend"
-  }
-}
-
 
 ############ JAR start
 
