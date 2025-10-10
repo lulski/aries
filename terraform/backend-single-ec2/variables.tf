@@ -1,13 +1,7 @@
 variable "server_port_backend" {
   description = "Spring boot app port"
   type        = number
-  default     = 8080
-}
-
-variable "server_port_frontend" {
-  description = "Next.js app port"
-  type        = number
-  default     = 3000
+  default     = 8181
 }
 
 variable "SPRING_DATA_MONGO_DB_URI" {
