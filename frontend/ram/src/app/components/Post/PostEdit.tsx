@@ -11,7 +11,7 @@ import Superscript from "@tiptap/extension-superscript";
 import TextAlign from "@tiptap/extension-text-align";
 import Underline from "@tiptap/extension-underline";
 import { useEditor } from "@tiptap/react";
-import { StarterKit } from "@tiptap/starter-kit";
+import StarterKit from "@tiptap/starter-kit";
 
 interface PostEditProps {
   form: UseFormReturnType<{
@@ -58,7 +58,10 @@ export default function PostEdit({ form, error }: PostEditProps) {
           editor={editor}
           styles={{ content: { minHeight: 400 } }}
         >
-          <RichTextEditor.Toolbar sticky stickyOffset={60}>
+          <RichTextEditor.Toolbar
+            sticky
+            stickyOffset="var(--docs-header-height)"
+          >
             <RichTextEditor.ControlsGroup>
               <RichTextEditor.Bold />
               <RichTextEditor.Italic />

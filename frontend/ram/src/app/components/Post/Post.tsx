@@ -1,4 +1,4 @@
-import { Box, Card, CardSection, Group, Text, Title } from "@mantine/core";
+import { Box, Card, Group, Text, Title } from "@mantine/core";
 import sanitizeHtml from "sanitize-html";
 import { PostData } from "../../lib/definitions";
 
@@ -33,10 +33,6 @@ export default function Post({ post, allowHtmlMarkup }: PostProps) {
         styles={{ root: { marginBottom: 10 } }}
         id={post.id}
       >
-        <CardSection>
-          {/* <Image src="https://raw.githubusercontent.com/mantinedev/mantine/master/.demo/images/bg-10.png" /> */}
-        </CardSection>
-
         <Group justify="space-between" mt="md" mb="xs">
           <Title order={5}>{post.title}</Title>
         </Group>

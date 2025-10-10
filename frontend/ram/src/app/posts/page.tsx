@@ -1,6 +1,6 @@
 "use client";
 
-import { Button, Container, Group } from "@mantine/core";
+import { Button, Container, Group, SimpleGrid } from "@mantine/core";
 import { useSearchParams } from "next/navigation";
 import { useEffect, useState } from "react";
 import AriesPagination, {
@@ -95,7 +95,7 @@ export default function Posts({ searchParams }: PageProps) {
   return (
     <>
       {showNewButton && (
-        <Container>
+        <Container strategy="grid">
           <Group justify="flex-end">
             <Button
               component="a"
@@ -108,16 +108,15 @@ export default function Posts({ searchParams }: PageProps) {
           </Group>
         </Container>
       )}
-      <Container>
-        <ul>
-          {posts.postDto.map((post, index) => (
-            <li key={index}>
-              <PostInline {...post}></PostInline>
-            </li>
-          ))}
-        </ul>
+      <SimpleGrid>
+        {posts.postDto.map((post, index) => (
+          <PostInline {...post} key={index}></PostInline>
+        ))}
+      </SimpleGrid>
+
+      <Group justify="center">
         {pagination && posts.total > 0 && <AriesPagination {...pagination} />}
-      </Container>
+      </Group>
     </>
   );
 }
