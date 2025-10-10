@@ -1,12 +1,12 @@
 import "@mantine/core/styles.css";
-import "./globals.css";
+import "@mantine/tiptap/styles.css";
 
-import React from "react";
 import {
   ColorSchemeScript,
   mantineHtmlProps,
   MantineProvider,
 } from "@mantine/core";
+import React from "react";
 
 import AriesLayout from "@/app/components/AriesLayout";
 import { ThemeProvider } from "./context/ThemeContext";
