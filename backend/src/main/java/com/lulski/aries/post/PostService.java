@@ -53,6 +53,15 @@ public class PostService {
 
         return this.postRepository
                 .findAllBy(pageable)
+                .map(post -> {
+                    String truncated = post.getContent();
+                    if (truncated != null && truncated.length() > 100) {
+                        truncated = truncated.substring(0, 100) + "...";
+                    }
+                    post.setContent(truncated);
+
+                    return post;
+                })
                 .onErrorResume(
                         error -> {
                             LOGGER.error(">>> failed to fetch Post data: " + error.getMessage());

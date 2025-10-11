@@ -4,14 +4,12 @@ import org.bson.types.ObjectId;
 import org.springframework.data.mongodb.core.index.Indexed;
 import org.springframework.data.mongodb.core.mapping.Document;
 
-import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import java.time.LocalDateTime;
 
 /**
  * Post
  */
 @Document(collection = "posts")
-@SuppressFBWarnings(value = "EI_EXPOSE_REP2")
 public class Post {
 
     private ObjectId id;
@@ -46,14 +44,14 @@ public class Post {
      * @param isArchived
      */
     public Post(
-        ObjectId id,
-        String title,
-        String content,
-        String author,
-        LocalDateTime createdOn,
-        LocalDateTime modifiedOn,
-        Boolean isPublished,
-        Boolean isArchived) {
+            ObjectId id,
+            String title,
+            String content,
+            String author,
+            LocalDateTime createdOn,
+            LocalDateTime modifiedOn,
+            Boolean isPublished,
+            Boolean isArchived) {
         this.id = id;
         this.title = title;
         this.content = content;
@@ -120,7 +118,6 @@ public class Post {
         this.isArchived = isArchived;
     }
 
-    @SuppressFBWarnings(value = "EI_EXPOSE_REP")
     public ObjectId getId() {
         return id;
     }
