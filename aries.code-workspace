@@ -3,6 +3,9 @@
     {
       "path": "frontend/ram"
     },
+    // {
+    //   "path": "frontend/ram2.0"
+    // },
     {
       "path": "backend"
     },
@@ -17,6 +20,7 @@
     "typescript.tsdk": "node_modules/typescript/lib",
     "java.compile.nullAnalysis.mode": "automatic",
     "jest.disabledWorkspaceFolders": ["backend,seeder,terraform"],
-    "java.configuration.updateBuildConfiguration": "automatic"
+    "java.configuration.updateBuildConfiguration": "automatic",
+    "java.jdt.ls.vmargs": "-XX:+UseParallelGC -XX:GCTimeRatio=4 -XX:AdaptiveSizePolicyWeight=90 -Dsun.zip.disableMemoryMapping=true -Xmx4G -Xms100m -Xlog:disable"
   }
 }
