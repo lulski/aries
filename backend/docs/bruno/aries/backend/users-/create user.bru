@@ -21,18 +21,18 @@ headers {
 }
 
 auth:basic {
-  username: system
-  password: system123
+  username: {{api_username}}
+  password: {{api_password}}
 }
 
 body:json {
   {
-  	"username": "kocu",
-  	"password": "kocu",
-  	"firstname": "lulski",
-  	"lastname": "gonzales",
-  	"authorities": [
-  		"USER","ADMIN"
-  	]
+    "username": "kocu",
+    "password": "kocu",
+    "firstname": "lulski",
+    "lastname": "gonzales",
+    "authorities": [
+      "USER","ADMIN"
+    ]
   }
 }
