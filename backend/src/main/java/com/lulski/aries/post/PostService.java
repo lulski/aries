@@ -3,11 +3,14 @@ package com.lulski.aries.post;
 import org.bson.types.ObjectId;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.dao.DataAccessException;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
+import org.jsoup.Jsoup;
+import org.jsoup.nodes.Document;
 
 import com.lulski.aries.post.exception.DatabaseAccessException;
 import com.lulski.aries.post.exception.NetworkTimeoutException;
@@ -26,9 +29,11 @@ import reactor.core.publisher.Mono;
 public class PostService {
     private static final Logger LOGGER = LoggerFactory.getLogger(PostService.class);
     private final PostRepository postRepository;
+    private final int postMaxLength;
 
-    public PostService(PostRepository postRepository) {
+    public PostService(PostRepository postRepository, @Value("${post.truncate.maxlength:500}") int maxLength) {
         this.postRepository = postRepository;
+        postMaxLength = maxLength;
     }
 
     /**
@@ -54,12 +59,8 @@ public class PostService {
         return this.postRepository
                 .findAllBy(pageable)
                 .map(post -> {
-                    String truncated = post.getContent();
-                    if (truncated != null && truncated.length() > 100) {
-                        truncated = truncated.substring(0, 100) + "...";
-                    }
+                    String truncated = truncateHtml(post.getContent(), this.postMaxLength);
                     post.setContent(truncated);
-
                     return post;
                 })
                 .onErrorResume(
@@ -183,5 +184,23 @@ public class PostService {
                     return postRepository.save(existingPost);
                 });
 
+    }
+
+    /**
+     * Will strip out HTML tags from input and return truncated text
+     * 
+     * @param html
+     * @param maxLength
+     * @return text value of HTML, truncated if greater than supplied maxLength
+     */
+    private String truncateHtml(String html, int maxLength) {
+        maxLength = maxLength > 0 ? maxLength : this.postMaxLength;
+        if (html != null && html.length() > 0) {
+            Document document = Jsoup.parse(html);
+            String text = document.text();
+            return text.length() > maxLength ? text.substring(0, maxLength) + " ..." : text;
+        } else {
+            return "";
+        }
     }
 }
