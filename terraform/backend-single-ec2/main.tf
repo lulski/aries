@@ -77,8 +77,7 @@ resource "aws_instance" "backend" {
                 aws s3 cp s3://aries-springboot-jar/aries_jar /home/ubuntu/aries-backend.jar
 
                 #run 
-                #nohup java -jar /home/ubuntu/aries-backend.jar --server.port=${var.server_port_backend} --spring.profiles.active=prod > /home/ubuntu/app.log 2>&1 &
-                #nohup java -jar /home/ubuntu/aries-backend.jar --server.port=8080 --spring.profiles.active=prod
+                nohup java -jar /home/ubuntu/aries-backend.jar --server.port=${var.server_port_backend} --spring.profiles.active=prod > /home/ubuntu/app.log 2>&1 &
                 EOF        
   )
 
