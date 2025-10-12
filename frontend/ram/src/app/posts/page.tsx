@@ -1,8 +1,8 @@
 "use client";
 
-import { Button, Container, Group, SimpleGrid } from "@mantine/core";
+import { Button, Group, SimpleGrid } from "@mantine/core";
 import { useSearchParams } from "next/navigation";
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import AriesPagination, {
   AriesPaginationProps,
 } from "../components/Pagination/AriesPagination";
@@ -21,9 +21,6 @@ async function getPosts(
   size: number
 ): Promise<PostApiResponse> {
   const API_BFF_POST_URL = "/api/posts";
-  // console.log(
-  //   `Fetching posts from: ${API_BFF_POST_URL}?page=${currentPage}&size=${size}`
-  // );
   const fetchUrl = `${API_BFF_POST_URL}?page=${currentPage}&size=${size}`;
   const response = await fetch(fetchUrl);
 
@@ -32,7 +29,6 @@ async function getPosts(
   }
   const responseJson: PostApiResponse = await response.json();
 
-  // console.log("Fetched posts:", responseJson);
   return responseJson;
 }
 
@@ -42,7 +38,14 @@ export default function Posts({ searchParams }: PageProps) {
   const size = searchParam.get("size") || "10";
   const [error, setError] = useState<string | null>(null);
 
-  // console.log(`page: ${page}, size: ${size}`);
+  // memoize parsed numeric values
+  const pageNum = useMemo(() => parseInt(page, 10) || 1, [page]);
+  const sizeNum = useMemo(() => parseInt(size, 10) || 10, [size]);
+
+  // simple in-component cache to memoize API responses per page/size
+  const cacheRef = useRef<Record<string, PostApiResponse>>({});
+
+  const cacheKey = useMemo(() => `${pageNum}-${sizeNum}`, [pageNum, sizeNum]);
 
   const [posts, setPosts] = useState<PostApiResponse | null>(null);
   const [pagination, setPagination] = useState<AriesPaginationProps | null>(
@@ -50,24 +53,57 @@ export default function Posts({ searchParams }: PageProps) {
   );
 
   useEffect(() => {
-    getPosts(parseInt(page), parseInt(size))
-      .then((response) => {
-        setPosts(response);
+    let cancelled = false;
 
-        const pagination: AriesPaginationProps = {
-          total: response.total ? response.total : 0,
-          page: page ? parseInt(page) : 1,
-          size: size ? parseInt(size) : 10,
-        };
-        setPagination(pagination);
-        setError(null);
-      })
-      .catch((err) => {
-        setError(err.message);
-        setPosts(null);
-        setPagination(null);
-      });
-  }, [page, size]);
+    async function load() {
+      setError(null);
+
+      // return cached response if present
+      if (cacheRef.current[cacheKey]) {
+        const cached = cacheRef.current[cacheKey];
+        if (!cancelled) {
+          setPosts(cached);
+          setPagination({
+            total: cached.total ?? 0,
+            page: pageNum,
+            size: sizeNum,
+          });
+        }
+        return;
+      }
+
+      try {
+        const response = await getPosts(pageNum, sizeNum);
+        cacheRef.current[cacheKey] = response;
+        if (!cancelled) {
+          // console.log(
+          //   Date.now().toString() + " >>> useEffect getting posts from cache: ",
+          //   cacheKey,
+          //   pageNum,
+          //   sizeNum
+          // );
+          setPosts(response);
+          setPagination({
+            total: response.total ?? 0,
+            page: pageNum,
+            size: sizeNum,
+          });
+        }
+      } catch (err: any) {
+        if (!cancelled) {
+          setError(err?.message ?? "Failed to fetch posts");
+          setPosts(null);
+          setPagination(null);
+        }
+      }
+    }
+
+    load();
+
+    return () => {
+      cancelled = true;
+    };
+  }, [cacheKey, pageNum, sizeNum]);
 
   const [showNewButton, setShowNewButton] = useState<boolean | null>(null);
   useEffect(() => {
@@ -95,7 +131,7 @@ export default function Posts({ searchParams }: PageProps) {
   return (
     <>
       {showNewButton && (
-        <Container strategy="grid">
+        <SimpleGrid>
           <Group justify="flex-end">
             <Button
               component="a"
@@ -106,7 +142,7 @@ export default function Posts({ searchParams }: PageProps) {
               New Post
             </Button>
           </Group>
-        </Container>
+        </SimpleGrid>
       )}
       <SimpleGrid>
         {posts.postDto.map((post, index) => (
