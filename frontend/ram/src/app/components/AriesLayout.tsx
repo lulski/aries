@@ -1,19 +1,11 @@
 "use client";
 
-import {
-  Anchor,
-  AppShell,
-  Burger,
-  Group,
-  Stack,
-  Title,
-  useMantineTheme,
-} from "@mantine/core";
+import { AriesLayoutProps } from "@/app/types/AriesLayoutProperties";
+import { Anchor, AppShell, Burger, Group, Stack, Title } from "@mantine/core";
 import { useDisclosure } from "@mantine/hooks";
 import { ReactNode } from "react";
-import { AriesLayoutProps } from "@/app/types/AriesLayoutProperties";
-import { ThemeToggleButton } from "./ThemeToggleButton/ThemeToggleButton";
 import { useTheme } from "../context/ThemeContext";
+import { ThemeToggleButton } from "./ThemeToggleButton/ThemeToggleButton";
 
 export default function AriesLayout({ children }: { children: ReactNode }) {
   const [navbarIsOpen, { toggle }] = useDisclosure();
@@ -21,10 +13,9 @@ export default function AriesLayout({ children }: { children: ReactNode }) {
 
   const layoutProps: AriesLayoutProps = {
     navbarItems: [
-      { label: "main", href: "/" },
-      { label: "memo", href: "/posts" },
-      { label: "who_am_i", href: "/about" },
-      { label: "clicky", href: "/login" },
+      { label: "Home", href: "/" },
+      { label: "Dev Memo", href: "/posts" },
+      { label: "About Me", href: "/about" },
     ],
   };
 
@@ -71,10 +62,10 @@ export default function AriesLayout({ children }: { children: ReactNode }) {
                 hiddenFrom="md"
                 c={theme.primaryColor}
               >
-                Coco Classico
+                Ichsan Siswoputranto
               </Title>
               <Title order={1} visibleFrom="md" c={theme.primaryColor}>
-                Coco Classico
+                Ichsan Siswoputranto
               </Title>
             </Stack>
           </Group>

@@ -3,6 +3,7 @@
 import { Button, Group, SimpleGrid } from "@mantine/core";
 import { useSearchParams } from "next/navigation";
 import { useEffect, useMemo, useRef, useState } from "react";
+import { ErrorBanner } from "../components/ErrorBanner/Error";
 import AriesPagination, {
   AriesPaginationProps,
 } from "../components/Pagination/AriesPagination";
@@ -125,7 +126,8 @@ export default function Posts({ searchParams }: PageProps) {
     getSession();
   }, []);
 
-  if (error) return <div>Error: {error}</div>;
+  if (error) return <ErrorBanner message={error} onRetry={null} />;
+
   if (!posts) return <div>Loading...</div>;
 
   return (
