@@ -70,7 +70,7 @@ export async function fetchPaginatedPosts(
   });
 
   if (!response.ok) {
-    throw new Error("Failed to fetch posts");
+    throw new Error("Unable to fetch data");
   }
 
   return response.json();
