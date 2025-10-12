@@ -45,7 +45,7 @@ export default function AboutMePage() {
             <Stack gap={4}>
               <Title order={2}>Ichsan Siswoputranto</Title>
               <Text size="sm" c="dimmed">
-                Software Engineer & Technical Consultant
+                Software Engineer
               </Text>
               <Group gap="xs" mt="xs">
                 <Badge color="blue" variant="light">
@@ -65,25 +65,28 @@ export default function AboutMePage() {
 
           <Stack gap="sm">
             <Text size="md">
-              I'm a Software Engineer and Technical Consultant with over 15
-              years of experience designing, building, and optimizing enterprise
-              systems across telecommunications, finance, insurance, and
-              government sectors.
+              I'm a Software Engineer with over 15 years of experience
+              designing, building, and optimizing enterprise systems across
+              telecommunications, finance, insurance, and government sectors.
             </Text>
 
             <Text size="md">
-              I specialize in{" "}
-              <strong>Java, Spring Boot, Microservices, and AWS</strong>, with a
-              strong focus on system integration, scalability, and security. I
-              also work with <strong>React and Next.js</strong> to deliver
-              seamless, modern web experiences backed by robust backend
-              architectures.
+              What truly drives me, though, is the craft of software development
+              itself — the curiosity to understand how things work, the
+              satisfaction of solving complex problems, and the joy of
+              continuously improving both my code and my thinking.
             </Text>
 
             <Text size="md">
-              I'm passionate about solving complex problems, mentoring
-              developers, and building scalable, secure systems that make a real
-              impact.
+              This website is a reflection of that mindset. It’s a personal
+              space in constant progress — a place where I experiment, learn new
+              technologies, and explore ideas that don’t always fit into my
+              day-to-day work.
+            </Text>
+            <Text size="md">
+              Whether it’s refining backend systems, experimenting with frontend
+              frameworks, or just documenting lessons learned, this site is my
+              medium to build, break, and grow as a software engineer.
             </Text>
           </Stack>
 
