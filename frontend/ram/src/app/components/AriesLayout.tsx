@@ -13,7 +13,6 @@ export default function AriesLayout({ children }: { children: ReactNode }) {
 
   const layoutProps: AriesLayoutProps = {
     navbarItems: [
-      { label: "Home", href: "/" },
       { label: "Dev Memo", href: "/posts" },
       { label: "About Me", href: "/about" },
     ],
@@ -46,7 +45,7 @@ export default function AriesLayout({ children }: { children: ReactNode }) {
                 suppressHydrationWarning
                 c={theme.primaryColor}
               >
-                Coco Classico
+                Ichsan Siswoputranto
               </Title>
               <Title
                 order={3}
@@ -54,7 +53,7 @@ export default function AriesLayout({ children }: { children: ReactNode }) {
                 hiddenFrom="sm"
                 c={theme.primaryColor}
               >
-                Coco Classico
+                Ichsan Siswoputranto
               </Title>
               <Title
                 order={2}
