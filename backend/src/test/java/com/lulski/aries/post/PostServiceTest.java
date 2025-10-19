@@ -27,129 +27,130 @@ import reactor.test.StepVerifier;
 @ActiveProfiles("mock")
 public class PostServiceTest {
 
-    private static final Logger logger = LoggerFactory.getLogger(PostServiceTest.class);
-    private final User author = new User(
-            new ObjectId("6795b64f525959be00d07c0b"),
-            "rbelmont",
-            "dummyPassword",
-            "Richter",
-            "Belmont",
-            "rbelmont@xyz.com");
-    private final Post post = new Post(
-            new ObjectId("1234b64f525959be00d07c0b"),
-            "how to gitgood part two",
-            "you just have to grind 3 hours everyday",
-            author.getUsername(),
-            LocalDateTime.now(),
-            LocalDateTime.now(),
-            false,
-            false);
-    @Autowired
-    private PostService postService;
-    @Value("${spring.profiles.active}")
-    private String profile;
-    @Autowired
-    private PostRepository postRepository;
-    @Autowired
-    private ApplicationContext cApplicationContext;
+        private static final Logger logger = LoggerFactory.getLogger(PostServiceTest.class);
+        private final User author = new User(
+                        new ObjectId("6795b64f525959be00d07c0b"),
+                        "rbelmont",
+                        "dummyPassword",
+                        "Richter",
+                        "Belmont",
+                        "rbelmont@xyz.com");
+        private final Post post = new Post(
+                        new ObjectId("1234b64f525959be00d07c0b"),
+                        "how to gitgood part two",
+                        "you just have to grind 3 hours everyday",
+                        author.getUsername(),
+                        LocalDateTime.now(),
+                        LocalDateTime.now(),
+                        false,
+                        false);
+        @Autowired
+        private PostService postService;
+        @Value("${spring.profiles.active}")
+        private String profile;
+        @Autowired
+        private PostRepository postRepository;
+        @Autowired
+        private ApplicationContext cApplicationContext;
 
-    @Test
-    void contextLoads() {
-        Arrays.stream(cApplicationContext.getBeanDefinitionNames())
-                .forEach(b -> System.out.println(">>> bean: " + b));
-    }
-
-    @BeforeEach
-    void setUp() {
-        if (profile.equals("testcontainer")) {
-            System.out.println(">>> Starting testcontainer:mongodb");
-            MongoDbContainerUtil.getMongoDbContainer().start();
-        } else if (profile.equals("mock")) {
-            logger.info("using mockBean");
+        @Test
+        void contextLoads() {
+                Arrays.stream(cApplicationContext.getBeanDefinitionNames())
+                                .forEach(b -> System.out.println(">>> bean: " + b));
         }
-    }
 
-    @AfterEach
-    void afterAll() {
-        if (profile.equals("testcontainer")) {
-            System.out.println(">>> stopping testcontainer:mongodb");
-            MongoDbContainerUtil.getMongoDbContainer().stop();
+        @BeforeEach
+        void setUp() {
+                if (profile.equals("testcontainer")) {
+                        System.out.println(">>> Starting testcontainer:mongodb");
+                        MongoDbContainerUtil.getMongoDbContainer().start();
+                } else if (profile.equals("mock")) {
+                        logger.info("using mockBean");
+                }
         }
-    }
 
-    @Test
-    void createNewPostThenArchiveIt() {
-        Arrays.stream(cApplicationContext.getBeanDefinitionNames())
-                .forEach(b -> System.out.println(">>> bean: " + b));
+        @AfterEach
+        void afterAll() {
+                if (profile.equals("testcontainer")) {
+                        System.out.println(">>> stopping testcontainer:mongodb");
+                        MongoDbContainerUtil.getMongoDbContainer().stop();
+                }
+        }
 
-        Post postToBeArchived = new Post(
-                new ObjectId("1234b64f525959be00d07c0b"),
-                "test archiving a post",
-                "Help keep the library tidy by returning your dishes to the cafe",
-                author.getUsername(),
-                LocalDateTime.now(),
-                LocalDateTime.now(),
-                false,
-                false);
+        @Test
+        void createNewPostThenArchiveIt() {
+                Arrays.stream(cApplicationContext.getBeanDefinitionNames())
+                                .forEach(b -> System.out.println(">>> bean: " + b));
 
-        postRepository.save(postToBeArchived).block();
+                Post postToBeArchived = new Post(
+                                new ObjectId("1234b64f525959be00d07c0b"),
+                                "test archiving a post",
+                                "Help keep the library tidy by returning your dishes to the cafe",
+                                author.getUsername(),
+                                LocalDateTime.now(),
+                                LocalDateTime.now(),
+                                false,
+                                false);
 
-        StepVerifier.create(postService.archivePost(postToBeArchived).single())
-                .expectNextMatches(p -> p.getIsArchived() == true)
-                .verifyComplete();
-    }
+                postRepository.save(postToBeArchived).block();
 
-    @Test
-    void createNewPost() {
-        StepVerifier.create(postRepository.save(post).single())
-                .expectNextMatches(p -> p.getId() != null)
-                .verifyComplete();
-    }
+                StepVerifier.create(postService.archivePost(postToBeArchived).single())
+                                .expectNextMatches(p -> p.getIsArchived() == true)
+                                .verifyComplete();
+        }
 
-    @Test
-    void listAllPosts() {
-        StepVerifier.create(postService.listAll(1, 2).collectList())
-                .expectNextMatches(
-                        posts -> {
-                            return !posts.isEmpty();
-                        })
-                .verifyComplete();
-    }
+        @Test
+        void createNewPost() {
+                StepVerifier.create(postRepository.save(post).single())
+                                .expectNextMatches(p -> p.getId() != null)
+                                .verifyComplete();
+        }
 
-    @Test
-    void getById_ThenReturnAPost() {
+        @Test
+        void listAllPosts() {
+                StepVerifier.create(postService.listAll(1, 2).collectList())
+                                .expectNextMatches(
+                                                posts -> {
+                                                        return !posts.isEmpty();
+                                                })
+                                .verifyComplete();
+        }
 
-        StepVerifier.create(postService.getById(TestMockRepositoryConfig.mockPostId))
-                .expectNextMatches(post -> post.getId().equals(new ObjectId(TestMockRepositoryConfig.mockPostId)))
-                .verifyComplete();
-    }
+        @Test
+        void getById_ThenReturnAPost() {
 
-    @Test
-    void getByTitle_ThenReturnAPost() {
-        StepVerifier.create(postService.getByTitle("how to gitgood part two"))
-                .expectNextMatches(post -> post.getTitle().equals("how to gitgood part two"))
-                .verifyComplete();
-    }
+                StepVerifier.create(postService.getById(TestMockRepositoryConfig.mockPostId))
+                                .expectNextMatches(post -> post.getId()
+                                                .equals(new ObjectId(TestMockRepositoryConfig.mockPostId)))
+                                .verifyComplete();
+        }
 
-    @Test
-    void shouldUpdatePostWithNewTitleAndContent() {
-        var updateDto = new PostRequestDto("how to gitgood part two has been updated", "just use AI",
-                "1234b64f525959be00d07c0b");
+        @Test
+        void getByTitle_ThenReturnAPost() {
+                StepVerifier.create(postService.getByTitle("how to gitgood part two"))
+                                .expectNextMatches(post -> post.getTitle().equals("how to gitgood part two"))
+                                .verifyComplete();
+        }
 
-        Post expected = new Post(
-                new ObjectId("1234b64f525959be00d07c0b"),
-                "how to gitgood part two has been updated",
-                "just use AI",
-                author.getUsername(),
-                LocalDateTime.now(),
-                LocalDateTime.now(),
-                false,
-                false);
+        @Test
+        void shouldUpdatePostWithNewTitleAndContent() {
+                var updateDto = new PostRequestDto("how to gitgood part two has been updated", "just use AI",
+                                "1234b64f525959be00d07c0b");
 
-        StepVerifier.create(postService.updatePost(updateDto, this.author))
-                .expectNextMatches(updatedPost -> updatedPost.getTitle().equals(expected.getTitle()) &&
-                        updatedPost.getContent().equals(expected.getContent()) &&
-                        updatedPost.getAuthor().equals(expected.getAuthor()))
-                .verifyComplete();
-    }
+                Post expected = new Post(
+                                new ObjectId("1234b64f525959be00d07c0b"),
+                                "how to gitgood part two has been updated",
+                                "just use AI",
+                                author.getUsername(),
+                                LocalDateTime.now(),
+                                LocalDateTime.now(),
+                                false,
+                                false);
+
+                StepVerifier.create(postService.updatePost(updateDto, this.author))
+                                .expectNextMatches(updatedPost -> updatedPost.getTitle().equals(expected.getTitle()) &&
+                                                updatedPost.getContent().equals(expected.getContent()) &&
+                                                updatedPost.getAuthor().equals(expected.getAuthor()))
+                                .verifyComplete();
+        }
 }

@@ -122,8 +122,6 @@ public class TestMockRepositoryConfig {
         post2.setContent("content 2");
 
         when(postRepository.findAllBy(any(Pageable.class))).thenReturn(Flux.just(post1, post2));
-        // Pageable pageable = PageRequest.of(page, size, Sort.by(Sort.Direction.DESC,
-        // "createdOn"));
 
         when(postRepository.save(any())).thenAnswer(invocationOnMock -> {
             Post post = invocationOnMock.getArgument(0);
