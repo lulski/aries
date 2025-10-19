@@ -54,16 +54,16 @@ class PostRouterAndHandlerTest {
     private ServerRequest mockServerRequest;
 
     private final User mockUser = new User.UserBuilder()
-        .authorities(Set.of("USER"))
-        .firstname("kocu")
-        .lastname("gonzales")
-        .password("Test")
-        .build();
+            .authorities(Set.of("USER"))
+            .firstname("kocu")
+            .lastname("gonzales")
+            .password("Test")
+            .build();
 
     @Test
     void contextLoad() {
         Arrays.stream(applicationContext.getBeanDefinitionNames())
-            .forEach(b -> System.out.println(">> beans: " + b));
+                .forEach(b -> System.out.println(">> beans: " + b));
     }
 
     @Test
@@ -75,20 +75,20 @@ class PostRouterAndHandlerTest {
         post.setContent(postRequestDto.content());
 
         User mockUser = new User.UserBuilder()
-            .authorities(Set.of("USER"))
-            .firstname("kocu")
-            .lastname("gonzales")
-            .password("Test")
-            .build();
+                .authorities(Set.of("USER"))
+                .firstname("kocu")
+                .lastname("gonzales")
+                .password("Test")
+                .build();
 
         webTestClient
-            .mutateWith(mockUser(mockUser))
-            .post()
-            .uri("/posts")
-            .body(BodyInserters.fromValue(postRequestDto))
-            .exchange()
-            .expectStatus()
-            .is2xxSuccessful();
+                .mutateWith(mockUser(mockUser))
+                .post()
+                .uri("/posts")
+                .body(BodyInserters.fromValue(postRequestDto))
+                .exchange()
+                .expectStatus()
+                .is2xxSuccessful();
     }
 
     @Test
@@ -101,19 +101,19 @@ class PostRouterAndHandlerTest {
         post.setContent(postRequestDto.content());
 
         User mockUser = new User.UserBuilder()
-            .authorities(Set.of("USER"))
-            .firstname("kocu")
-            .lastname("gonzales")
-            .password("Test")
-            .build();
+                .authorities(Set.of("USER"))
+                .firstname("kocu")
+                .lastname("gonzales")
+                .password("Test")
+                .build();
 
         webTestClient
-            .mutateWith(mockUser(mockUser))
-            .get()
-            .uri("/posts?id=" + TestMockRepositoryConfig.mockPostId)
-            .exchange()
-            .expectStatus()
-            .is2xxSuccessful();
+                .mutateWith(mockUser(mockUser))
+                .get()
+                .uri("/posts?id=" + TestMockRepositoryConfig.mockPostId)
+                .exchange()
+                .expectStatus()
+                .is2xxSuccessful();
     }
 
     @Test
@@ -124,54 +124,58 @@ class PostRouterAndHandlerTest {
         PostRequestDto postRequestDto = new PostRequestDto("is this it", "modern age", "");
 
         webTestClient
-            .mutateWith(mockUser(mockUser))
-            .post()
-            .uri("/posts")
-            .body(BodyInserters.fromValue(postRequestDto))
-            .exchange()
-            .expectStatus()
-            .is5xxServerError();
+                .mutateWith(mockUser(mockUser))
+                .post()
+                .uri("/posts")
+                .body(BodyInserters.fromValue(postRequestDto))
+                .exchange()
+                .expectStatus()
+                .is5xxServerError();
     }
 
     @Test
     void findByTitle_WithSpecialCharacters() {
         String specialCharacterTitle = "Special%Character";
         Post expectedPost = new Post(new ObjectId(),
-            specialCharacterTitle, "This is a post with special characters in the title",
-            "testUser", LocalDateTime.now().minusDays(1), LocalDateTime.now(), true, false);
+                specialCharacterTitle, "This is a post with special characters in the title",
+                "testUser", LocalDateTime.now().minusDays(1), LocalDateTime.now(), true, false);
 
         when(postRepository.findTopByTitle(specialCharacterTitle)).thenReturn(Mono.just(expectedPost));
 
         when(mockServerRequest.queryParam("title")).thenReturn(Optional.of(specialCharacterTitle));
 
         webTestClient
-            .mutateWith(mockUser(mockUser))
-            .get()
-            .uri("/posts?title=" + specialCharacterTitle)
-            .exchange()
-            .expectStatus()
-            .is2xxSuccessful()
-            .expectBody(PostResponseDto.PostDto.class)
-            .consumeWith((result) -> {
-                PostResponseDto.PostDto responseBody = result.getResponseBody();
-                System.out.println("Content-Type: "
-                    + result.getResponseHeaders().getContentType());
-                System.out.println("Response Body: " + responseBody);
-                assertThat(responseBody).isNotNull();
-                assertThat(responseBody.title()).isEqualTo(specialCharacterTitle);
-                assertThat(responseBody.content()).isEqualTo(
-                    "This is a post with special characters in the title");
-                assertThat(responseBody.id()).isNotNull();
-                assertThat(responseBody.createdOn()
-                    .equals(LocalDateTime.now().minusDays(1)
-                        .format(DateTimeFormatter.ofLocalizedDate(FormatStyle.MEDIUM)
-                            .withLocale(Locale.ENGLISH))));
-                assertThat(responseBody.modifiedOn()
-                    .equals(LocalDateTime.now()
-                        .format(DateTimeFormatter.ofLocalizedDate(FormatStyle.MEDIUM)
-                            .withLocale(Locale.ENGLISH))));
+                .mutateWith(mockUser(mockUser))
+                .get()
+                .uri("/posts?title=" + specialCharacterTitle)
+                .exchange()
+                .expectStatus()
+                .is2xxSuccessful()
+                .expectBody(PostResponseDto.PostDto.class)
+                .consumeWith((result) -> {
+                    PostResponseDto.PostDto responseBody = result.getResponseBody();
+                    System.out.println("Content-Type: "
+                            + result.getResponseHeaders().getContentType());
+                    System.out.println("Response Body: " + responseBody);
+                    assertThat(responseBody).isNotNull();
+                    assertThat(responseBody.title()).isEqualTo(specialCharacterTitle);
 
-            });
+                    assertThat(responseBody.titleUrl())
+                            .isEqualTo(PostUtil.sanitizeTitleForURL(specialCharacterTitle));
+
+                    assertThat(responseBody.content()).isEqualTo(
+                            "This is a post with special characters in the title");
+                    assertThat(responseBody.id()).isNotNull();
+                    assertThat(responseBody.createdOn()
+                            .equals(LocalDateTime.now().minusDays(1)
+                                    .format(DateTimeFormatter.ofLocalizedDate(FormatStyle.MEDIUM)
+                                            .withLocale(Locale.ENGLISH))));
+                    assertThat(responseBody.modifiedOn()
+                            .equals(LocalDateTime.now()
+                                    .format(DateTimeFormatter.ofLocalizedDate(FormatStyle.MEDIUM)
+                                            .withLocale(Locale.ENGLISH))));
+
+                });
     }
 
     @Test
@@ -183,12 +187,12 @@ class PostRouterAndHandlerTest {
         Mono<ServerResponse> responseMono = postHandler.findByTitle(mockServerRequest);
         // Then
         StepVerifier.create(responseMono)
-            .expectErrorSatisfies(error -> {
-                assertThat(error)
-                    .isInstanceOf(BadRequestException.class)
-                    .hasMessage("invalid request: title query parameter is missing");
-            })
-            .verify();
+                .expectErrorSatisfies(error -> {
+                    assertThat(error)
+                            .isInstanceOf(BadRequestException.class)
+                            .hasMessage("invalid request: title query parameter is missing");
+                })
+                .verify();
 
         verify(mockServerRequest, times(1)).queryParam("title");
 
