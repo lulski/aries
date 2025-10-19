@@ -5,7 +5,7 @@ meta {
 }
 
 get {
-  url: http://localhost:8181/api/v1/users/:username
+  url: {{protocol}}://{{host}}:{{port}}/api/v1/users/:username
   body: none
   auth: basic
 }
@@ -15,7 +15,7 @@ params:query {
 }
 
 params:path {
-  username: tbelmonttt
+  username: kocu
 }
 
 headers {
