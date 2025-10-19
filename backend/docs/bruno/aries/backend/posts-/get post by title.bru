@@ -5,14 +5,14 @@ meta {
 }
 
 get {
-  url: {{protocol}}://{{host}}:{{port}}api/v1/posts?title=eleventh-post&id=68eac4a6305c898302608171
+  url: {{protocol}}://{{host}}:{{port}}/api/v1/posts?id=68eac4a6305c898302608171
   body: none
   auth: basic
 }
 
 params:query {
-  title: eleventh-post
   id: 68eac4a6305c898302608171
+  ~title: eleventh-post
 }
 
 headers {
