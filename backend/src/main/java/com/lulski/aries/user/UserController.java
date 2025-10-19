@@ -47,25 +47,24 @@ public class UserController {
      */
     @PostMapping(PATH_USER)
     public Mono<ResponseEntity<UserControllerResponseDto>> addUser(
-        @RequestBody UserRequestDto userDto) {
+            @RequestBody UserRequestDto userDto) {
 
         return userService
-            .insertNew(userDto)
-            .map(
-                savedUser -> {
-                    UserControllerResponseDto userControllerResponseDto =
-                        new UserControllerResponseDto(
-                            List.of(UserDto.fromUser(savedUser)), ResponseStatus.SUCCESS.getValue());
-                    return ResponseEntity.ok().body((userControllerResponseDto));
-                })
-            .onErrorResume(
-                e -> {
-                    LOGGER.error(e.getMessage());
-                    UserControllerResponseDto userControllerResponseDto =
-                        new UserControllerResponseDto(List.of(), ResponseStatus.FAILED.getValue());
-                    return Mono.just(
-                        ResponseEntity.internalServerError().body(userControllerResponseDto));
-                });
+                .insertNew(userDto)
+                .map(
+                        savedUser -> {
+                            UserControllerResponseDto userControllerResponseDto = new UserControllerResponseDto(
+                                    List.of(UserDto.fromUser(savedUser)), ResponseStatus.SUCCESS.getValue());
+                            return ResponseEntity.ok().body((userControllerResponseDto));
+                        })
+                .onErrorResume(
+                        e -> {
+                            LOGGER.error(e.getMessage());
+                            UserControllerResponseDto userControllerResponseDto = new UserControllerResponseDto(
+                                    List.of(), ResponseStatus.FAILED.getValue());
+                            return Mono.just(
+                                    ResponseEntity.internalServerError().body(userControllerResponseDto));
+                        });
     }
 
     /**
@@ -76,18 +75,17 @@ public class UserController {
      */
     @GetMapping(PATH_USER + "/{username}")
     public Mono<ResponseEntity<UserControllerResponseDto>> getUserByUsername(
-        @PathVariable String username) {
+            @PathVariable("username") String username) {
 
         return userRepository
-            .findTopByUsername(username)
-            .map(
-                foundUser ->
-                    ResponseEntity.ok()
-                        .body(
-                            new UserControllerResponseDto(
-                                List.of(UserDto.fromUser(foundUser)),
-                                ResponseStatus.SUCCESS.getValue())))
-            .switchIfEmpty(Mono.just(ResponseEntity.notFound().build()));
+                .findTopByUsername(username)
+                .map(
+                        foundUser -> ResponseEntity.ok()
+                                .body(
+                                        new UserControllerResponseDto(
+                                                List.of(UserDto.fromUser(foundUser)),
+                                                ResponseStatus.SUCCESS.getValue())))
+                .switchIfEmpty(Mono.just(ResponseEntity.notFound().build()));
     }
 
     /**
@@ -99,24 +97,23 @@ public class UserController {
      */
     @PatchMapping(PATH_USER + "/{username}")
     public Mono<ResponseEntity<UserControllerResponseDto>> updateByUsername(
-        @PathVariable String username, @RequestBody UserRequestDto userRequestDto) {
+            @PathVariable("username") String username, @RequestBody UserRequestDto userRequestDto) {
         return userService
-            .update(username, userRequestDto)
-            .map(
-                updatedUser ->
-                    ResponseEntity.ok(
-                        new UserControllerResponseDto(
-                            List.of(UserDto.fromUser(updatedUser)), ResponseStatus.SUCCESS.getValue())))
-            .switchIfEmpty(Mono.just(ResponseEntity.notFound().build()))
-            .onErrorResume(
-                e -> {
-                    LOGGER.error(e.getMessage());
-                    return Mono.just(
-                        ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
-                            .body(
+                .update(username, userRequestDto)
+                .map(
+                        updatedUser -> ResponseEntity.ok(
                                 new UserControllerResponseDto(
-                                    List.of(), ResponseStatus.FAILED.getValue())));
-                });
+                                        List.of(UserDto.fromUser(updatedUser)), ResponseStatus.SUCCESS.getValue())))
+                .switchIfEmpty(Mono.just(ResponseEntity.notFound().build()))
+                .onErrorResume(
+                        e -> {
+                            LOGGER.error(e.getMessage());
+                            return Mono.just(
+                                    ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                                            .body(
+                                                    new UserControllerResponseDto(
+                                                            List.of(), ResponseStatus.FAILED.getValue())));
+                        });
     }
 
     /**
@@ -127,23 +124,22 @@ public class UserController {
      */
     @DeleteMapping(PATH_USER + "/{username}")
     public Mono<ResponseEntity<UserControllerResponseDto>> deleteUserByUsername(
-        @PathVariable String username) {
+            @PathVariable("username") String username) {
 
         return userRepository
-            .deleteByUsername(username)
-            .then(
-                Mono.just(
-                    ResponseEntity.ok()
-                        .body(
-                            new UserControllerResponseDto(
-                                List.of(), "user " + username + " successfully deleted"))))
-            .onErrorResume(
-                e ->
-                    Mono.just(
-                        ResponseEntity.internalServerError()
-                            .body(
-                                new UserControllerResponseDto(
-                                    List.of(), "failed deleting user: " + username))));
+                .deleteByUsername(username)
+                .then(
+                        Mono.just(
+                                ResponseEntity.ok()
+                                        .body(
+                                                new UserControllerResponseDto(
+                                                        List.of(), "user " + username + " successfully deleted"))))
+                .onErrorResume(
+                        e -> Mono.just(
+                                ResponseEntity.internalServerError()
+                                        .body(
+                                                new UserControllerResponseDto(
+                                                        List.of(), "failed deleting user: " + username))));
     }
 
     /**
@@ -154,22 +150,21 @@ public class UserController {
     @GetMapping(PATH_USER)
     public Mono<ResponseEntity<UserControllerResponseDto>> listAllUsers() {
         return userService
-            .findAll()
-            .map(UserDto::fromUser)
-            .collectList()
-            .map(
-                dtoList ->
-                    ResponseEntity.ok()
-                        .body(
-                            new UserControllerResponseDto(dtoList, ResponseStatus.SUCCESS.getValue())))
-            .onErrorResume(
-                e -> {
-                    LOGGER.error(e.getMessage());
-                    return Mono.just(
-                        ResponseEntity.internalServerError()
-                            .body(
-                                new UserControllerResponseDto(
-                                    List.of(), ResponseStatus.FAILED.getValue())));
-                });
+                .findAll()
+                .map(UserDto::fromUser)
+                .collectList()
+                .map(
+                        dtoList -> ResponseEntity.ok()
+                                .body(
+                                        new UserControllerResponseDto(dtoList, ResponseStatus.SUCCESS.getValue())))
+                .onErrorResume(
+                        e -> {
+                            LOGGER.error(e.getMessage());
+                            return Mono.just(
+                                    ResponseEntity.internalServerError()
+                                            .body(
+                                                    new UserControllerResponseDto(
+                                                            List.of(), ResponseStatus.FAILED.getValue())));
+                        });
     }
 }

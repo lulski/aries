@@ -117,18 +117,6 @@ class UserControllerTest {
     @Test
     @Order(2)
     void getUserByUsername() {
-        Mono<User> monoUserSaveResponse = userRepository.save(this.dummyUser).single();
-
-        StepVerifier.create(monoUserSaveResponse)
-                .expectNextMatches(
-                        user -> {
-                            User savedUser = user;
-                            System.out.println(savedUser.getId());
-                            userRepository.findTopByUsername(savedUser.getUsername());
-                            return true;
-                        })
-                .expectComplete()
-                .verify();
 
         webTestClient
                 .get()
