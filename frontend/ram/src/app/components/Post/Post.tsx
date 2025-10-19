@@ -34,7 +34,7 @@ export default function Post({ post, allowHtmlMarkup }: PostProps) {
         id={post.id}
       >
         <Group justify="space-between" mt="md" mb="xs">
-          <Title order={5}>{post.title}</Title>
+          <Title order={1}>{post.title}</Title>
         </Group>
 
         <Box size="sm" dangerouslySetInnerHTML={{ __html: displayContent }} />
