@@ -32,6 +32,7 @@ export type SessionData = {
 export type PostData = {
   id: string;
   title: string;
+  titleUrl: string;
   content: string;
   author: string;
   createdOn: string;

@@ -83,7 +83,7 @@ export default function editPost() {
       const data = await res.json();
       console.log(data);
       if (res.ok) {
-        const newTitle = encodeURI(data.postDto[0].title);
+        const newTitle = encodeURI(data.postDto[0].titleUrl);
         router.push(`/posts/${newTitle}`);
       } else {
         console.error(data.error);

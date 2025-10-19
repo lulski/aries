@@ -17,7 +17,7 @@ export default function PostInline(post: PostData) {
       radius="md"
       withBorder
       component={Link}
-      href={`/posts/${post.title}`}
+      href={`/posts/${post.titleUrl}`}
       styles={{ root: { marginBottom: 10 } }}
       id={post.id}
     >
