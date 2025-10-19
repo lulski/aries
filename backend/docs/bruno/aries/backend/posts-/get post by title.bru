@@ -5,13 +5,14 @@ meta {
 }
 
 get {
-  url: http://3.105.182.113:8181/api/v1/posts?title=Tasks
+  url: http://{{host}}:{{port}}/api/v1/posts?title=eleventh-post&id=68eac4a6305c898302608171
   body: none
   auth: basic
 }
 
 params:query {
-  title: Tasks
+  title: eleventh-post
+  id: 68eac4a6305c898302608171
 }
 
 headers {
@@ -20,6 +21,6 @@ headers {
 }
 
 auth:basic {
-  username: isiswoputranto
-  password: _hsad712!
+  username: {{api_username}}
+  password: {{api_password}}
 }
