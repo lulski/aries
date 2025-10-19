@@ -1,14 +1,7 @@
-export interface Post {
-  id: string;
-  title: string;
-  content: string;
-  createdOn: string;
-  modifiedOn: string;
-  author: string;
-}
+import { PostData } from "./definitions";
 
 export interface PostApiResponse {
-  postDto: Post[];
+  postDto: PostData[];
   message: string;
   page: number;
   size: number;
