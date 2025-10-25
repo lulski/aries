@@ -1,0 +1,25 @@
+meta {
+  name: image
+  type: http
+  seq: 1
+}
+
+get {
+  url: {{protocol}}://{{host}}:{{port}}/api/v1/presigned-url/aries-image-upload/totoro.png
+  body: none
+  auth: basic
+}
+
+params:query {
+  ~email: milunes@gmail.com
+}
+
+headers {
+  User-Agent: insomnia/10.2.0
+  X-CSRF-TOKEN: undefined
+}
+
+auth:basic {
+  username: {{api_username}}
+  password: {{api_password}}
+}
