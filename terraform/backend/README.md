@@ -1,4 +1,4 @@
-# Terraform Backend Infrastructure
+# Terraform Backend Infrastructure - NOT USED ANYMORE, USING backend-single-ec2/ instead
 
 This directory contains Terraform configuration files for deploying the backend infrastructure.
 
@@ -33,6 +33,6 @@ This directory contains Terraform configuration files for deploying the backend 
 - AWS credentials configured (if deploying to AWS)
 - Update variable values as needed in `variables.tf` or via CLI
 
-## todo
+## Notes
 
-- deploy backend.jar to this EC2 instance
+-
