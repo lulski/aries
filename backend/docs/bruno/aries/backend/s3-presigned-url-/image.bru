@@ -5,13 +5,9 @@ meta {
 }
 
 get {
-  url: {{protocol}}://{{host}}:{{port}}/api/v1/presigned-url/aries-image-upload/totoro.png
+  url: {{protocol}}://{{host}}:{{port}}/api/v1/s3/presigned-url/aries-image-upload/totoro.png
   body: none
   auth: basic
-}
-
-params:query {
-  ~email: milunes@gmail.com
 }
 
 headers {
