@@ -1,0 +1,24 @@
+meta {
+  name: upload image
+  type: http
+  seq: 3
+}
+
+put {
+  url: {{protocol}}://{{host}}:{{port}}/api/v1/s3/upload/aries-image-upload/pexel
+  body: multipartForm
+  auth: inherit
+}
+
+headers {
+  Content-Type: multipart/form-data
+}
+
+body:multipart-form {
+  file: @file(/Users/lulski/Pictures/wallpapers/pexels-pixabay-459203.jpg)
+}
+
+settings {
+  encodeUrl: false
+  timeout: 0
+}
