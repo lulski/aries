@@ -5,7 +5,7 @@ meta {
 }
 
 put {
-  url: {{protocol}}://{{host}}:{{port}}/api/v1/s3/upload/aries-image-upload/pexel
+  url: {{protocol}}://{{host}}:{{port}}/api/v1/s3/upload/aries-img-bucket
   body: multipartForm
   auth: inherit
 }
@@ -15,7 +15,7 @@ headers {
 }
 
 body:multipart-form {
-  file: @file(/Users/lulski/Pictures/wallpapers/pexels-pixabay-459203.jpg)
+  file: @file(/Users/lulski/Pictures/wallpapers/totoro.png)
 }
 
 settings {
