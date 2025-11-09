@@ -3,6 +3,10 @@ package com.lulski.aries.user;
 import static com.lulski.aries.util.Constant.PATH_USER;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.springframework.security.test.web.reactive.server.SecurityMockServerConfigurers.mockUser;
+
+import java.util.Arrays;
+import java.util.Set;
+
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.MethodOrderer;
@@ -24,11 +28,6 @@ import org.springframework.web.reactive.function.BodyInserters;
 
 import com.lulski.aries.config.MongoDbContainerUtil;
 import com.lulski.aries.config.TestWebSecurityConfig;
-
-import java.util.Arrays;
-import java.util.Set;
-import reactor.core.publisher.Mono;
-import reactor.test.StepVerifier;
 
 @SpringBootTest()
 @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
