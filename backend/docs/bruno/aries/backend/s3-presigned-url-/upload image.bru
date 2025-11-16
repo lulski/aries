@@ -5,7 +5,7 @@ meta {
 }
 
 put {
-  url: {{protocol}}://{{host}}:{{port}}/api/v1/s3/upload/aries-img-bucket
+  url: {{protocol}}://{{host}}:{{port}}/api/v1/s3/upload/aries-img-bucket/S3_bucket_design.png
   body: multipartForm
   auth: inherit
 }
@@ -15,7 +15,7 @@ headers {
 }
 
 body:multipart-form {
-  file: @file(/Users/lulski/Pictures/wallpapers/totoro.png)
+  file: @file(/Users/lulski/Downloads/S3_bucket_design.png)
 }
 
 settings {
