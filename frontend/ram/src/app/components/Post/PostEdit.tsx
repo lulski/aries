@@ -1,15 +1,17 @@
 "use client";
 
-import "@mantine/tiptap/styles.css";
+// import "@mantine/tiptap/styles.css";
 
 import { InputWrapper, TextInput } from "@mantine/core";
 import { UseFormReturnType } from "@mantine/form";
 import { Link, RichTextEditor } from "@mantine/tiptap";
+import { IconColorPicker } from "@tabler/icons-react";
+import { Color } from "@tiptap/extension-color";
 import Highlight from "@tiptap/extension-highlight";
 import SubScript from "@tiptap/extension-subscript";
 import Superscript from "@tiptap/extension-superscript";
 import TextAlign from "@tiptap/extension-text-align";
-import Underline from "@tiptap/extension-underline";
+import { TextStyle } from "@tiptap/extension-text-style";
 import { useEditor } from "@tiptap/react";
 import StarterKit from "@tiptap/starter-kit";
 
@@ -26,7 +28,8 @@ export default function PostEdit({ form, error }: PostEditProps) {
   const editor = useEditor({
     extensions: [
       StarterKit,
-      Underline,
+      TextStyle,
+      Color,
       Link,
       Superscript,
       SubScript,
@@ -36,6 +39,7 @@ export default function PostEdit({ form, error }: PostEditProps) {
     content: form.values.content,
     onUpdate: ({ editor }) => form.setFieldValue("content", editor.getHTML()),
     immediatelyRender: false,
+    shouldRerenderOnTransaction: true,
   });
 
   return (
@@ -69,7 +73,6 @@ export default function PostEdit({ form, error }: PostEditProps) {
               <RichTextEditor.Strikethrough />
               <RichTextEditor.ClearFormatting />
               <RichTextEditor.Highlight />
-              <RichTextEditor.Code />
             </RichTextEditor.ControlsGroup>
 
             <RichTextEditor.ControlsGroup>
@@ -86,6 +89,7 @@ export default function PostEdit({ form, error }: PostEditProps) {
               <RichTextEditor.OrderedList />
               <RichTextEditor.Subscript />
               <RichTextEditor.Superscript />
+              <RichTextEditor.CodeBlock />
             </RichTextEditor.ControlsGroup>
 
             <RichTextEditor.ControlsGroup>
@@ -103,6 +107,40 @@ export default function PostEdit({ form, error }: PostEditProps) {
             <RichTextEditor.ControlsGroup>
               <RichTextEditor.Undo />
               <RichTextEditor.Redo />
+            </RichTextEditor.ControlsGroup>
+
+            <RichTextEditor.ControlsGroup>
+              <RichTextEditor.ColorPicker
+                colors={[
+                  "#25262b",
+                  "#868e96",
+                  "#fa5252",
+                  "#e64980",
+                  "#be4bdb",
+                  "#7950f2",
+                  "#4c6ef5",
+                  "#228be6",
+                  "#15aabf",
+                  "#12b886",
+                  "#40c057",
+                  "#82c91e",
+                  "#fab005",
+                  "#fd7e14",
+                ]}
+              />
+
+              <RichTextEditor.ControlsGroup>
+                <RichTextEditor.Control interactive={false}>
+                  <IconColorPicker size={16} stroke={1.5} />
+                </RichTextEditor.Control>
+                <RichTextEditor.Color color="#F03E3E" />
+                <RichTextEditor.Color color="#7048E8" />
+                <RichTextEditor.Color color="#1098AD" />
+                <RichTextEditor.Color color="#37B24D" />
+                <RichTextEditor.Color color="#F59F00" />
+              </RichTextEditor.ControlsGroup>
+
+              <RichTextEditor.UnsetColor />
             </RichTextEditor.ControlsGroup>
           </RichTextEditor.Toolbar>
 
