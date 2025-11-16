@@ -12,6 +12,7 @@ import org.springframework.stereotype.Service;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 
+import com.lulski.aries.post.exception.BadRequestException;
 import com.lulski.aries.post.exception.DatabaseAccessException;
 import com.lulski.aries.post.exception.NetworkTimeoutException;
 import com.lulski.aries.post.exception.PostNotFoundException;
@@ -134,9 +135,15 @@ public class PostService {
      *                                 the database.
      */
     public Mono<Post> insertNew(PostRequestDto postRequestDto, User user) {
+
+        // validate
+        if (PostUtil.isContainsIllegalChars(postRequestDto.title())) {
+            return Mono.error(new BadRequestException("Illegal characters in the title"));
+        }
+
         Post post = new Post();
         post.setAuthor(user.getFirstName() + " " + user.getLastName());
-        post.setTitle(postRequestDto.title());
+        post.setTitle(postRequestDto.title().trim());
         post.setContent(postRequestDto.content());
         post.setCreatedOn(LocalDateTime.now());
         post.setModifiedOn(LocalDateTime.now());
@@ -179,7 +186,7 @@ public class PostService {
                 .flatMap(existingPost -> {
                     existingPost.setAuthor(user.getUsername());
                     existingPost.setModifiedOn(LocalDateTime.now());
-                    existingPost.setTitle(dto.title());
+                    existingPost.setTitle(dto.title().trim());
                     existingPost.setContent(dto.content());
                     return postRepository.save(existingPost);
                 });

@@ -1,7 +1,5 @@
 package com.lulski.aries.post;
 
-import java.util.StringTokenizer;
-
 import org.springframework.util.StringUtils;
 
 public class PostUtil {
@@ -51,6 +49,10 @@ public class PostUtil {
         }
         return sBuilder.toString();
 
+    }
+
+    public static boolean isContainsIllegalChars(String input) {
+        return input.matches(".*[#,~].*");
     }
 
 }
