@@ -5,13 +5,9 @@ meta {
 }
 
 delete {
-  url: http://localhost:8181/api/v1/users/:username
+  url: {{protocol}}://{{host}}:{{port}}/api/v1/users/:username
   body: json
   auth: none
-}
-
-params:query {
-  undefined: undefined
 }
 
 params:path {

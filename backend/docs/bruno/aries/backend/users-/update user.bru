@@ -5,9 +5,9 @@ meta {
 }
 
 patch {
-  url: http://localhost:8181/api/v1/users/:username
+  url: {{protocol}}://{{host}}:{{port}}/api/v1/users/:username
   body: json
-  auth: basic
+  auth: inherit
 }
 
 params:query {
@@ -21,11 +21,6 @@ params:path {
 headers {
   Content-Type: application/json
   User-Agent: insomnia/10.2.0
-}
-
-auth:basic {
-  username: kocu
-  password: kocu
 }
 
 body:json {
