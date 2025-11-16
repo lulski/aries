@@ -96,8 +96,8 @@ public class PostHandler {
                         Authentication authentication = tuple.getT1();
                         PostRequestDto dto = tuple.getT2();
 
-                        LOGGER.info(">>> user " + authentication.getPrincipal() + " is inserting new post "
-                                        + dto.title());
+                        LOGGER.info(">>> user `{}` is inserting new post {}", authentication.getName(), dto.title());
+
                         return postService.insertNew(dto, (User) authentication.getPrincipal())
                                         .flatMap(post -> {
                                                 PostResponseDto postResponseDto = new PostResponseDto(
@@ -164,6 +164,9 @@ public class PostHandler {
 
                         // Build the error response depending on exception type
                         Mono<ServerResponse> responseMono = switch (error) {
+                                case BadRequestException ex -> ServerResponse.status(HttpStatus.BAD_REQUEST)
+                                                .bodyValue(Map.of("error", ex.getMessage()));
+
                                 case PostNotFoundException ex ->
                                         ServerResponse.status(HttpStatus.NOT_FOUND)
                                                         .bodyValue(Map.of(
