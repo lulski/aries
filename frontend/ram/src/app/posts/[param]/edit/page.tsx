@@ -12,6 +12,7 @@ import { useEffect, useState } from "react";
 export default function editPost() {
   const params = useParams();
   const [isLoading, setIsLoading] = useState(true);
+  const [isSubmitting, setIsSubmitting] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const originalTitleUrl = usePathname().replace("/edit", "");
   const router = useRouter();
@@ -34,15 +35,12 @@ export default function editPost() {
   useEffect(() => {
     async function loadPost() {
       try {
-        console.info(">>> params", params);
-
         const response = await fetch(`/api/posts/${params.param}`);
         if (!response.ok) {
           throw new Error(`HTTP error! status: ${response.status}`);
         }
 
         const data: PostData = await response.json();
-        console.log("Fetched post data:", data);
         form.setValues({
           title: data.title.trim(),
           content: data.content.trim(),
@@ -62,6 +60,8 @@ export default function editPost() {
   }, [params.id]);
 
   const handleSubmit = async (values: typeof form.values) => {
+    setIsSubmitting(true); // start submitting
+
     const originalTitle = originalTitleUrl.replace("/posts/", "");
     const patchUrl = `/api/posts/${originalTitle}`;
 
@@ -90,6 +90,8 @@ export default function editPost() {
       }
     } catch (error) {
       console.error("API call failure");
+    } finally {
+      setIsSubmitting(false);
     }
   };
 
@@ -98,7 +100,7 @@ export default function editPost() {
       <LoadingOverlay
         zIndex={1000}
         overlayProps={{ radius: "sm", blur: 2 }}
-        visible={true}
+        visible={isSubmitting}
       />
     );
   }
@@ -110,6 +112,12 @@ export default function editPost() {
   return (
     <AuthGuard>
       <form onSubmit={form.onSubmit(handleSubmit)}>
+        {/* show overlay while submitting */}
+        <LoadingOverlay
+          zIndex={1000}
+          overlayProps={{ radius: "sm", blur: 2 }}
+          visible={isSubmitting}
+        />
         <PostEdit form={form}></PostEdit>
         <Group justify="flex-end" mt="md">
           <Button type="submit">Submit</Button>
