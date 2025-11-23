@@ -3,7 +3,7 @@
 import "@mantine/tiptap/styles.css";
 import "./styles.scss";
 
-import { Button, InputWrapper, TextInput } from "@mantine/core";
+import { Button, Group, InputWrapper, TextInput } from "@mantine/core";
 import { UseFormReturnType } from "@mantine/form";
 import { RichTextEditor } from "@mantine/tiptap";
 import { Color } from "@tiptap/extension-color";
@@ -65,18 +65,12 @@ export default function PostEdit({ form, error }: PostEditProps) {
     const url = window.prompt("Image URL");
     if (!url) return;
 
-    // guard: ensure editor is initialized and has .chain()
     if (!editor || typeof (editor as any).chain !== "function") {
       console.error("editor not ready or not a TipTap Editor instance", editor);
       return;
     }
 
-    // safe call
-    //editor.chain().focus().setImage({ src: url }).run();
     editor.commands.setImage({ src: url });
-
-    // keep form/content in sync if you track it
-    // form.setFieldValue("content", editor.getHTML());
   }
 
   return (
@@ -174,10 +168,9 @@ export default function PostEdit({ form, error }: PostEditProps) {
           <RichTextEditor.Content />
         </RichTextEditor>
       </InputWrapper>
-      <Button onClick={() => addImage(editor)}>Set image</Button>
-      {/* <button type="button" onClick={() => addImage(editor)}>
-        Set image
-      </button> */}
+      <Group justify="start" mt="md">
+        <Button onClick={() => addImage(editor)}>Add image URL</Button>
+      </Group>
     </>
   );
 }

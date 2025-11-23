@@ -77,12 +77,6 @@ export default function Posts({ searchParams }: PageProps) {
         const response = await getPosts(pageNum, sizeNum);
         cacheRef.current[cacheKey] = response;
         if (!cancelled) {
-          // console.log(
-          //   Date.now().toString() + " >>> useEffect getting posts from cache: ",
-          //   cacheKey,
-          //   pageNum,
-          //   sizeNum
-          // );
           setPosts(response);
           setPagination({
             total: response.total ?? 0,

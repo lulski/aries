@@ -51,6 +51,8 @@
     "@types/react-dom": "^19",
     "@types/sanitize-html": "^2.15.0",
     "clsx": "^2.1.1",
+    "eslint": "9.39.1",
+    "eslint-config-next": "16.0.3",
     "jest": "^30.0.4",
     "jest-environment-jsdom": "^30.0.4",
     "postcss": "^8.5.3",

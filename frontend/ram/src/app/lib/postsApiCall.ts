@@ -34,7 +34,7 @@ export async function fetchPost(
     return data as PostApiResponse;
   } catch (error) {
     console.error("Error fetching post:", error);
-    throw new Error("Failed to fetch post");
+    throw new Error("Failed to fetch posts");
   }
 }
 
@@ -84,7 +84,7 @@ export async function savePost(body: string): Promise<PostApiResponse> {
   });
 
   if (!response.ok) {
-    throw new Error("Failed to save posts");
+    throw new Error("Failed to save post");
   }
 
   return response.json();
@@ -105,7 +105,7 @@ export async function updatePost(body: string): Promise<PostApiResponse> {
   });
 
   if (!response.ok) {
-    throw new Error("Failed to save posts");
+    throw new Error("Failed to save post");
   }
 
   return response.json();

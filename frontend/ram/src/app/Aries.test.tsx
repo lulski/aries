@@ -29,22 +29,16 @@ jest.mock("./theme", () => ({
   AriesThemeSet: { colors: ["light", "dark"] },
 }));
 
-describe("Aries component", () => {
-  it("renders the image with correct src", () => {
-    render(<Aries />);
-    const image = screen.getByRole("img");
-    expect(image).toBeInTheDocument();
-    expect(image).toHaveAttribute(
-      "src",
-      "https://raw.githubusercontent.com/mantinedev/mantine/master/.demo/images/bg-7.png"
-    );
-  });
+jest.mock("./about/page", () => {
+  return {
+    __esModule: true,
+    default: () => <div data-testid="about-page">About me</div>,
+  };
+});
 
-  it("renders Stack and Box components", () => {
+describe("Aries component", () => {
+  it("renders AboutMePage", () => {
     render(<Aries />);
-    const stack = screen.getByTestId("stack");
-    const boxes = screen.getAllByTestId("box");
-    expect(stack).toBeInTheDocument();
-    expect(boxes).toHaveLength(2);
+    expect(screen.getByTestId("about-page")).toBeInTheDocument();
   });
 });

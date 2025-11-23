@@ -43,21 +43,6 @@ const theme = createTheme({
 });
 
 export default function Post({ post, allowHtmlMarkup }: PostProps) {
-  // let displayContent;
-
-  // const sanitizedContent = sanitizeHtml(post.content, {
-  //   allowedTags: [],
-  //   allowedAttributes: {
-  //     a: ["href", "target", "rel"],
-  //   },
-  // });
-  // console.log("allowHtmlMarkup: " + allowHtmlMarkup);
-  // if (allowHtmlMarkup) {
-  //   displayContent = post.content;
-  // } else {
-  //   displayContent = sanitizedContent;
-  // }
-
   const editor = useEditor({
     shouldRerenderOnTransaction: true,
 
@@ -91,15 +76,13 @@ export default function Post({ post, allowHtmlMarkup }: PostProps) {
           <Title order={1}>{post.title}</Title>
         </Group>
 
-        <Box size="sm" dangerouslySetInnerHTML={{ __html: post.content }} />
+        <Box
+          size="sm"
+          bd="1px solid #ddd"
+          bdrs="md"
+          dangerouslySetInnerHTML={{ __html: post.content }}
+        />
 
-        {/* <RichTextEditor
-          id="post"
-          editor={editor}
-          styles={{ content: { minHeight: 400 } }}
-        >
-          <RichTextEditor.Content />
-        </RichTextEditor> */}
         <br />
         <Text size="xs" ta="right">
           {post.author}
