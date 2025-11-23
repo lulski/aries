@@ -1,5 +1,6 @@
 "use client";
 import {
+  Box,
   Card,
   createTheme,
   Group,
@@ -7,9 +8,14 @@ import {
   Text,
   Title,
 } from "@mantine/core";
-import { Link, RichTextEditor } from "@mantine/tiptap";
+import { Link } from "@mantine/tiptap";
+import Document from "@tiptap/extension-document";
+import { Dropcursor } from "@tiptap/extension-dropcursor";
 import Highlight from "@tiptap/extension-highlight";
+import Image from "@tiptap/extension-image";
+import Paragraph from "@tiptap/extension-paragraph";
 import Superscript from "@tiptap/extension-superscript";
+import TextTiptap from "@tiptap/extension-text";
 import TextAlign from "@tiptap/extension-text-align";
 import { Color, TextStyle } from "@tiptap/extension-text-style";
 import { useEditor } from "@tiptap/react";
@@ -63,6 +69,16 @@ export default function Post({ post, allowHtmlMarkup }: PostProps) {
       Superscript,
       Highlight,
       TextAlign.configure({ types: ["heading", "paragraph"] }),
+      Image.configure({
+        resize: {
+          enabled: false,
+          alwaysPreserveAspectRatio: true,
+        },
+      }),
+      Document,
+      Paragraph,
+      TextTiptap,
+      Dropcursor,
     ],
     content: post.content,
     immediatelyRender: false,
@@ -75,15 +91,15 @@ export default function Post({ post, allowHtmlMarkup }: PostProps) {
           <Title order={1}>{post.title}</Title>
         </Group>
 
-        {/* <Box size="sm" dangerouslySetInnerHTML={{ __html: displayContent }} /> */}
+        <Box size="sm" dangerouslySetInnerHTML={{ __html: post.content }} />
 
-        <RichTextEditor
+        {/* <RichTextEditor
           id="post"
           editor={editor}
           styles={{ content: { minHeight: 400 } }}
         >
           <RichTextEditor.Content />
-        </RichTextEditor>
+        </RichTextEditor> */}
         <br />
         <Text size="xs" ta="right">
           {post.author}
