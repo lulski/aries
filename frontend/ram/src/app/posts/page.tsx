@@ -35,7 +35,7 @@ async function getPosts(
 const SESSION_KEY = process.env.SESSION_KEY;
 const COOKIE_NAME = process.env.COOKIE_NAME;
 
-export async function isPostButtonEnabled() {
+async function isPostButtonEnabled() {
   const ariescookie = await cookies();
   const session = await getIronSession<SessionData>(ariescookie, {
     password: SESSION_KEY,
