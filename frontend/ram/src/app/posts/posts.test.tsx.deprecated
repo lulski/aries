@@ -1,6 +1,6 @@
 import "@testing-library/jest-dom";
 import { render, screen, waitFor } from "@testing-library/react";
-import Posts from "./page";
+import Posts from "./page.tsx.deprecated";
 
 // Mock Mantine components
 jest.mock("@mantine/core", () => {

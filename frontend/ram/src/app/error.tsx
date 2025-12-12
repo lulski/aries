@@ -1,8 +1,8 @@
 "use client"; // Error boundaries must be Client Components
 
-import { useEffect } from "react";
-import { Alert, Box, Container, Paper, Text } from "@mantine/core";
+import { Alert, Text } from "@mantine/core";
 import { IconInfoCircle } from "@tabler/icons-react";
+import { useEffect } from "react";
 
 export default function Error({
   error,
@@ -10,16 +10,19 @@ export default function Error({
   error: Error & { digest?: string };
 }) {
   useEffect(() => {
-    // Log the error to an error reporting service
     console.error(">>>> error: " + error);
   }, [error]);
 
   const icon = <IconInfoCircle />;
 
   return (
-    <Alert variant="red" title="Sorry, something's not right" icon={icon}>
+    <Alert
+      variant="red"
+      title="Whoop-de-doo, something's screwed the pooch!"
+      icon={icon}
+    >
       <Text size="md" c="red">
-        Try again later!
+        Sorry lah!
       </Text>
     </Alert>
   );
