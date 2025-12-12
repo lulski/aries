@@ -3,15 +3,15 @@
     {
       "path": "frontend/ram"
     },
-    // {
-    //   "path": "frontend/ram2.0"
-    // },
+    {
+      "path": ".github"
+    },
     {
       "path": "backend"
     },
-    {
-      "path": "seeder"
-    },
+    // {
+    //   "path": "seeder"
+    // },
     {
       "path": "terraform"
     }
@@ -21,6 +21,7 @@
     "java.compile.nullAnalysis.mode": "automatic",
     "jest.disabledWorkspaceFolders": ["backend,seeder,terraform"],
     "java.configuration.updateBuildConfiguration": "automatic",
-    "java.jdt.ls.vmargs": "-XX:+UseParallelGC -XX:GCTimeRatio=4 -XX:AdaptiveSizePolicyWeight=90 -Dsun.zip.disableMemoryMapping=true -Xmx4G -Xms100m -Xlog:disable"
+    "java.jdt.ls.vmargs": "-XX:+UseParallelGC -XX:GCTimeRatio=4 -XX:AdaptiveSizePolicyWeight=90 -Dsun.zip.disableMemoryMapping=true -Xmx4G -Xms100m -Xlog:disable",
+    "java.debug.settings.onBuildFailureProceed": true
   }
 }

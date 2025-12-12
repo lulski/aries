@@ -7,11 +7,11 @@ meta {
 delete {
   url: {{protocol}}://{{host}}:{{port}}/api/v1/users/:username
   body: json
-  auth: none
+  auth: inherit
 }
 
 params:path {
-  username: berak
+  username: kocu
 }
 
 headers {
