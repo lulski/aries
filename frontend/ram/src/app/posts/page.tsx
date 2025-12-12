@@ -8,10 +8,7 @@ import { PostApiResponse } from "../lib/postsApiCall";
 
 type SearchParams = Promise<{ [key: string]: string | string[] | undefined }>;
 
-// export async function generateMetadata(props: { searchParams: SearchParams }) {
-//   const searchParams = await props.searchParams;
-// }
-export async function getBaseUrl() {
+async function getBaseUrl() {
   const h = await headers();
   const host = h.get("host");
   const proto = h.get("x-forwarded-proto") ?? "http"; // usually set in AWS
