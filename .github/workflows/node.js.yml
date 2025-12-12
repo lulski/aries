@@ -6,8 +6,13 @@ name: Node.js CI
 on:
   push:
     branches: ["main"]
+    paths:
+      - 'frontend/ram/**'
+
   pull_request:
     branches: ["main"]
+    paths:
+      - 'frontend/ram/**'
 
 jobs:
   build:
