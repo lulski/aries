@@ -13,7 +13,10 @@ jobs:
   build:
 
     runs-on: ubuntu-latest
-
+    defaults:
+      run:
+       working-directory: ./frontend/ram   
+  
     strategy:
       matrix:
         node-version: [18.x, 20.x, 22.x]
@@ -27,11 +30,5 @@ jobs:
         node-version: ${{ matrix.node-version }}
         cache: 'npm'
     - run: npm ci
-      working-directory: ./frontend/ram
-
     - run: npm run build --if-present
-      working-directory: ./frontend/ram
-
     - run: npm test
-      working-directory: ./frontend/ram
-
