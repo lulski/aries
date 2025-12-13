@@ -1,6 +1,5 @@
 "use client";
 import {
-  Box,
   Card,
   createTheme,
   Group,
@@ -8,7 +7,8 @@ import {
   Text,
   Title,
 } from "@mantine/core";
-import { Link } from "@mantine/tiptap";
+import { Link, RichTextEditor } from "@mantine/tiptap";
+import "@mantine/tiptap/styles.css";
 import Document from "@tiptap/extension-document";
 import { Dropcursor } from "@tiptap/extension-dropcursor";
 import Highlight from "@tiptap/extension-highlight";
@@ -21,6 +21,7 @@ import { Color, TextStyle } from "@tiptap/extension-text-style";
 import { useEditor } from "@tiptap/react";
 import StarterKit from "@tiptap/starter-kit";
 import { PostData } from "../../lib/definitions";
+import "./styles.scss";
 
 type PostProps = {
   post: PostData;
@@ -45,7 +46,7 @@ const theme = createTheme({
 export default function Post({ post, allowHtmlMarkup }: PostProps) {
   const editor = useEditor({
     shouldRerenderOnTransaction: true,
-
+    editable: false,
     extensions: [
       StarterKit,
       TextStyle,
@@ -76,13 +77,13 @@ export default function Post({ post, allowHtmlMarkup }: PostProps) {
           <Title order={1}>{post.title}</Title>
         </Group>
 
-        <Box
-          size="sm"
-          bd="1px solid #ddd"
-          bdrs="md"
-          dangerouslySetInnerHTML={{ __html: post.content }}
-        />
-
+        <RichTextEditor
+          editor={editor}
+          contentEditable={false}
+          content={post.content}
+        >
+          <RichTextEditor.Content />
+        </RichTextEditor>
         <br />
         <Text size="xs" ta="right">
           {post.author}
