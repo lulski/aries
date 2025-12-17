@@ -5,6 +5,7 @@
   },
   "editor.formatOnSave": true,
   "search.exclude": {
-    "*/.terraform/*": true
+    "*/.terraform/*": true,
+    "*/.terraform.lock.hcl": true
   }
 }
