@@ -9,6 +9,5 @@
     "out/": true,
     "bin/": true,
     "build/": true
-  },
-  "java.configuration.updateBuildConfiguration": "interactive"
+  }
 }
