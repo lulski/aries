@@ -4,7 +4,7 @@ variable "server_port_backend" {
   default     = 8181
 }
 
-variable "SPRING_DATA_MONGO_DB_URI" {
+variable "SPRING_DATA_MONGODB_URI" {
   description = "MongoDB Atlas database connection string"
   type        = string
   sensitive   = true

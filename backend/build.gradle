@@ -53,3 +53,16 @@ dependencies {
 tasks.named('test') {
     useJUnitPlatform()
 }
+
+// DONOT COMMIT THESE BLOCK -start
+tasks.named('bootRun') {
+    environment 'SPRING_DATA_MONGODB_URI', 'mongodb://localhost:27017'
+    environment 'SPRING_PROFILES_ACTIVE', 'local'
+}
+
+task printEnvVariables {
+    doLast {
+        println "JAVA_HOME: ${System.getenv('JAVA_HOME')}"
+    }
+}
+// DONOT COMMIT THESE BLOCK -end

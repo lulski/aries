@@ -4,7 +4,7 @@ variable "server_port" {
   default     = 8181
 }
 
-variable "SPRING_DATA_MONGO_DB_URI" {
+variable "SPRING_DATA_MONGODB_URI" {
   description = "MongoDB Atlas database connection string"
   type        = string
   sensitive   = true
@@ -13,6 +13,6 @@ variable "SPRING_DATA_MONGO_DB_URI" {
 
 variable "region" {
   description = "AWS region"
-  type = string
-  default = "ap-southeast-2"
+  type        = string
+  default     = "ap-southeast-2"
 }
