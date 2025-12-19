@@ -1,10 +1,10 @@
 "use client";
 
+import { useTheme } from "@/app/context/ThemeContext";
 import { AriesLayoutProps } from "@/app/types/AriesLayoutProperties";
 import { Anchor, AppShell, Burger, Group, Stack, Title } from "@mantine/core";
 import { useDisclosure } from "@mantine/hooks";
 import { ReactNode } from "react";
-import { useTheme } from "../context/ThemeContext";
 import { ThemeToggleButton } from "./ThemeToggleButton/ThemeToggleButton";
 
 export default function AriesLayout({ children }: { children: ReactNode }) {
@@ -21,7 +21,7 @@ export default function AriesLayout({ children }: { children: ReactNode }) {
   return (
     <AppShell
       suppressHydrationWarning
-      header={{ height: 60 }}
+      header={{ height: "64px" }}
       navbar={{
         width: 300,
         breakpoint: "sm",

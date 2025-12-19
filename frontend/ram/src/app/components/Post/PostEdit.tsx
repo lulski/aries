@@ -30,6 +30,10 @@ interface PostEditProps {
 }
 
 export default function PostEdit({ form, error }: PostEditProps) {
+  const toolbarStyle = {
+    zIndex: 1,
+  };
+
   const editor = useEditor({
     extensions: [
       StarterKit,
@@ -91,11 +95,12 @@ export default function PostEdit({ form, error }: PostEditProps) {
         <RichTextEditor
           id="post-editor"
           editor={editor}
-          styles={{ content: { minHeight: 400 } }}
+          className="post-editor"
         >
           <RichTextEditor.Toolbar
-            sticky
-            stickyOffset="var(--docs-header-height)"
+            sticky={true}
+            stickyOffset="var(--app-shell-header-height)"
+            style={toolbarStyle}
           >
             <RichTextEditor.SourceCode />
             <RichTextEditor.ControlsGroup>
@@ -153,22 +158,12 @@ export default function PostEdit({ form, error }: PostEditProps) {
                 "#fd7e14",
               ]}
             />
-
-            {/* <RichTextEditor.ControlsGroup>
-              <RichTextEditor.Color color="#F03E3E" />
-              <RichTextEditor.Color color="#7048E8" />
-              <RichTextEditor.Color color="#1098AD" />
-              <RichTextEditor.Color color="#37B24D" />
-              <RichTextEditor.Color color="#F59F00" />
-
-              <RichTextEditor.UnsetColor />
-            </RichTextEditor.ControlsGroup> */}
           </RichTextEditor.Toolbar>
 
           <RichTextEditor.Content />
         </RichTextEditor>
       </InputWrapper>
-      <Group justify="start" mt="md">
+      <Group justify="center" mt="md">
         <Button onClick={() => addImage(editor)}>Add image URL</Button>
       </Group>
     </>
