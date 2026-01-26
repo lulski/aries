@@ -1,9 +1,9 @@
 plugins {
-    id 'org.springframework.boot' version '4.0.1' // Latest stable 4.x
+    id 'org.springframework.boot' version '4.0.2' // Latest stable 4.x
     id 'io.spring.dependency-management' version '1.1.7'
     id 'java'
     id 'maven-publish'
-    id 'org.openrewrite.rewrite' version '7.24.0'
+    id 'org.openrewrite.rewrite' version 'latest.release'
 }
 
 tasks.withType(JavaCompile).configureEach {
@@ -32,23 +32,32 @@ repositories {
 }
 
 rewrite {
-  activeRecipe(
-      'org.openrewrite.java.OrderImports',
-  )
+    activeRecipe("org.openrewrite.java.spring.boot4.MigrateToModularStarters")
+    activeRecipe("org.openrewrite.java.spring.boot4.SpringBootProperties_4_0")
+    activeRecipe("org.openrewrite.java.spring.boot4.UpgradeSpringBoot_4_0")
+    setExportDatatables(true)
 }
 
 
 dependencies {
-    // 1. Data & Persistence (Now more modular)
+    
     implementation 'org.springframework.boot:spring-boot-starter-data-mongodb-reactive'
+    testImplementation 'org.springframework.boot:spring-boot-starter-data-mongodb-reactive-test'
     
-    // 2. Security & Web (Webflux remains standard)
     implementation 'org.springframework.boot:spring-boot-starter-security'
+    testImplementation 'org.springframework.boot:spring-boot-starter-security-test'
+
     implementation 'org.springframework.boot:spring-boot-starter-webflux'
+    testImplementation 'org.springframework.boot:spring-boot-starter-webflux-test'
+
     
-    // 3. Actuator & Validation
     implementation 'org.springframework.boot:spring-boot-starter-actuator'
+    testImplementation 'org.springframework.boot:spring-boot-starter-actuator-test'
+
     implementation 'org.springframework.boot:spring-boot-starter-validation'
+    testImplementation 'org.springframework.boot:spring-boot-starter-validation-test'
+
+
 
     // 4. Third Party Libraries
     implementation 'org.jsoup:jsoup:1.22.1' // Upgraded for Jakarta 11 compatibility
@@ -56,18 +65,18 @@ dependencies {
     // 5. AWS SDK (Check for v2.x latest for Java 25 support)
     implementation platform('software.amazon.awssdk:bom:2.30.0')
     implementation 'software.amazon.awssdk:s3'
-    implementation "software.amazon.awssdk:netty-nio-client"
+    implementation 'software.amazon.awssdk:netty-nio-client'
 
     // 6. Observability (Note: Spring Boot 4 migrates to Micrometer 2.x)
-    implementation 'io.micrometer:micrometer-registry-prometheus' // Drop manual versioning
+    implementation 'io.micrometer:micrometer-registry-prometheus' 
 
-    // --- TEST DEPENDENCIES ---
-    // Note: Spring Boot 4 removes JUnit 4 support entirely. JUnit 5/6 is mandatory.
-    testImplementation 'org.springframework.boot:spring-boot-starter-test'
     testImplementation 'io.projectreactor:reactor-test'
-    testImplementation 'org.springframework.security:spring-security-test'
-    testImplementation "org.testcontainers:mongodb:1.20.4"
+
+    testImplementation 'org.testcontainers:testcontainers-mongodb:2.0.3'
+
     testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
+
+    rewrite("org.openrewrite.recipe:rewrite-spring:6.23.0")
 }
 
 tasks.named('test') {

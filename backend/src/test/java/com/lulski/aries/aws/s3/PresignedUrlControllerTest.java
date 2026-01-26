@@ -1,7 +1,6 @@
 package com.lulski.aries.aws.s3;
 
 import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
 import java.net.URI;
@@ -9,8 +8,10 @@ import java.time.Duration;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
+import org.mockito.junit.jupiter.MockitoExtension;
 
 import reactor.test.StepVerifier;
 import software.amazon.awssdk.services.s3.model.GetObjectRequest;
@@ -18,6 +19,7 @@ import software.amazon.awssdk.services.s3.presigner.S3Presigner;
 import software.amazon.awssdk.services.s3.presigner.model.GetObjectPresignRequest;
 import software.amazon.awssdk.services.s3.presigner.model.PresignedGetObjectRequest;
 
+@ExtendWith(MockitoExtension.class)
 class PresignedUrlControllerTest {
 
     @Mock

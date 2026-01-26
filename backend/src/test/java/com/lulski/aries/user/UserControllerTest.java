@@ -17,7 +17,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.boot.test.autoconfigure.web.reactive.AutoConfigureWebTestClient;
+// import org.springframework.boot.test.autoconfigure.web.reactive.AutoConfigureWebTestClient;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.Import;
@@ -27,13 +27,14 @@ import org.springframework.test.web.reactive.server.WebTestClient;
 import org.springframework.web.reactive.function.BodyInserters;
 
 import com.lulski.aries.config.MongoDbContainerUtil;
+import com.lulski.aries.config.TestMockRepositoryConfig;
 import com.lulski.aries.config.TestWebSecurityConfig;
 
 @SpringBootTest()
 @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
-@AutoConfigureWebTestClient(timeout = "100000000")
+// @AutoConfigureWebTestClient(timeout = "100000000")
 @ActiveProfiles("mock")
-@Import(TestWebSecurityConfig.class)
+@Import({TestWebSecurityConfig.class, TestMockRepositoryConfig.class})
 class UserControllerTest {
 
     private final Logger logger = LoggerFactory.getLogger(UserControllerTest.class);

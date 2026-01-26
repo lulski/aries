@@ -1,10 +1,9 @@
 package com.lulski.aries.config;
-
-import org.springframework.boot.autoconfigure.mongo.MongoProperties;
+import org.jspecify.annotations.NonNull;
+import org.springframework.boot.mongodb.autoconfigure.MongoProperties;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Profile;
 import org.springframework.data.mongodb.config.AbstractReactiveMongoConfiguration;
-import org.springframework.lang.NonNull;
 
 import com.mongodb.ConnectionString;
 import com.mongodb.MongoClientSettings;
@@ -29,7 +28,7 @@ public class MongoConfig extends AbstractReactiveMongoConfiguration {
     }
 
     @Override
-    protected void configureClientSettings(@NonNull MongoClientSettings.Builder builder) {
+    protected void configureClientSettings(MongoClientSettings.@NonNull Builder builder) {
         builder.applyConnectionString(new ConnectionString(mongoProperties.getUri()));
     }
 }
