@@ -86,9 +86,14 @@ public class PostHandler {
 
         public Mono<ServerResponse> insertNew(ServerRequest serverRequest) {
                 Mono<Authentication> principalMono = serverRequest.principal().cast(Authentication.class)
-                                .filter(authentication -> authentication.isAuthenticated()
+                                // .peek(item -> LOGGER.debug(">>> Authentication principal: {}", item.getPrincipal()))
+                                .filter(authentication -> {
+                                        LOGGER.debug(">>> Authentication details: {}", authentication.getAuthorities());
+                                                return authentication.isAuthenticated()
                                                 && authentication.getAuthorities().stream()
-                                                                .anyMatch(auth -> auth.getAuthority().contains("USER")))
+                                                                .anyMatch(auth -> auth.getAuthority().contains("USER"));
+                                }
+                                        )
                                 .switchIfEmpty(Mono.error(new AuthenticationCredentialsNotFoundException(
                                                 "user not authenticated")));
 

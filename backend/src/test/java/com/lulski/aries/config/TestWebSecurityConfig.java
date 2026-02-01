@@ -6,9 +6,9 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Primary;
 import org.springframework.context.annotation.Profile;
 import org.springframework.security.config.web.server.ServerHttpSecurity;
+import org.springframework.security.core.userdetails.ReactiveUserDetailsPasswordService;
 import org.springframework.security.core.userdetails.User;
 import org.springframework.security.core.userdetails.UserDetails;
-import org.springframework.security.core.userdetails.UserDetailsPasswordService;
 import org.springframework.security.crypto.factory.PasswordEncoderFactories;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.provisioning.InMemoryUserDetailsManager;
@@ -94,8 +94,8 @@ public class TestWebSecurityConfig {
      */
     @Bean
     @Primary
-    public UserDetailsPasswordService userDetailsPasswordService() {
-        return Mockito.mock(UserDetailsPasswordService.class);
+    public ReactiveUserDetailsPasswordService userDetailsPasswordService() {
+        return Mockito.mock(ReactiveUserDetailsPasswordService.class);
     }
 
     /**

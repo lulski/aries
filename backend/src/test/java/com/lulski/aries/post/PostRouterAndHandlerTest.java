@@ -13,11 +13,21 @@ import java.util.Optional;
 import java.util.Set;
 
 import org.bson.types.ObjectId;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.boot.webtestclient.autoconfigure.AutoConfigureWebTestClient;
+import org.springframework.context.ApplicationContext;
+import org.springframework.context.annotation.ComponentScan;
+import org.springframework.context.annotation.FilterType;
 import org.springframework.context.annotation.Import;
+import org.springframework.data.mongodb.repository.config.EnableReactiveMongoRepositories;
+import org.springframework.security.core.userdetails.ReactiveUserDetailsPasswordService;
+import org.springframework.security.core.userdetails.UserDetailsPasswordService;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.test.context.ActiveProfiles;
+import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.test.web.reactive.server.WebTestClient;
 import org.springframework.web.reactive.function.BodyInserters;
 import org.springframework.web.reactive.function.server.ServerRequest;
@@ -25,8 +35,10 @@ import org.springframework.web.reactive.function.server.ServerResponse;
 
 import com.lulski.aries.config.TestMockRepositoryConfig;
 import com.lulski.aries.config.TestWebSecurityConfig;
+// import com.lulski.aries.config.TestWebSecurityConfig;
 import com.lulski.aries.post.exception.BadRequestException;
 import com.lulski.aries.user.User;
+import com.lulski.aries.user.UserRepository;
 
 import reactor.core.publisher.Mono;
 import reactor.test.StepVerifier;
@@ -42,9 +54,16 @@ import reactor.test.StepVerifier;
  * 
  * Activated with the "mock" profile to use in-memory data instead of MongoDB.
  */
-@SpringBootTest
+@SpringBootTest()
+@AutoConfigureWebTestClient(
+    timeout = "36000"
+)
 @ActiveProfiles("mock")
 @Import({TestWebSecurityConfig.class, TestMockRepositoryConfig.class})
+@EnableReactiveMongoRepositories(excludeFilters = @ComponentScan.Filter(
+    type = FilterType.ASSIGNABLE_TYPE, 
+    classes = {UserRepository.class, PostRepository.class}
+))
 class PostRouterAndHandlerTest {
 
         @Autowired
@@ -55,10 +74,11 @@ class PostRouterAndHandlerTest {
 
         private final User mockUser = new User.UserBuilder()
                         .authorities(Set.of("USER"))
-                        .firstname("kocu")
+                        .firstname("test")
                         .lastname("gonzales")
-                        .password("Test")
+                        .password("test")
                         .build();
+
 
         /**
          * Test successful creation of a new post.
