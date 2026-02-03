@@ -10,13 +10,17 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.context.ApplicationContext;
+import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Import;
+import org.springframework.data.mongodb.repository.config.EnableReactiveMongoRepositories;
 import org.springframework.test.context.ActiveProfiles;
+import org.springframework.test.context.TestPropertySource;
 
 import com.lulski.aries.config.MongoDbContainerUtil;
 import com.lulski.aries.config.TestMockRepositoryConfig;
 import com.lulski.aries.config.TestWebSecurityConfig;
 import com.lulski.aries.user.User;
+import com.lulski.aries.user.UserRepository;
 
 import java.time.LocalDateTime;
 import java.util.Arrays;
@@ -25,6 +29,10 @@ import reactor.test.StepVerifier;
 @SpringBootTest
 @Import({ TestMockRepositoryConfig.class, TestWebSecurityConfig.class })
 @ActiveProfiles("mock")
+@EnableReactiveMongoRepositories(excludeFilters = @ComponentScan.Filter(
+    type = org.springframework.context.annotation.FilterType.ASSIGNABLE_TYPE,
+    classes = {PostRepository.class}))
+@TestPropertySource(properties = "spring.profiles.active=mock") // because @Value doesn't work in test anymore, what the hell Springboot??
 public class PostServiceTest {
 
         private static final Logger logger = LoggerFactory.getLogger(PostServiceTest.class);
