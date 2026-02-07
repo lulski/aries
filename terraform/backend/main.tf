@@ -70,7 +70,7 @@ resource "aws_launch_template" "aries" {
 
   key_name = aws_key_pair.aries.key_name
 
-  user_data = base64encode(<<-EOF
+  user_data = <<-EOF
               #!/bin/bash
 
               #install JRE
@@ -84,7 +84,7 @@ resource "aws_launch_template" "aries" {
               ./aws/install
 
               #inject database connection string
-              echo 'SPRING_DATA_MONGODB_URI="${var.SPRING_DATA_MONGODB_URI}"' | sudo tee -a /etc/environment
+              echo 'SPRING_MONGODB_URI="${var.SPRING_MONGODB_URI}"' | sudo tee -a /etc/environment
 
               echo -e "Aries Backend:\n" > index.html
               echo -e "Java version: $(java -version 2>&1 | head -n 1)" >> index.html
@@ -97,7 +97,7 @@ resource "aws_launch_template" "aries" {
 
               #nohup busybox httpd -f -p ${var.server_port} &
               EOF        
-  )
+  
 
   iam_instance_profile {
     name = aws_iam_instance_profile.ec2_profile.name
