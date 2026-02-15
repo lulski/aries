@@ -3,7 +3,7 @@
   "files.exclude": {
     "out/": true,
     "bin/": true,
-    "build/": true
+    // "build/": true
   },
   "search.exclude": {
     "out/": true,
