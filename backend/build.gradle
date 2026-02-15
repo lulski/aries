@@ -84,15 +84,14 @@ tasks.named('test') {
     useJUnitPlatform()
 }
 
-// DONOT COMMIT THESE BLOCK -start
-// tasks.named('bootRun') {
-//     environment 'SPRING_DATA_MONGODB_URI', 'mongodb://localhost:27017'
-//     environment 'SPRING_PROFILES_ACTIVE', 'local'
-// }
+task bootRunLocal(type: org.springframework.boot.gradle.tasks.run.BootRun) {
+    group = "application"
+    description = "Runs the Spring Boot app with custom environment variables."
+    mainClass = bootRun.mainClass
+    classpath = bootRun.classpath
 
-// task printEnvVariables {
-//     doLast {
-//         println "JAVA_HOME: ${System.getenv('JAVA_HOME')}"
-//     }
-// }
-// DONOT COMMIT THESE BLOCK -end
+    doFirst {
+        environment 'SPRING_PROFILES_ACTIVE', 'local'
+        environment 'SPRING_DATA_MONGODB_URI', 'mongodb://localhost:27017'   
+     }
+}
