@@ -54,7 +54,7 @@ resource "aws_instance" "backend" {
 
   iam_instance_profile = aws_iam_instance_profile.ec2_profile.id
 
-  user_data = base64encode(<<-EOF
+  user_data = <<-EOF
                 #!/bin/bash
 
                 #install JRE
@@ -68,7 +68,7 @@ resource "aws_instance" "backend" {
                 ./aws/install
 
                 #inject database connection string
-                echo 'SPRING_DATA_MONGODB_URI="${var.SPRING_DATA_MONGODB_URI}"' | sudo tee -a /etc/environment
+                echo 'SPRING_MONGODB_URI="${var.SPRING_MONGODB_URI}"' | sudo tee -a /etc/environment
 
                 echo -e "Aries Backend:\n" > index.html
                 echo -e "Java version: $(java -version 2>&1 | head -n 1)" >> index.html
@@ -78,8 +78,7 @@ resource "aws_instance" "backend" {
 
                 #run 
                 nohup java -jar /home/ubuntu/aries-backend.jar --server.port=${var.server_port_backend} --spring.profiles.active=prod > /home/ubuntu/app.log 2>&1 &
-                EOF        
-  )
+    EOF
 
   user_data_replace_on_change = true
 

@@ -1,6 +1,6 @@
 package com.lulski.aries.config;
 
-import org.testcontainers.containers.MongoDBContainer;
+import org.testcontainers.mongodb.MongoDBContainer;
 
 /**
  * Util class to setup testcontainer mongodb

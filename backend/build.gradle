@@ -1,7 +1,9 @@
 plugins {
+    id 'org.springframework.boot' version '4.0.2' // Latest stable 4.x
+    id 'io.spring.dependency-management' version '1.1.7'
     id 'java'
-    id 'org.springframework.boot' version '3.5.3'
-    id 'io.spring.dependency-management' version '1.1.6'
+    id 'maven-publish'
+    id 'org.openrewrite.rewrite' version 'latest.release'
 }
 
 tasks.withType(JavaCompile).configureEach {
@@ -29,40 +31,67 @@ repositories {
     mavenCentral()
 }
 
+rewrite {
+    activeRecipe("org.openrewrite.java.spring.boot4.MigrateToModularStarters")
+    activeRecipe("org.openrewrite.java.spring.boot4.SpringBootProperties_4_0")
+    activeRecipe("org.openrewrite.java.spring.boot4.UpgradeSpringBoot_4_0")
+    setExportDatatables(true)
+}
+
+
 dependencies {
+    
     implementation 'org.springframework.boot:spring-boot-starter-data-mongodb-reactive'
+    testImplementation 'org.springframework.boot:spring-boot-starter-data-mongodb-reactive-test'
+    
     implementation 'org.springframework.boot:spring-boot-starter-security'
+    testImplementation 'org.springframework.boot:spring-boot-starter-security-test'
+
     implementation 'org.springframework.boot:spring-boot-starter-webflux'
+    testImplementation 'org.springframework.boot:spring-boot-starter-webflux-test'
+    testImplementation 'org.springframework.boot:spring-boot-webtestclient'
+
+    
     implementation 'org.springframework.boot:spring-boot-starter-actuator'
+    testImplementation 'org.springframework.boot:spring-boot-starter-actuator-test'
+
     implementation 'org.springframework.boot:spring-boot-starter-validation'
-    implementation 'org.jsoup:jsoup:1.21.2'
+    testImplementation 'org.springframework.boot:spring-boot-starter-validation-test'
 
-    implementation platform('software.amazon.awssdk:bom:2.27.21')
+
+
+    // 4. Third Party Libraries
+    implementation 'org.jsoup:jsoup:1.22.1' // Upgraded for Jakarta 11 compatibility
+
+    // 5. AWS SDK (Check for v2.x latest for Java 25 support)
+    implementation platform('software.amazon.awssdk:bom:2.30.0')
     implementation 'software.amazon.awssdk:s3'
-    implementation "software.amazon.awssdk:netty-nio-client"
-    implementation 'io.micrometer:micrometer-registry-prometheus:1.15.0'
+    implementation 'software.amazon.awssdk:netty-nio-client'
 
+    // 6. Observability (Note: Spring Boot 4 migrates to Micrometer 2.x)
+    implementation 'io.micrometer:micrometer-registry-prometheus' 
 
-    testImplementation 'org.springframework.boot:spring-boot-starter-test'
     testImplementation 'io.projectreactor:reactor-test'
-    testImplementation 'org.springframework.security:spring-security-test'
-    testImplementation "org.testcontainers:mongodb:1.20.4"
+
+    testImplementation 'org.testcontainers:testcontainers-mongodb:2.0.3'
+
     testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
+
+    rewrite("org.openrewrite.recipe:rewrite-spring:6.23.0")
 }
 
 tasks.named('test') {
     useJUnitPlatform()
 }
 
-// DONOT COMMIT THESE BLOCK -start
-tasks.named('bootRun') {
-    environment 'SPRING_DATA_MONGODB_URI', 'mongodb://localhost:27017'
-    environment 'SPRING_PROFILES_ACTIVE', 'local'
-}
+task bootRunLocal(type: org.springframework.boot.gradle.tasks.run.BootRun) {
+    group = "application"
+    description = "Runs the Spring Boot app with custom environment variables."
+    mainClass = bootRun.mainClass
+    classpath = bootRun.classpath
 
-task printEnvVariables {
-    doLast {
-        println "JAVA_HOME: ${System.getenv('JAVA_HOME')}"
-    }
+    doFirst {
+        environment 'SPRING_PROFILES_ACTIVE', 'local'
+        environment 'SPRING_DATA_MONGODB_URI', 'mongodb://localhost:27017'   
+     }
 }
-// DONOT COMMIT THESE BLOCK -end

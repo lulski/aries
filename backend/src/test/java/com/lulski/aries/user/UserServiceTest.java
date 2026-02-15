@@ -4,7 +4,9 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.context.ApplicationContext;
+import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Import;
+import org.springframework.data.mongodb.repository.config.EnableReactiveMongoRepositories;
 import org.springframework.test.context.ActiveProfiles;
 
 import com.lulski.aries.config.TestMockRepositoryConfig;
@@ -17,6 +19,9 @@ import reactor.test.StepVerifier;
 @SpringBootTest
 @ActiveProfiles("mock")
 @Import({TestMockRepositoryConfig.class, TestWebSecurityConfig.class})
+@EnableReactiveMongoRepositories(excludeFilters = @ComponentScan.Filter(
+    type = org.springframework.context.annotation.FilterType.ASSIGNABLE_TYPE,
+    classes = {UserRepository.class}))
 class UserServiceTest {
 
     @Autowired

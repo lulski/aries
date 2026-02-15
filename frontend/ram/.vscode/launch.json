@@ -6,14 +6,18 @@
       "type": "node",
       "request": "launch",
       "program": "${workspaceFolder}/node_modules/next/dist/bin/next",
-      "runtimeArgs": ["--inspect"],
-      "skipFiles": ["<node_internals>/**"],
+      "runtimeArgs": [
+        "--inspect"
+      ],
+      "skipFiles": [
+        "<node_internals>/**"
+      ],
       "serverReadyAction": {
         "action": "debugWithChrome",
         "killOnServerStop": true,
         "pattern": "- Local:.+(https?://.+)",
         "uriFormat": "%s",
-        "webRoot": "${workspaceFolder}/ram"
+        "webRoot": "${workspaceFolder}/frontend/ram"
       }
     },
     {
@@ -30,7 +34,7 @@
         "--runTestsByPath",
         "${jest.testFile}"
       ],
-      "cwd": "c:\\projects\\aries\\frontend\\ram",
+      "cwd": "${workspaceFolder}/frontend/ram",
       "console": "integratedTerminal",
       "internalConsoleOptions": "neverOpen",
       "disableOptimisticBPs": true,

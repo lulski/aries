@@ -17,23 +17,33 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.boot.test.autoconfigure.web.reactive.AutoConfigureWebTestClient;
+// import org.springframework.boot.test.autoconfigure.web.reactive.AutoConfigureWebTestClient;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.boot.webtestclient.autoconfigure.AutoConfigureWebTestClient;
 import org.springframework.context.ApplicationContext;
+import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Import;
+import org.springframework.data.mongodb.repository.config.EnableReactiveMongoRepositories;
 import org.springframework.http.MediaType;
 import org.springframework.test.context.ActiveProfiles;
+import org.springframework.test.context.TestPropertySource;
 import org.springframework.test.web.reactive.server.WebTestClient;
 import org.springframework.web.reactive.function.BodyInserters;
 
 import com.lulski.aries.config.MongoDbContainerUtil;
+import com.lulski.aries.config.TestMockRepositoryConfig;
 import com.lulski.aries.config.TestWebSecurityConfig;
+import com.lulski.aries.post.PostRepository;
 
 @SpringBootTest()
 @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
 @AutoConfigureWebTestClient(timeout = "100000000")
 @ActiveProfiles("mock")
-@Import(TestWebSecurityConfig.class)
+@Import({TestWebSecurityConfig.class, TestMockRepositoryConfig.class})
+@TestPropertySource(properties = "spring.profiles.active=mock") // because @Value doesn't work in test anymore, what the hell Springboot??
+@EnableReactiveMongoRepositories(excludeFilters = @ComponentScan.Filter(// have to exclude PostRepository too, because of TestMockRepositoryConfig always gets defeated by MongoAutoConfiguration
+    type = org.springframework.context.annotation.FilterType.ASSIGNABLE_TYPE,
+    classes = {UserRepository.class,PostRepository.class}))
 class UserControllerTest {
 
     private final Logger logger = LoggerFactory.getLogger(UserControllerTest.class);
@@ -42,9 +52,6 @@ class UserControllerTest {
             null, "dummyUser", "dummyPassword", "just a dummy", "not mandatory", "dummy@xyz.com");
     @Autowired
     private WebTestClient webTestClient;
-
-    @Autowired
-    private UserRepository userRepository;
 
     @Value("${spring.profiles.active}")
     private String profile;
