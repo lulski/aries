@@ -1,5 +1,8 @@
 package com.lulski.aries.post;
 
+import java.time.LocalDateTime;
+import java.util.Arrays;
+
 import org.bson.types.ObjectId;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
@@ -20,10 +23,7 @@ import com.lulski.aries.config.MongoDbContainerUtil;
 import com.lulski.aries.config.TestMockRepositoryConfig;
 import com.lulski.aries.config.TestWebSecurityConfig;
 import com.lulski.aries.user.User;
-import com.lulski.aries.user.UserRepository;
 
-import java.time.LocalDateTime;
-import java.util.Arrays;
 import reactor.test.StepVerifier;
 
 @SpringBootTest

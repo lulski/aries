@@ -40,9 +40,9 @@ public class GlobalExceptionHandler {
         e.printStackTrace();
         ServerErrorResponse errorResponse =
             new ServerErrorResponse(
-                "Unique key error", e.getMessage(), HttpStatus.UNPROCESSABLE_ENTITY.value());
+                "Unique key error", e.getMessage(), HttpStatus.UNPROCESSABLE_CONTENT.value());
 
-        return Mono.just(ResponseEntity.unprocessableEntity().body(errorResponse));
+        return Mono.just(ResponseEntity.unprocessableContent().body(errorResponse));
     }
 
     /**
@@ -65,7 +65,7 @@ public class GlobalExceptionHandler {
             new ServerErrorResponse(
                 e.getMessage(), username + " doesn't exist", HttpStatus.NOT_FOUND.value());
 
-        return Mono.just(ResponseEntity.unprocessableEntity().body(errorResponse));
+        return Mono.just(ResponseEntity.unprocessableContent().body(errorResponse));
     }
 
     /**
@@ -84,7 +84,7 @@ public class GlobalExceptionHandler {
             new ServerErrorResponse(
                 "Invalid request body",
                 "username, firstname, and email are required",
-                HttpStatus.UNPROCESSABLE_ENTITY.value());
+                HttpStatus.UNPROCESSABLE_CONTENT.value());
 
         return Mono.just(ResponseEntity.badRequest().body(errorResponse));
     }
@@ -103,7 +103,7 @@ public class GlobalExceptionHandler {
         e.printStackTrace();
         InvalidRequestDto dto =
             new InvalidRequestDto(
-                HttpStatus.UNPROCESSABLE_ENTITY.value(), e.getMessage(), request.getId());
+                HttpStatus.UNPROCESSABLE_CONTENT.value(), e.getMessage(), request.getId());
         return Mono.just(ResponseEntity.badRequest().body(dto));
     }
 }
