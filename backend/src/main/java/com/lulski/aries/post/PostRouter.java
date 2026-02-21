@@ -35,7 +35,7 @@ public class PostRouter {
      * @return A RouterFunction that maps incoming requests to their respective
      *         handler methods
      */
-    @Bean
+    @Bean(name = "postRoute")
     RouterFunction<ServerResponse> route(PostHandler postHandler) {
         return RouterFunctions.route(POST("/posts"), postHandler::insertNew)
                 .andRoute(PATCH("/posts"), postHandler::update)
