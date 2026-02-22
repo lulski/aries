@@ -69,7 +69,12 @@ dependencies {
     implementation 'software.amazon.awssdk:netty-nio-client'
 
     // 6. Observability (Note: Spring Boot 4 migrates to Micrometer 2.x)
-    implementation 'io.micrometer:micrometer-registry-prometheus' 
+    implementation 'io.micrometer:micrometer-registry-prometheus'
+
+    // 7. Rabbit MQ
+    implementation 'org.springframework.boot:spring-boot-starter-amqp'
+    testImplementation 'org.springframework.boot:spring-boot-starter-amqp-test'
+
 
     testImplementation 'io.projectreactor:reactor-test'
 

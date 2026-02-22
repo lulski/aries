@@ -23,7 +23,13 @@ class MessagingRouterIntegrationTest {
 
     @Test
     void route_postsToMessagesEndpoint_successfullyRoutesToHandler() {
-                String payload = "{\"message\": \"Hello\"}";
+        String payload = """
+        {
+            "exchange": "test-exchange",
+            "routingKey": "test-routing-key",
+            "message": "Hello"
+        }
+        """;
 
         webTestClient.post()
             .uri("/messages")
@@ -36,8 +42,14 @@ class MessagingRouterIntegrationTest {
 
     @Test
     void route_postsToMessagesWithCustomBody_rece6ivesRequest() {
-        String payload = "{\"message\": \"Hello\"}";
-        
+        String payload = """
+        {
+            "exchange": "test-exchange",
+            "routingKey": "test-routing-key",
+            "message": "Hello"
+        }
+        """;
+                
         webTestClient.post()
             .uri("/messages")
             .header("Content-Type", "application/json")
