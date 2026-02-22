@@ -28,6 +28,8 @@ The backend reads RabbitMQ connection settings from environment variables which 
 - `RABBITMQ_DEFAULT_USER` -> `spring.rabbitmq.username` (default: `guest`)
 - `RABBITMQ_DEFAULT_PASS` -> `spring.rabbitmq.password` (default: `guest`)
 
+Backend listens to queue: `test-queue`
+
 Example with custom credentials:
 
 ```

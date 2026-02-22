@@ -19,6 +19,7 @@ public class MessagingHandler {
     @Autowired
     RabbitTemplate rabbitTemplate;
 
+
     public Mono<ServerResponse> publishMessage(ServerRequest request) {
         return request.bodyToMono(Map.class)
                 .flatMap(map -> {
