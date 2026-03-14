@@ -1,36 +1,40 @@
-import { MantineProvider } from "@mantine/react";
-import type { Preview } from "@storybook/nextjs-vite";
-import "../src/app/globals.css";
-import { AriesLayout } from "../src/components/AriesLayout";
-import { ThemeProvider } from "../src/components/ThemeProvider";
+import '@mantine/core/styles.css';
 
-const preview: Preview = {
-  decorators: [
-    (Story) => (
-      <MantineProvider defaultColorScheme="auto">
-        <ThemeProvider>
-          <AriesLayout>
-            <Story />
-          </AriesLayout>
-        </ThemeProvider>
-      </MantineProvider>
-    ),
-  ],
-  parameters: {
-    controls: {
-      matchers: {
-        color: /(background|color)$/i,
-        date: /Date$/i,
-      },
-    },
+import { ColorSchemeScript, MantineProvider } from '@mantine/core';
+import { AriesThemeSet, createAriesTheme } from '../src/app/theme';
 
-    a11y: {
-      // 'todo' - show a11y violations in the test UI only
-      // 'error' - fail CI on a11y violations
-      // 'off' - skip a11y checks entirely
-      test: "todo",
+export const parameters = {
+  layout: 'fullscreen',
+  options: {
+    showPanel: false,
+    // storySort: (a, b) => a.title.localeCompare(b.title, undefined, { numeric: true }),
+  },
+  backgrounds: { disable: true },
+};
+
+export const globalTypes = {
+  theme: {
+    name: 'Theme',
+    description: 'Mantine color scheme',
+    defaultValue: 'light',
+    toolbar: {
+      icon: 'mirror',
+      items: [
+        { value: 'light', title: 'Light' },
+        { value: 'dark', title: 'Dark' },
+      ],
     },
   },
 };
 
-export default preview;
+export const decorators = [
+  (renderStory: any, context: any) => {
+    const scheme = (context.globals.theme || 'dark') as 'light' | 'dark';
+    return (
+      <MantineProvider theme={createAriesTheme(AriesThemeSet.colors[0])} forceColorScheme={scheme}>
+        <ColorSchemeScript />
+        {renderStory()}
+      </MantineProvider>
+    );
+  },
+];

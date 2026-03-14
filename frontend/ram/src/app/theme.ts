@@ -1,4 +1,3 @@
-// theme.ts
 import {
   createTheme,
   DefaultMantineColor,

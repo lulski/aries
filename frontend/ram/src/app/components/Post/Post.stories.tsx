@@ -9,7 +9,28 @@ const samplePost: PostData = {
   id: "1",
   title: "Hello World",
   titleUrl: "hello-world",
-  content: "<p>This is <strong>post</strong> content</p>",
+  content: `
+            <h1>This is h1</h1>
+            <h2>This is h2</h2>
+            <h3>This is h3</h3>
+            <h4>This is h4</h4>
+            <h5>This is h5</h5>
+            <h6>This is h6</h6>
+            <b>This is bold content</b><br/>
+            <i>This is italic content</i>
+            <p>This is <strong>post</strong> content</p>
+            <ul>
+              <li>First item</li>
+              <li>Second item</li>
+              <li>Third item</li>
+            </ul>
+            <ol>
+              <li>First ordered item</li>
+              <li>Second ordered item</li>
+              <li>Third ordered item</li>
+            </ol>
+            <a href="https://example.com">This is a link</a>
+            `,
   author: "Alice",
   createdOn: "2026-03-08",
   modifiedOn: "2026-03-08",
