@@ -17,6 +17,25 @@
       }
     },
     {
+      "name": "Next.js: debug server-side",
+      "type": "node-terminal",
+      "request": "launch",
+      "command": "npm run dev -- --inspect"
+    },
+    {
+      "name": "Next.js: debug client-side (Firefox)",
+      "type": "firefox",
+      "request": "launch",
+      "url": "http://localhost:3000",
+      "reAttach": true,
+      "pathMappings": [
+        {
+          "url": "webpack://_N_E",
+          "path": "${workspaceFolder}"
+        }
+      ]
+    },
+    {
       "type": "node",
       "name": "vscode-jest-tests.v2.ram",
       "request": "launch",
