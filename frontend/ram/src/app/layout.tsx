@@ -1,6 +1,9 @@
 import "@mantine/core/styles.css";
 import "@mantine/tiptap/styles.css";
 
+// ‼️ import dropzone styles after core package styles
+import '@mantine/dropzone/styles.css';
+
 import {
   ColorSchemeScript,
   mantineHtmlProps,
