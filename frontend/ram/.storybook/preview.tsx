@@ -1,10 +1,10 @@
-import '@mantine/core/styles.css';
+import "@mantine/core/styles.css";
 
-import { ColorSchemeScript, MantineProvider } from '@mantine/core';
-import { AriesThemeSet, createAriesTheme } from '../src/app/theme';
+import { ColorSchemeScript, MantineProvider } from "@mantine/core";
+import { AriesThemeSet, createAriesTheme } from "../src/app/theme";
 
 export const parameters = {
-  layout: 'fullscreen',
+  layout: "fullscreen",
   options: {
     showPanel: false,
     // storySort: (a, b) => a.title.localeCompare(b.title, undefined, { numeric: true }),
@@ -14,14 +14,14 @@ export const parameters = {
 
 export const globalTypes = {
   theme: {
-    name: 'Theme',
-    description: 'Mantine color scheme',
-    defaultValue: 'light',
+    name: "Theme",
+    description: "Mantine color scheme",
+    defaultValue: "light",
     toolbar: {
-      icon: 'mirror',
+      icon: "mirror",
       items: [
-        { value: 'light', title: 'Light' },
-        { value: 'dark', title: 'Dark' },
+        { value: "light", title: "Light" },
+        { value: "dark", title: "Dark" },
       ],
     },
   },
@@ -29,9 +29,12 @@ export const globalTypes = {
 
 export const decorators = [
   (renderStory: any, context: any) => {
-    const scheme = (context.globals.theme || 'dark') as 'light' | 'dark';
+    const scheme = (context.globals.theme || "dark") as "light" | "dark";
     return (
-      <MantineProvider theme={createAriesTheme(AriesThemeSet.colors[0])} forceColorScheme={scheme}>
+      <MantineProvider
+        theme={createAriesTheme(AriesThemeSet.colors[0])}
+        forceColorScheme={scheme}
+      >
         <ColorSchemeScript />
         {renderStory()}
       </MantineProvider>
