@@ -9,9 +9,9 @@
     {
       "path": "backend"
     },
-    // {
-    //   "path": "seeder"
-    // },
+    {
+      "path": "seeder"
+    },
     {
       "path": "terraform"
     }

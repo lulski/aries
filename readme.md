@@ -25,6 +25,31 @@ Aries is a full-stack CRUD web application featuring a reactive backend and a mo
 
 ## Getting Started
 
+### Run the database
+
+```
+podman volume create mongodb_data && podman volume create mongodb_config
+
+podman run -d \
+  --name mongodb \
+  -p 27017:27017 \
+  -v mongodb_data:/data/db:Z \
+  -v mongodb_config:/data/configdb:Z \
+  mongodb/mongodb-community-server:latest
+
+podman run -d \
+  --name mongodb \
+  -p 27017:27017 \
+  -v ./data/mongodb/db:/data/db:Z \
+  -v ./data/mongodb/config:/data/configdb:Z \
+  -e GLIBC_TUNABLES: glibc.cpu.hwcaps=-SHSTK
+  mongodb/mongodb-community-server:6.0-ubi8-slim
+
+
+  docker pull mongodb/mongodb-community-server:6.0-ubi8-slim
+
+```
+
 ### Run the Backend (Development)
 
 ```sh
@@ -54,20 +79,6 @@ cd ./aries/seeder
 - `backend/` — Spring Boot WebFlux backend API
 - `frontend/` — Next.js frontend app
 - `seeder/` — Spring Batch database seeder
-
----
-
-## Backend To-do
-
-- [ ] Add more API endpoints
-- [ ] Improve authentication/authorization
-- [ ] Add integration tests
-
-## Frontend To-do
-
-- [ ] Implement user registration
-- [ ] Add post editing/deletion
-- [ ] Improve UI/UX
 
 ---
 
