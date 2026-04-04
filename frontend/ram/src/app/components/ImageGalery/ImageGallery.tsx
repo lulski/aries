@@ -1,8 +1,12 @@
-import { Box, Group, SimpleGrid, Stack, Text } from "@mantine/core";
+import { Box, Group, Image, SimpleGrid, Stack, Text } from "@mantine/core";
 import { Dropzone, DropzoneProps, IMAGE_MIME_TYPE } from "@mantine/dropzone";
 import { IconPhoto, IconUpload, IconX } from "@tabler/icons-react";
 
-export default function ImageGalery(props: Partial<DropzoneProps>) {
+type ImageGalleryProps = Partial<DropzoneProps> & {
+  numImages?: number | 0;
+};
+
+export default function ImageGallery(props: ImageGalleryProps) {
   return (
     <>
       <Stack>
@@ -12,21 +16,30 @@ export default function ImageGalery(props: Partial<DropzoneProps>) {
             cols={{ base: 1, "300px": 2, "500px": 5 }}
             spacing={{ base: 10, "300px": "xl" }}
           >
-            {[1, 2, 3, 4, 5].map((num) => (
-              <Box
-                key={num}
-                p="md"
-                bd="1px solid gray"
-                style={{
-                  minHeight: "100px",
-                  display: "flex",
-                  alignItems: "center",
-                  justifyContent: "center",
-                }}
-              >
-                {num}
-              </Box>
-            ))}
+            {props.numImages &&
+              props.numImages > 0 &&
+              [...Array(props.numImages)].map((_, index) => (
+                <Box
+                  key={index}
+                  p="sm"
+                  bd="1px solid gray"
+                  style={{
+                    minHeight: "100px",
+                    display: "flex",
+                    alignItems: "center",
+                    justifyContent: "center",
+                  }}
+                >
+                  <Image
+                    key={`img-${index}`}
+                    radius="xs"
+                    h={50}
+                    w="auto"
+                    fit="fill"
+                    src="https://raw.githubusercontent.com/mantinedev/mantine/master/.demo/images/bg-9.png"
+                  />
+                </Box>
+              ))}
           </SimpleGrid>
         </div>
 

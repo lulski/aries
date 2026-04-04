@@ -19,7 +19,7 @@ import TextAlign from "@tiptap/extension-text-align";
 import { TextStyle } from "@tiptap/extension-text-style";
 import { useEditor } from "@tiptap/react";
 import StarterKit from "@tiptap/starter-kit";
-import ImageGalery from "../ImageGalery/ImageGalery";
+import ImageGallery from "../ImageGalery/ImageGallery";
 
 interface PostEditProps {
   form: UseFormReturnType<{
@@ -165,7 +165,7 @@ export default function PostEdit({ form, error }: PostEditProps) {
         </RichTextEditor>
       </InputWrapper>
       <Group justify="center" mt="md">
-        <ImageGalery />
+        <ImageGallery />
       </Group>
     </>
   );
