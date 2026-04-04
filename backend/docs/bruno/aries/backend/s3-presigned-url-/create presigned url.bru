@@ -1,12 +1,12 @@
 meta {
-  name: image
+  name: create presigned url
   type: http
-  seq: 1
+  seq: 3
 }
 
-get {
+post {
   url: {{protocol}}://{{host}}:{{port}}/api/v1/s3/presigned-url/aries-img-bucket/666
-  body: none
+  body: multipartForm
   auth: basic
 }
 
@@ -18,4 +18,8 @@ headers {
 auth:basic {
   username: {{api_username}}
   password: {{api_password}}
+}
+
+body:multipart-form {
+  file: @file(/home/lulski/Pictures/backgrounds/Adidas_Blue.png)
 }
