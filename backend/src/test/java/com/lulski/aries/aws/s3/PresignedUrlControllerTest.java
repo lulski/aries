@@ -4,6 +4,7 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.when;
 
 import java.net.URI;
+import java.util.HashMap;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -64,11 +65,26 @@ class PresignedUrlControllerTest {
                 .thenReturn(presignedGetObjectRequest);
 
         when(presignedGetObjectRequest.url()).thenReturn(new URI(expectedUrl).toURL());
-
         StepVerifier.create(controller.generatePresignedUrl(bucket, object))
                 .assertNext(response -> {
                     assert response.getStatusCode().is2xxSuccessful();
                 })
                 .verifyComplete();
+    }
+
+    @Test
+    void testCreatePresignedUrlSuccess() throws Exception {
+        String bucket = "test-bucket";
+        String object = "folder/test-object.txt";
+        HashMap<String, String> metaData = new HashMap<>(); 
+        metaData.put("key1", "value1");
+        
+        StepVerifier.create(controller.createPresignedUrl(bucket, object, metaData))
+        .assertNext(response-> {
+            assert response.equals("https://s3.amazonaws.com/presigned-url");
+            })
+        .verifyComplete();
+     
+
     }
 }

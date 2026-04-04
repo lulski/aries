@@ -2,9 +2,11 @@ package com.lulski.aries.aws.s3;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.time.Duration;
@@ -31,17 +33,20 @@ public class PresignedUrlController {
     }
 
     /**
-     * generates URL that allows access to the supplied bucket object
+     * generates URL that allows access to the supplied bucketName and postId
+     * @param bucketName the name of the S3 bucket
+     * @param postId the ID of the post
+     * @return a Mono containing the presigned URL
      */
-    @GetMapping("/s3/presigned-url/{bucket}/{object}")
+    @GetMapping("/s3/presigned-url/{bucketName}/{postId}")
     public Mono<ResponseEntity<String>> generatePresignedUrl(
-            @PathVariable String bucket,
-            @PathVariable String object) {
+            @PathVariable String bucketName,
+            @PathVariable String postId) {
 
         return Mono.fromCallable(() -> {
             GetObjectRequest getObjectRequest = GetObjectRequest.builder()
-                    .bucket(bucket)
-                    .key(object)
+                    .bucket(bucketName)
+                    .key(postId)
                     .build();
 
             GetObjectPresignRequest presignRequest = GetObjectPresignRequest
@@ -55,28 +60,57 @@ public class PresignedUrlController {
         }).subscribeOn(Schedulers.boundedElastic());// move blocking work off main thread
     }
 
-    /* Create a presigned URL to use in a subsequent PUT request */
-    public String createPresignedUrl(String bucketName, String keyName, Map<String, String> metadata) {
-        try (S3Presigner presigner = S3Presigner.create()) {
+    /**
+     * generates URL that allows access to the supplied bucketName and postId
+     * @param bucketName the name of the S3 bucket
+     * @param postId the ID of the post
+     * @return a Mono containing the presigned URL
+     */    
+    @PostMapping("/s3/presigned-url/{bucketName}/{postId}")
+    public Mono<String> createPresignedUrl(
+            @PathVariable String bucketName, 
+            @PathVariable String postId,
+            Map<String, String> metadata) {
 
+        // Validate inputs first
+        if (!validateInput(bucketName, postId)) {
+            return Mono.error(new IllegalArgumentException("Invalid bucket/postId names"));
+        }
+
+        return Mono.fromCallable(() -> {
             PutObjectRequest objectRequest = PutObjectRequest.builder()
                     .bucket(bucketName)
-                    .key(keyName)
+                    .key(postId)
                     .metadata(metadata)
+                    .contentType(getContentTypeFromMetadata(metadata))
                     .build();
 
             PutObjectPresignRequest presignRequest = PutObjectPresignRequest.builder()
-                    .signatureDuration(Duration.ofMinutes(10)) // The URL expires in 10 minutes.
+                    .signatureDuration(Duration.ofMinutes(10))
                     .putObjectRequest(objectRequest)
                     .build();
 
-            PresignedPutObjectRequest presignedRequest = presigner.presignPutObject(presignRequest);
-            String myURL = presignedRequest.url().toString();
-            logger.info("Presigned URL to upload a file to: [{}]", myURL);
-            logger.info("HTTP method: [{}]", presignedRequest.httpRequest().method());
+            return presigner.presignPutObject(presignRequest).url().toExternalForm();
+        })
+        .subscribeOn(Schedulers.boundedElastic()) // Critical!
+        .doOnError(e -> {
+            logger.error("Failed to create presigned URL", e);
+             }
+            )
+        .onErrorResume(e -> Mono.just(
+                ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                        .body(e.getMessage())
+                        .toString()
+        ));
+    }
 
-            return presignedRequest.url().toExternalForm();
-        }
+    private boolean validateInput(String bucket, String object) {
+        return !bucket.isEmpty() && !bucket.contains("..") && 
+               !object.isEmpty() && !object.contains("..");
+    }
+
+    private String getContentTypeFromMetadata(Map<String, String> metadata) {
+        return metadata.getOrDefault("content-type", "application/octet-stream");
     }
 
 }
