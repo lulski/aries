@@ -17,6 +17,8 @@ import reactor.test.StepVerifier;
 import software.amazon.awssdk.services.s3.presigner.S3Presigner;
 import software.amazon.awssdk.services.s3.presigner.model.GetObjectPresignRequest;
 import software.amazon.awssdk.services.s3.presigner.model.PresignedGetObjectRequest;
+import software.amazon.awssdk.services.s3.presigner.model.PresignedPutObjectRequest;
+import software.amazon.awssdk.services.s3.presigner.model.PutObjectPresignRequest;
 
 @ExtendWith(MockitoExtension.class)
 class PresignedUrlControllerTest {
@@ -26,6 +28,9 @@ class PresignedUrlControllerTest {
 
     @Mock
     private PresignedGetObjectRequest presignedGetObjectRequest;
+
+    @Mock
+    private PresignedPutObjectRequest presignedPutObjectRequest;
 
     private PresignedUrlController controller;
 
@@ -74,14 +79,22 @@ class PresignedUrlControllerTest {
 
     @Test
     void testCreatePresignedUrlSuccess() throws Exception {
-        String bucket = "test-bucket";
+        // String bucket = "test-bucket";
+        String bucket = "aries";
         String object = "folder/test-object.txt";
         HashMap<String, String> metaData = new HashMap<>(); 
         metaData.put("key1", "value1");
+        String expectedUrl = "https://s3.amazonaws.com/presigned-url";
+
+        when(presigner.presignPutObject(any(PutObjectPresignRequest.class)))
+                .thenReturn(presignedPutObjectRequest);
+
+        when(presignedPutObjectRequest.url())
+                .thenReturn(new URI(expectedUrl).toURL());
         
         StepVerifier.create(controller.createPresignedUrl(bucket, object, metaData))
         .assertNext(response-> {
-            assert response.equals("https://s3.amazonaws.com/presigned-url");
+            assert response.equals(expectedUrl);
             })
         .verifyComplete();
      

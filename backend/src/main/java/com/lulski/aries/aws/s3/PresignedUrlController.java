@@ -1,5 +1,8 @@
 package com.lulski.aries.aws.s3;
 
+import java.time.Duration;
+import java.util.Map;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
@@ -9,16 +12,12 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import java.time.Duration;
-import java.util.Map;
-
 import reactor.core.publisher.Mono;
 import reactor.core.scheduler.Schedulers;
 import software.amazon.awssdk.services.s3.model.GetObjectRequest;
 import software.amazon.awssdk.services.s3.model.PutObjectRequest;
 import software.amazon.awssdk.services.s3.presigner.S3Presigner;
 import software.amazon.awssdk.services.s3.presigner.model.GetObjectPresignRequest;
-import software.amazon.awssdk.services.s3.presigner.model.PresignedPutObjectRequest;
 import software.amazon.awssdk.services.s3.presigner.model.PutObjectPresignRequest;
 
 @RestController
@@ -61,7 +60,8 @@ public class PresignedUrlController {
     }
 
     /**
-     * generates URL that allows access to the supplied bucketName and postId
+     * generates URL that allows upload access to the supplied bucketName and postId
+     * this is so the frontend app can upload the image directly to S3 without going through the backend, which is more efficient and scalable
      * @param bucketName the name of the S3 bucket
      * @param postId the ID of the post
      * @return a Mono containing the presigned URL
