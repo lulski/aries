@@ -65,14 +65,13 @@ public class PresignedUrlController {
      * @param bucketName the name of the S3 bucket
      * @param postId     the ID of the post
      * @return a Mono containing the presigned URL
-     */    
+     */
     @PostMapping("/s3/presigned/{bucketName}/{postId}")
     public Mono<PresignedUrlResponse> createPresignedUrl(
-            @PathVariable String bucketName, 
+            @PathVariable String bucketName,
             @PathVariable String postId,
             Map<String, String> metadata) {
 
-        // Validate inputs first
         if (!validateInput(bucketName, postId)) {
             return Mono.error(new IllegalArgumentException("Invalid bucket/postId names"));
         }
@@ -94,12 +93,13 @@ public class PresignedUrlController {
                     .signatureDuration(Duration.ofMinutes(10))
                     .putObjectRequest(objectRequest)
                     .build();
-            
-            var presignedUrlResponse = new PresignedUrlResponse(presigner.presignPutObject(presignRequest).url().toExternalForm());
+
+            var presignedUrlResponse = new PresignedUrlResponse(
+                    presigner.presignPutObject(presignRequest).url().toExternalForm());
             return presignedUrlResponse;
         })
-        .subscribeOn(Schedulers.boundedElastic())
-        .onErrorMap(e -> new PresignedUrlException("Failed to create presigned URL", e));
+                .subscribeOn(Schedulers.boundedElastic())
+                .onErrorMap(e -> new PresignedUrlException("Failed to create presigned URL", e));
     }
 
     private boolean validateInput(String bucket, String object) {
@@ -109,6 +109,13 @@ public class PresignedUrlController {
 
     private String getContentTypeFromMetadata(Map<String, String> metadata) {
         return metadata.getOrDefault("content-type", "application/octet-stream");
+    }
+
+    private boolean validateMIMEType(String contentType) {
+        if (contentType == null || contentType.isEmpty()) {
+            return false;
+        }
+        return contentType.startsWith("image/");
     }
 
     private record PresignedUrlResponse(String url) {
