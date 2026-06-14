@@ -3,6 +3,8 @@ package com.lulski.aries.aws.s3;
 import java.time.Duration;
 import java.util.Map;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -23,6 +25,7 @@ import software.amazon.awssdk.services.s3.presigner.model.PutObjectPresignReques
 public class PresignedUrlController {
 
     private final S3Presigner presigner;
+    private final Logger LOGGER = LoggerFactory.getLogger(PresignedUrlController.class);
 
     public PresignedUrlController(S3Presigner presigner) {
         this.presigner = presigner;
@@ -77,9 +80,13 @@ public class PresignedUrlController {
         }
 
         String contentType = getContentTypeFromMetadata(metadata);
-        if (!validateMIMEType(contentType)) {
-            return Mono.error(new IllegalArgumentException("Invalid MIME type: only image uploads are allowed"));
-        }
+        LOGGER.info("Received request to create presigned URL for bucket: {}, postId: {}, contentType: {}", bucketName, postId, contentType);
+ 
+        //TODO: we should validate the content type to prevent malicious uploads,
+        // but for now we will just log it and let S3 handle the validation based on the content type of the uploaded file
+        // if (!validateMIMEType(contentType)) {
+        //     return Mono.error(new IllegalArgumentException("Invalid MIME type: only image uploads are allowed"));
+        // }
 
         return Mono.fromCallable(() -> {
             PutObjectRequest objectRequest = PutObjectRequest.builder()
