@@ -1,4 +1,4 @@
-package com.lulski.aries.images;
+package com.lulski.aries.image;
 
 import java.util.Objects;
 

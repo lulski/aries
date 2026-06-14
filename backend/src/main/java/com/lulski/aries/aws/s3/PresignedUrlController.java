@@ -3,8 +3,6 @@ package com.lulski.aries.aws.s3;
 import java.time.Duration;
 import java.util.Map;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -25,8 +23,6 @@ public class PresignedUrlController {
 
     private final S3Presigner presigner;
 
-    private static final Logger logger = LoggerFactory.getLogger(PresignedUrlController.class);
-
     public PresignedUrlController(S3Presigner presigner) {
         this.presigner = presigner;
     }
@@ -37,7 +33,7 @@ public class PresignedUrlController {
      * @param postId the ID of the post
      * @return a Mono containing the presigned URL
      */
-    @GetMapping("/s3/presigned-url/{bucketName}/{postId}")
+    @GetMapping("/s3/presigned/{bucketName}/{postId}")
     public Mono<ResponseEntity<String>> generatePresignedUrl(
             @PathVariable String bucketName,
             @PathVariable String postId) {
@@ -66,8 +62,8 @@ public class PresignedUrlController {
      * @param postId the ID of the post
      * @return a Mono containing the presigned URL
      */    
-    @PostMapping("/s3/presigned-url/{bucketName}/{postId}")
-    public Mono<String> createPresignedUrl(
+    @PostMapping("/s3/presigned/{bucketName}/{postId}")
+    public Mono<PresignedUrlResponse> createPresignedUrl(
             @PathVariable String bucketName, 
             @PathVariable String postId,
             Map<String, String> metadata) {
@@ -89,19 +85,12 @@ public class PresignedUrlController {
                     .signatureDuration(Duration.ofMinutes(10))
                     .putObjectRequest(objectRequest)
                     .build();
-
-            return presigner.presignPutObject(presignRequest).url().toExternalForm();
+            
+            var presignedUrlResponse = new PresignedUrlResponse(presigner.presignPutObject(presignRequest).url().toExternalForm());
+            return presignedUrlResponse;
         })
-        .subscribeOn(Schedulers.boundedElastic()) // Critical!
-        .doOnError(e -> {
-            logger.error("Failed to create presigned URL", e);
-             }
-            )
-        .onErrorResume(e -> Mono.just(
-                ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
-                        .body(e.getMessage())
-                        .toString()
-        ));
+        .subscribeOn(Schedulers.boundedElastic())
+        .onErrorMap(e -> new PresignedUrlException("Failed to create presigned URL", e));
     }
 
     private boolean validateInput(String bucket, String object) {
@@ -111,6 +100,10 @@ public class PresignedUrlController {
 
     private String getContentTypeFromMetadata(Map<String, String> metadata) {
         return metadata.getOrDefault("content-type", "application/octet-stream");
+    }
+
+    private record PresignedUrlResponse(String url) {
+
     }
 
 }

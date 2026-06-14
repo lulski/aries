@@ -1,8 +1,10 @@
-package com.lulski.aries.images;
+package com.lulski.aries.image;
 
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.http.MediaType;
+
+import com.lulski.aries.image.Image;
 
 import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
 
