@@ -9,6 +9,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.multipart.MultipartFile;
 
 import reactor.core.publisher.Mono;
 import reactor.core.scheduler.Schedulers;
@@ -28,9 +29,10 @@ public class PresignedUrlController {
     }
 
     /**
-     * generates URL that allows access to the supplied bucketName and postId
+     * generates URL that allows View access to the supplied bucketName and postId
+     * 
      * @param bucketName the name of the S3 bucket
-     * @param postId the ID of the post
+     * @param postId     the ID of the post
      * @return a Mono containing the presigned URL
      */
     @GetMapping("/s3/presigned/{bucketName}/{postId}")
@@ -57,9 +59,11 @@ public class PresignedUrlController {
 
     /**
      * generates URL that allows upload access to the supplied bucketName and postId
-     * this is so the frontend app can upload the image directly to S3 without going through the backend, which is more efficient and scalable
+     * this is so the frontend app can upload the image directly to S3 without going
+     * through the backend, which is more efficient and scalable
+     * 
      * @param bucketName the name of the S3 bucket
-     * @param postId the ID of the post
+     * @param postId     the ID of the post
      * @return a Mono containing the presigned URL
      */    
     @PostMapping("/s3/presigned/{bucketName}/{postId}")
@@ -71,6 +75,11 @@ public class PresignedUrlController {
         // Validate inputs first
         if (!validateInput(bucketName, postId)) {
             return Mono.error(new IllegalArgumentException("Invalid bucket/postId names"));
+        }
+
+        String contentType = getContentTypeFromMetadata(metadata);
+        if (!validateMIMEType(contentType)) {
+            return Mono.error(new IllegalArgumentException("Invalid MIME type: only image uploads are allowed"));
         }
 
         return Mono.fromCallable(() -> {
@@ -94,8 +103,8 @@ public class PresignedUrlController {
     }
 
     private boolean validateInput(String bucket, String object) {
-        return !bucket.isEmpty() && !bucket.contains("..") && 
-               !object.isEmpty() && !object.contains("..");
+        return !bucket.isEmpty() && !bucket.contains("..") &&
+                !object.isEmpty() && !object.contains("..");
     }
 
     private String getContentTypeFromMetadata(Map<String, String> metadata) {

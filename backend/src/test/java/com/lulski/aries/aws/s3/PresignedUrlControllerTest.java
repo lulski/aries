@@ -82,8 +82,9 @@ class PresignedUrlControllerTest {
         // String bucket = "test-bucket";
         String bucket = "aries";
         String object = "folder/test-object.txt";
-        HashMap<String, String> metaData = new HashMap<>(); 
+        HashMap<String, String> metaData = new HashMap<>();
         metaData.put("key1", "value1");
+        metaData.put("content-type", "image/jpeg");
         String expectedUrl = "https://s3.amazonaws.com/presigned-url";
 
         when(presigner.presignPutObject(any(PutObjectPresignRequest.class)))
@@ -91,13 +92,35 @@ class PresignedUrlControllerTest {
 
         when(presignedPutObjectRequest.url())
                 .thenReturn(new URI(expectedUrl).toURL());
-        
-        StepVerifier.create(controller.createPresignedUrl(bucket, object, metaData))
-        .assertNext(response-> {
-            assert response.equals(expectedUrl);
-            })
-        .verifyComplete();
-     
 
+        StepVerifier.create(controller.createPresignedUrl(bucket, object, metaData))
+                .assertNext(response -> {
+                    assert response.equals(expectedUrl);
+                })
+                .verifyComplete();
+
+    }
+
+    @Test
+    void testCreatePresignedUrlInvalidMIMEType() throws Exception {
+        String bucket = "aries";
+        String object = "folder/test-object.txt";
+        HashMap<String, String> metaData = new HashMap<>();
+        metaData.put("content-type", "text/plain");
+
+        StepVerifier.create(controller.createPresignedUrl(bucket, object, metaData))
+                .expectError(IllegalArgumentException.class)
+                .verify();
+    }
+
+    @Test
+    void testCreatePresignedUrlMissingContentType() throws Exception {
+        String bucket = "aries";
+        String object = "folder/test-object.txt";
+        HashMap<String, String> metaData = new HashMap<>();
+
+        StepVerifier.create(controller.createPresignedUrl(bucket, object, metaData))
+                .expectError(IllegalArgumentException.class)
+                .verify();
     }
 }
