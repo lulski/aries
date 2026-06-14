@@ -1,12 +1,83 @@
 import { Box, Group, Image, SimpleGrid, Stack, Text } from "@mantine/core";
 import { Dropzone, DropzoneProps, IMAGE_MIME_TYPE } from "@mantine/dropzone";
 import { IconPhoto, IconUpload, IconX } from "@tabler/icons-react";
-
+import { useState } from "react";
+import { FileError, FileRejection } from "react-dropzone";
+import { ErrorBanner } from "../ErrorBanner/Error";
 type ImageGalleryProps = Partial<DropzoneProps> & {
   numImages?: number | 0;
 };
 
 export default function ImageGallery(props: ImageGalleryProps) {
+  const [imageUploadError, setImageUploadError] = useState<string | null>(null);
+  const FILE_UPLOAD_MAX_SIZE = process.env.FILE_UPLOAD_MAX_SIZE;
+  const BFF_PRESIGNED_URL =
+    process.env.BFF_PRESIGNED_URL || "/api/s3/presigned";
+  const S3_BUCKET_NAME = process.env.S3_BUCKET_NAME || "post-images";
+
+  function handleDrop(files: File[]) {
+    console.log("accepted files", files);
+    files.map((file) => {
+      generatePresignedUrl(file)
+        .then((response) => {
+          if (!response.ok) {
+            throw new Error("Failed to get presigned URL");
+          }
+          return response.json();
+        })
+        .then((data) => {
+          console.log("Presigned URL data:", data);
+        })
+        .catch((error) => {
+          console.error("Error generating presigned URL:", error);
+        });
+    });
+  }
+
+  function generatePresignedUrl(file: File) {
+    console.log("Generating presigned URL for file:", file);
+    const response = fetch(BFF_PRESIGNED_URL, {
+      cache: "no-store",
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        bucketName: S3_BUCKET_NAME,
+      }),
+    });
+    return response;
+  }
+
+  function handleReject(fileRejections: FileRejection[]) {
+    console.log("rejected files", fileRejections);
+    const errorMessages = fileRejections.map((fileRejection) => {
+      const errorMsg =
+        "file: " +
+        fileRejection.file.name +
+        " was rejected. Reason: " +
+        fileRejection.errors.map((e: FileError) => e.message).join(", ");
+      return errorMsg;
+    });
+    setImageUploadError(errorMessages.join(". "));
+  }
+
+  function resetImageUploadError() {
+    setImageUploadError(null);
+  }
+
+  // function customValidation(file: File) {
+  //   if (file.size > parseInt(FILE_UPLOAD_MAX_SIZE || "2097152")) {
+  //     const error: FileError = {
+  //       message: `File size should not exceed ${parseInt(FILE_UPLOAD_MAX_SIZE || "2097152") / 1024 / 1024}mb`,
+  //       code: "file-too-large",
+  //     };
+  //     return error;
+  //   } else {
+  //     return null;
+  //   }
+  // }
+
   return (
     <>
       <Stack>
@@ -41,13 +112,22 @@ export default function ImageGallery(props: ImageGalleryProps) {
                 </Box>
               ))}
           </SimpleGrid>
+
+          {imageUploadError && (
+            <ErrorBanner
+              message={imageUploadError}
+              onClose={resetImageUploadError}
+              onRetry={null}
+            />
+          )}
         </div>
 
         <Box my="xl" bd={"1px solid gray"} p="xl">
           <Dropzone
-            onDrop={(files) => console.log("accepted files", files)}
-            onReject={(files) => console.log("rejected files", files)}
-            maxSize={5 * 1024 ** 2}
+            onDrop={handleDrop}
+            onReject={handleReject}
+            // validator={customValidation}
+            maxSize={parseInt(FILE_UPLOAD_MAX_SIZE || "2097152")}
             accept={IMAGE_MIME_TYPE}
             {...props}
           >
@@ -85,7 +165,7 @@ export default function ImageGallery(props: ImageGalleryProps) {
                 </Text>
                 <Text size="sm" c="dimmed" inline mt={7}>
                   Attach as many files as you like, each file should not exceed
-                  5mb
+                  2mb in size
                 </Text>
               </div>
             </Group>

@@ -14,6 +14,8 @@ export default function NewPostPage() {
   const title: string = "";
   const content: string = "";
 
+  const BFF_POST_URL = process.env.BFF_POST_URL || "/api/posts";
+
   const form = useForm({
     mode: "uncontrolled",
     initialValues: {
@@ -31,7 +33,7 @@ export default function NewPostPage() {
   const handleSubmit = async (values: typeof form.values) => {
     console.log(values);
     try {
-      const res = await fetch("/api/posts", {
+      const res = await fetch(BFF_POST_URL, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",

@@ -19,7 +19,7 @@ type PageProps = {
 
 async function getPosts(
   currentPage: number,
-  size: number
+  size: number,
 ): Promise<PostApiResponse> {
   const API_BFF_POST_URL = "/api/posts";
   const fetchUrl = `${API_BFF_POST_URL}?page=${currentPage}&size=${size}`;
@@ -50,7 +50,7 @@ export default function Posts({ searchParams }: PageProps) {
 
   const [posts, setPosts] = useState<PostApiResponse | null>(null);
   const [pagination, setPagination] = useState<AriesPaginationProps | null>(
-    null
+    null,
   );
 
   useEffect(() => {
@@ -120,7 +120,8 @@ export default function Posts({ searchParams }: PageProps) {
     getSession();
   }, []);
 
-  if (error) return <ErrorBanner message={error} onRetry={null} />;
+  if (error)
+    return <ErrorBanner message={error} onRetry={null} onClose={null} />;
 
   if (!posts) return <div>Loading...</div>;
 

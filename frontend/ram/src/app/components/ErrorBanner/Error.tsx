@@ -1,7 +1,12 @@
 import { Alert, Button, Group, Text } from "@mantine/core";
 import { IconAlertCircle } from "@tabler/icons-react";
 
-export function ErrorBanner({ message = "Something went wrong", onRetry }) {
+/**Todo: allow multiple messages */
+export function ErrorBanner({
+  message = "Something went wrong",
+  onRetry,
+  onClose,
+}) {
   return (
     <Alert
       icon={<IconAlertCircle size={20} />}
@@ -10,6 +15,7 @@ export function ErrorBanner({ message = "Something went wrong", onRetry }) {
       radius="md"
       withCloseButton
       title="Error"
+      onClose={onClose}
       style={{
         marginBottom: "1rem",
         border: "1px solid var(--mantine-color-red-4)",
