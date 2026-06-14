@@ -48,12 +48,10 @@ cd ./aries/backend
 ### Run the Frontend
 
 ```sh
-cd ./aries/frontend
+cd ./aries/frontend/ram
 npm install
 npm run dev
 ```
-
-> **Note:** If your frontend is in a subfolder (e.g., `frontend/ram`), adjust the path accordingly.
 
 ### Run the Seeder (Optional: Populate Database)
 
