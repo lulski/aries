@@ -5,13 +5,11 @@ import java.util.Map;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RestController;
-import org.springframework.web.multipart.MultipartFile;
 
 import reactor.core.publisher.Mono;
 import reactor.core.scheduler.Schedulers;
@@ -32,21 +30,21 @@ public class PresignedUrlController {
     }
 
     /**
-     * generates URL that allows View access to the supplied bucketName and postId
-     * 
+     * generates URL that allows View access to the supplied bucketName and fileName
+     *
      * @param bucketName the name of the S3 bucket
-     * @param postId     the ID of the post
+     * @param fileName   the name of the file in the S3 bucket
      * @return a Mono containing the presigned URL
      */
-    @GetMapping("/s3/presigned/{bucketName}/{postId}")
+    @GetMapping("/s3/presigned/{bucketName}/{fileName}")
     public Mono<ResponseEntity<String>> generatePresignedUrl(
             @PathVariable String bucketName,
-            @PathVariable String postId) {
+            @PathVariable String fileName) {
 
         return Mono.fromCallable(() -> {
             GetObjectRequest getObjectRequest = GetObjectRequest.builder()
                     .bucket(bucketName)
-                    .key(postId)
+                    .key(fileName)
                     .build();
 
             GetObjectPresignRequest presignRequest = GetObjectPresignRequest
@@ -61,37 +59,41 @@ public class PresignedUrlController {
     }
 
     /**
-     * generates URL that allows upload access to the supplied bucketName and postId
+     * generates URL that allows upload access to the supplied bucketName and
+     * fileName
      * this is so the frontend app can upload the image directly to S3 without going
      * through the backend, which is more efficient and scalable
-     * 
+     *
      * @param bucketName the name of the S3 bucket
-     * @param postId     the ID of the post
+     * @param fileName   the name of the file in the S3 bucket
      * @return a Mono containing the presigned URL
      */
-    @PostMapping("/s3/presigned/{bucketName}/{postId}")
+    @PostMapping("/s3/presigned/{bucketName}/{fileName}")
     public Mono<PresignedUrlResponse> createPresignedUrl(
             @PathVariable String bucketName,
-            @PathVariable String postId,
+            @PathVariable String fileName,
             Map<String, String> metadata) {
 
-        if (!validateInput(bucketName, postId)) {
-            return Mono.error(new IllegalArgumentException("Invalid bucket/postId names"));
+        if (!validateInput(bucketName, fileName)) {
+            return Mono.error(new IllegalArgumentException("Invalid bucket or file name"));
         }
 
         String contentType = getContentTypeFromMetadata(metadata);
-        LOGGER.info("Received request to create presigned URL for bucket: {}, postId: {}, contentType: {}", bucketName, postId, contentType);
- 
-        //TODO: we should validate the content type to prevent malicious uploads,
-        // but for now we will just log it and let S3 handle the validation based on the content type of the uploaded file
+        LOGGER.info("Received request to create presigned URL for bucket: {}, fileName: {}, contentType: {}",
+                bucketName, fileName, contentType);
+
+        // TODO: we should validate the content type to prevent malicious uploads,
+        // but for now we will just log it and let S3 handle the validation based on the
+        // content type of the uploaded file
         // if (!validateMIMEType(contentType)) {
-        //     return Mono.error(new IllegalArgumentException("Invalid MIME type: only image uploads are allowed"));
+        // return Mono.error(new IllegalArgumentException("Invalid MIME type: only image
+        // uploads are allowed"));
         // }
 
         return Mono.fromCallable(() -> {
             PutObjectRequest objectRequest = PutObjectRequest.builder()
                     .bucket(bucketName)
-                    .key(postId)
+                    .key(fileName)
                     .metadata(metadata)
                     .contentType(getContentTypeFromMetadata(metadata))
                     .build();
