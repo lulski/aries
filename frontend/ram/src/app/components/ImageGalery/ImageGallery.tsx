@@ -10,10 +10,11 @@ type ImageGalleryProps = Partial<DropzoneProps> & {
 
 export default function ImageGallery(props: ImageGalleryProps) {
   const [imageUploadError, setImageUploadError] = useState<string | null>(null);
-  const FILE_UPLOAD_MAX_SIZE = process.env.FILE_UPLOAD_MAX_SIZE;
+  const FILE_UPLOAD_MAX_SIZE = process.env.NEXT_PUBLIC_FILE_UPLOAD_MAX_SIZE;
   const BFF_PRESIGNED_URL =
-    process.env.BFF_PRESIGNED_URL || "/api/s3/presigned";
-  const S3_BUCKET_NAME = process.env.S3_BUCKET_NAME || "post-images";
+    process.env.NEXT_PUBLIC_PRESIGNED_URL || "/api/s3/presigned";
+  const S3_BUCKET_NAME =
+    process.env.NEXT_PUBLIC_S3_BUCKET_NAME || "post-images";
 
   function handleDrop(files: File[]) {
     console.log("accepted files", files);
@@ -27,6 +28,13 @@ export default function ImageGallery(props: ImageGalleryProps) {
         })
         .then((data) => {
           console.log("Presigned URL data:", data);
+          return uploadFileToS3(file, data.presignedUrl);
+        })
+        .then((response) => {
+          if (!response.ok) {
+            throw new Error("Failed to upload file to S3");
+          }
+          console.log("File uploaded to S3 successfully");
         })
         .catch((error) => {
           console.error("Error generating presigned URL:", error);
@@ -34,16 +42,30 @@ export default function ImageGallery(props: ImageGalleryProps) {
     });
   }
 
+  function uploadFileToS3(file: File, presignedUrl: string) {
+    console.log("Uploading file to S3 with presigned URL:", presignedUrl);
+    return fetch(presignedUrl, {
+      method: "PUT",
+      headers: {
+        "Content-Type": file.type,
+      },
+      body: file,
+    });
+  }
+
   function generatePresignedUrl(file: File) {
     console.log("Generating presigned URL for file:", file);
-    const response = fetch(BFF_PRESIGNED_URL, {
+    const response = fetch(BFF_PRESIGNED_URL + `/${S3_BUCKET_NAME}`, {
       cache: "no-store",
       method: "POST",
       headers: {
         "Content-Type": "application/json",
       },
       body: JSON.stringify({
-        bucketName: S3_BUCKET_NAME,
+        name: file.name,
+        size: file.size,
+        type: file.type,
+        lastModified: file.lastModified,
       }),
     });
     return response;
