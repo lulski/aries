@@ -2,6 +2,7 @@
   "name": "ram",
   "version": "0.1.0",
   "private": true,
+  "type": "module",
   "scripts": {
     "dev": "next dev --turbopack",
     "build": "next build",
@@ -80,10 +81,5 @@
     "vite": "^7.3.1",
     "vitest": "^4.0.18",
     "whatwg-fetch": "^3.6.20"
-  },
-  "eslintConfig": {
-    "extends": [
-      "plugin:storybook/recommended"
-    ]
   }
 }
