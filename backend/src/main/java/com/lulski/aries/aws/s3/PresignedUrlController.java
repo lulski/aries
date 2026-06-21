@@ -9,6 +9,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 
 import reactor.core.publisher.Mono;
@@ -69,10 +70,10 @@ public class PresignedUrlController {
      * @return a Mono containing the presigned URL
      */
     @PostMapping("/s3/presigned/{bucketName}/{fileName}")
-    public Mono<PresignedUrlResponse> createPresignedUrl(
+    public Mono<PresignedUrlResponseDto> createPresignedUrl(
             @PathVariable String bucketName,
             @PathVariable String fileName,
-            Map<String, String> metadata) {
+            @RequestBody(required = false) Map<String, String> metadata) {
 
         if (!validateInput(bucketName, fileName)) {
             return Mono.error(new IllegalArgumentException("Invalid bucket or file name"));
@@ -85,10 +86,9 @@ public class PresignedUrlController {
         // TODO: we should validate the content type to prevent malicious uploads,
         // but for now we will just log it and let S3 handle the validation based on the
         // content type of the uploaded file
-        // if (!validateMIMEType(contentType)) {
-        // return Mono.error(new IllegalArgumentException("Invalid MIME type: only image
-        // uploads are allowed"));
-        // }
+        if (!validateMIMEType(contentType)) {
+            return Mono.error(new IllegalArgumentException("Invalid MIME type: only image uploads are allowed"));
+        }
 
         return Mono.fromCallable(() -> {
             PutObjectRequest objectRequest = PutObjectRequest.builder()
@@ -103,7 +103,7 @@ public class PresignedUrlController {
                     .putObjectRequest(objectRequest)
                     .build();
 
-            var presignedUrlResponse = new PresignedUrlResponse(
+            var presignedUrlResponse = new PresignedUrlResponseDto(
                     presigner.presignPutObject(presignRequest).url().toExternalForm());
             return presignedUrlResponse;
         })
@@ -125,10 +125,6 @@ public class PresignedUrlController {
             return false;
         }
         return contentType.startsWith("image/");
-    }
-
-    private record PresignedUrlResponse(String url) {
-
     }
 
 }

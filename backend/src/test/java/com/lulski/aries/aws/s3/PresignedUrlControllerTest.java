@@ -95,7 +95,7 @@ class PresignedUrlControllerTest {
 
         StepVerifier.create(controller.createPresignedUrl(bucket, object, metaData))
                 .assertNext(response -> {
-                    assert response.equals(expectedUrl);
+                    assert response.url().equals(expectedUrl);
                 })
                 .verifyComplete();
 
