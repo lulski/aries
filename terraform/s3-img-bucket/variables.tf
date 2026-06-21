@@ -8,3 +8,10 @@ variable "terraform_user_arn" {
   type        = string
   sensitive   = true
 }
+
+variable "cors_allowed_origin" {
+  description = "allowed fqdn"
+  type        = string
+  sensitive   = false
+  default     = "ichsansiswo.me"
+}
