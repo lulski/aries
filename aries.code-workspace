@@ -1,20 +1,20 @@
 {
   "folders": [
     {
-      "path": "frontend/ram"
-    },
-    // {
-    //   "path": "frontend/ram2.0"
-    // },
-    {
-      "path": "backend"
+      "path": "frontend/ram",
     },
     {
-      "path": "seeder"
+      "path": "backend",
     },
     {
-      "path": "terraform"
-    }
+      "path": "seeder",
+    },
+    {
+      "path": "terraform",
+    },
+    {
+      "path": ".github",
+    },
   ],
   "settings": {
     "typescript.tsdk": "node_modules/typescript/lib",
@@ -22,6 +22,6 @@
     "jest.disabledWorkspaceFolders": ["backend,seeder,terraform"],
     "java.configuration.updateBuildConfiguration": "automatic",
     "java.jdt.ls.vmargs": "-XX:+UseParallelGC -XX:GCTimeRatio=4 -XX:AdaptiveSizePolicyWeight=90 -Dsun.zip.disableMemoryMapping=true -Xmx4G -Xms100m -Xlog:disable",
-    "java.debug.settings.onBuildFailureProceed": true
-  }
+    "java.debug.settings.onBuildFailureProceed": true,
+  },
 }
