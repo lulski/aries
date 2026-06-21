@@ -13,6 +13,7 @@ jest.mock("@mantine/core", () => ({
   Button: ({ children, ...props }: any) => (
     <button {...props}>{children}</button>
   ),
+  /* eslint-disable @next/next/no-img-element */
   Image: ({ src, ...props }: any) => <img src={src} alt="mock" {...props} />,
   Group: ({ children }: any) => <div data-testid="group">{children}</div>,
   useMantineColorScheme: () => ({

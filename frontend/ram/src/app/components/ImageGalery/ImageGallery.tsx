@@ -130,6 +130,7 @@ export default function ImageGallery(props: ImageGalleryProps) {
                     w="auto"
                     fit="fill"
                     src="https://raw.githubusercontent.com/mantinedev/mantine/master/.demo/images/bg-9.png"
+                    alt="image-gallery"
                   />
                 </Box>
               ))}
