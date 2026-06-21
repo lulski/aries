@@ -46,7 +46,7 @@ resource "aws_security_group" "instance" {
 }
 
 resource "aws_instance" "backend" {
-  depends_on             = [aws_s3_bucket.aries]
+  depends_on             = [aws_s3_object.aries_backend_jar]
   instance_type          = "t3.micro"
   ami                    = "ami-010876b9ddd38475e"
   vpc_security_group_ids = [aws_security_group.instance.id]
