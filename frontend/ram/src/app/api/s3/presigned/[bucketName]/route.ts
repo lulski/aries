@@ -24,6 +24,9 @@ export async function POST(
           `${process.env.API_USERNAME}:${process.env.API_PASSWORD}`,
         ).toString("base64"),
     },
+    body: JSON.stringify({
+      "content-type": body.type,
+    }),
   });
 
   if (!response.ok) {
