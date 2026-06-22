@@ -46,9 +46,6 @@ export default function ImageGallery(props: ImageGalleryProps) {
     console.log("Uploading file to S3 with presigned URL:", presignedUrl);
     return fetch(presignedUrl, {
       method: "PUT",
-      headers: {
-        "Content-Type": file.type,
-      },
       body: file,
     });
   }
