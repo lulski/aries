@@ -4,7 +4,7 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.when;
 
 import java.net.URI;
-import java.time.Duration;
+import java.util.HashMap;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -14,10 +14,11 @@ import org.mockito.MockitoAnnotations;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 import reactor.test.StepVerifier;
-import software.amazon.awssdk.services.s3.model.GetObjectRequest;
 import software.amazon.awssdk.services.s3.presigner.S3Presigner;
 import software.amazon.awssdk.services.s3.presigner.model.GetObjectPresignRequest;
 import software.amazon.awssdk.services.s3.presigner.model.PresignedGetObjectRequest;
+import software.amazon.awssdk.services.s3.presigner.model.PresignedPutObjectRequest;
+import software.amazon.awssdk.services.s3.presigner.model.PutObjectPresignRequest;
 
 @ExtendWith(MockitoExtension.class)
 class PresignedUrlControllerTest {
@@ -27,6 +28,9 @@ class PresignedUrlControllerTest {
 
     @Mock
     private PresignedGetObjectRequest presignedGetObjectRequest;
+
+    @Mock
+    private PresignedPutObjectRequest presignedPutObjectRequest;
 
     private PresignedUrlController controller;
 
@@ -66,11 +70,57 @@ class PresignedUrlControllerTest {
                 .thenReturn(presignedGetObjectRequest);
 
         when(presignedGetObjectRequest.url()).thenReturn(new URI(expectedUrl).toURL());
-
         StepVerifier.create(controller.generatePresignedUrl(bucket, object))
                 .assertNext(response -> {
                     assert response.getStatusCode().is2xxSuccessful();
                 })
                 .verifyComplete();
+    }
+
+    @Test
+    void testCreatePresignedUrlSuccess() throws Exception {
+        // String bucket = "test-bucket";
+        String bucket = "aries";
+        String object = "folder/test-object.txt";
+        HashMap<String, String> metaData = new HashMap<>();
+        metaData.put("key1", "value1");
+        metaData.put("content-type", "image/jpeg");
+        String expectedUrl = "https://s3.amazonaws.com/presigned-url";
+
+        when(presigner.presignPutObject(any(PutObjectPresignRequest.class)))
+                .thenReturn(presignedPutObjectRequest);
+
+        when(presignedPutObjectRequest.url())
+                .thenReturn(new URI(expectedUrl).toURL());
+
+        StepVerifier.create(controller.createPresignedUrl(bucket, object, metaData))
+                .assertNext(response -> {
+                    assert response.url().equals(expectedUrl);
+                })
+                .verifyComplete();
+
+    }
+
+    @Test
+    void testCreatePresignedUrlInvalidMIMEType() throws Exception {
+        String bucket = "aries";
+        String object = "folder/test-object.txt";
+        HashMap<String, String> metaData = new HashMap<>();
+        metaData.put("content-type", "text/plain");
+
+        StepVerifier.create(controller.createPresignedUrl(bucket, object, metaData))
+                .expectError(IllegalArgumentException.class)
+                .verify();
+    }
+
+    @Test
+    void testCreatePresignedUrlMissingContentType() throws Exception {
+        String bucket = "aries";
+        String object = "folder/test-object.txt";
+        HashMap<String, String> metaData = new HashMap<>();
+
+        StepVerifier.create(controller.createPresignedUrl(bucket, object, metaData))
+                .expectError(IllegalArgumentException.class)
+                .verify();
     }
 }

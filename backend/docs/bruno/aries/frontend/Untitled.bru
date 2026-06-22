@@ -1,0 +1,23 @@
+meta {
+  name: Untitled
+  type: http
+  seq: 1
+}
+
+post {
+  url: http://localhost:3000/api/s3/presigned/aries-img-bucket/post1234
+  body: json
+  auth: inherit
+}
+
+body:json {
+  {
+    "filename": "profile.jpg",
+    "contentType": "image/jpeg"
+  }
+}
+
+settings {
+  encodeUrl: true
+  timeout: 0
+}

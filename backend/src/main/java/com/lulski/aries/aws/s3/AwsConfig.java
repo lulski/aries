@@ -19,7 +19,7 @@ public class AwsConfig {
 
     @Bean
     public S3Presigner s3Presigner() {
-        return S3Presigner.builder().region(Region.AP_SOUTHEAST_2).build();
+        return S3Presigner.builder().region(Region.of(region)).build();
     }
 
     @Bean

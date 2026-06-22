@@ -65,7 +65,7 @@ export default function AboutMePage() {
 
           <Stack gap="sm">
             <Text size="md">
-              I'm a Software Engineer with over 15 years of experience
+              {"I'm"} a Software Engineer with over 15 years of experience
               designing, building, and optimizing enterprise systems across
               telecommunications, finance, insurance, and government sectors.
             </Text>

@@ -5,7 +5,7 @@ meta {
 }
 
 put {
-  url: {{protocol}}://{{host}}:{{port}}/api/v1/s3/upload/aries-img-bucket/S3_bucket_design.png
+  url: {{protocol}}://{{host}}:{{port}}/api/v1/s3/upload/aries-img-bucket/666
   body: multipartForm
   auth: inherit
 }
@@ -15,7 +15,7 @@ headers {
 }
 
 body:multipart-form {
-  file: @file(/Users/lulski/Downloads/S3_bucket_design.png)
+  file: @file(/home/lulski/Pictures/backgrounds/16.jpg)
 }
 
 settings {

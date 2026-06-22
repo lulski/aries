@@ -1,0 +1,25 @@
+meta {
+  name: create presigned url
+  type: http
+  seq: 3
+}
+
+post {
+  url: {{protocol}}://{{host}}:{{port}}/api/v1/s3/presigned/aries-img-bucket/666
+  body: multipartForm
+  auth: basic
+}
+
+headers {
+  User-Agent: insomnia/10.2.0
+  X-CSRF-TOKEN: undefined
+}
+
+auth:basic {
+  username: {{api_username}}
+  password: {{api_password}}
+}
+
+body:multipart-form {
+  file: @file(/home/lulski/Pictures/backgrounds/Adidas_Blue.png)
+}

@@ -3,7 +3,7 @@
 import "@mantine/tiptap/styles.css";
 import "./styles.scss";
 
-import { Button, Group, InputWrapper, TextInput } from "@mantine/core";
+import { Group, InputWrapper, TextInput } from "@mantine/core";
 import { UseFormReturnType } from "@mantine/form";
 import { RichTextEditor } from "@mantine/tiptap";
 import { Color } from "@tiptap/extension-color";
@@ -19,6 +19,7 @@ import TextAlign from "@tiptap/extension-text-align";
 import { TextStyle } from "@tiptap/extension-text-style";
 import { useEditor } from "@tiptap/react";
 import StarterKit from "@tiptap/starter-kit";
+import ImageGallery from "../ImageGalery/ImageGallery";
 
 interface PostEditProps {
   form: UseFormReturnType<{
@@ -164,7 +165,7 @@ export default function PostEdit({ form, error }: PostEditProps) {
         </RichTextEditor>
       </InputWrapper>
       <Group justify="center" mt="md">
-        <Button onClick={() => addImage(editor)}>Add image URL</Button>
+        <ImageGallery />
       </Group>
     </>
   );

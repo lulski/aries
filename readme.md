@@ -25,6 +25,19 @@ Aries is a full-stack CRUD web application featuring a reactive backend and a mo
 
 ## Getting Started
 
+### Run the database
+
+```
+podman volume create aries_mongodb_data && podman volume create aries_mongodb_config
+
+podman run -d \
+  --name mongodb \
+  -p 27017:27017 \
+  -v aries_mongodb_data:/data/db:Z \
+  -v aries_mongodb_config:/data/configdb:Z \
+  library/mongo:8.0.4
+```
+
 ### Run the Backend (Development)
 
 ```sh
@@ -35,12 +48,10 @@ cd ./aries/backend
 ### Run the Frontend
 
 ```sh
-cd ./aries/frontend
+cd ./aries/frontend/ram
 npm install
 npm run dev
 ```
-
-> **Note:** If your frontend is in a subfolder (e.g., `frontend/ram`), adjust the path accordingly.
 
 ### Run the Seeder (Optional: Populate Database)
 
@@ -54,20 +65,6 @@ cd ./aries/seeder
 - `backend/` — Spring Boot WebFlux backend API
 - `frontend/` — Next.js frontend app
 - `seeder/` — Spring Batch database seeder
-
----
-
-## Backend To-do
-
-- [ ] Add more API endpoints
-- [ ] Improve authentication/authorization
-- [ ] Add integration tests
-
-## Frontend To-do
-
-- [ ] Implement user registration
-- [ ] Add post editing/deletion
-- [ ] Improve UI/UX
 
 ---
 

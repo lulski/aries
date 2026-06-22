@@ -9,5 +9,7 @@
     "out/": true,
     "bin/": true,
     "build/": true
-  }
+  },
+  "java.debug.settings.onBuildFailureProceed": true,
+  "java.configuration.updateBuildConfiguration": "automatic"
 }
