@@ -3,7 +3,7 @@ import { PostData, SessionData } from "@/app/lib/definitions";
 import { fetchPostById, fetchPostByTitle } from "@/app/lib/postsApiCall";
 import { getSessionData } from "@/app/lib/sessionUtil";
 import { Button, Group } from "@mantine/core";
-import link from "next/link";
+import Link from "next/link";
 
 type PageProps = {
   params: Promise<{
@@ -31,9 +31,9 @@ export default async function viewPost({ params }: PageProps) {
       <Group justify="flex-end" mb={"10px"}>
         {sessionData.isAuthenticated &&
           sessionData.authorities.includes("ADMIN") && (
-            <Button component={link} href={`/posts/${param}/edit`}>
-              Edit Post
-            </Button>
+            <Link href={`/posts/${param}/edit`}>
+              <Button size="md">Edit Post</Button>
+            </Link>
           )}
       </Group>
       <Post {...{ post, allowHtmlMarkup: true }} />

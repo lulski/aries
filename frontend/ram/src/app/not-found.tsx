@@ -13,9 +13,9 @@ export default function NotFound() {
           <Text c="dimmed" size="lg">
             I {"haven't"} created it yet. :)
           </Text>
-          <Button component={Link} href="/" size="md">
-            Take me back to home page
-          </Button>
+          <Link href="/">
+            <Button size="md">Take me back to home page</Button>
+          </Link>
         </Stack>
       </Container>
     </Center>
