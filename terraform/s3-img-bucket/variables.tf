@@ -13,5 +13,5 @@ variable "cors_allowed_origin" {
   description = "allowed fqdn"
   type        = string
   sensitive   = false
-  default     = "ichsansiswo.me"
+  default     = "https://ichsansiswo.me"
 }
