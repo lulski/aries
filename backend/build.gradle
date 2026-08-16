@@ -1,5 +1,5 @@
 plugins {
-    id 'org.springframework.boot' version '4.0.2' // Latest stable 4.x
+    id 'org.springframework.boot' version '4.1.0' // Latest stable 4.x
     id 'io.spring.dependency-management' version '1.1.7'
     id 'java'
     id 'maven-publish'
@@ -58,8 +58,6 @@ dependencies {
     implementation 'org.springframework.boot:spring-boot-starter-validation'
     testImplementation 'org.springframework.boot:spring-boot-starter-validation-test'
 
-
-
     // 4. Third Party Libraries
     implementation 'org.jsoup:jsoup:1.22.1' // Upgraded for Jakarta 11 compatibility
 
@@ -74,7 +72,6 @@ dependencies {
     // // 7. Rabbit MQ
     // implementation 'org.springframework.boot:spring-boot-starter-amqp'
     // testImplementation 'org.springframework.boot:spring-boot-starter-amqp-test'
-
 
     testImplementation 'io.projectreactor:reactor-test'
 
