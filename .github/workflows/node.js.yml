@@ -22,9 +22,7 @@ jobs:
 
     strategy:
       matrix:
-        node-version: [25.x]
-        # cache-dependency-path: frontend/ram/package-lock.json
-        # See supported Node.js release schedule at https://nodejs.org/en/about/releases/
+        node-version: [26]
 
     steps:
       - uses: actions/checkout@v4
