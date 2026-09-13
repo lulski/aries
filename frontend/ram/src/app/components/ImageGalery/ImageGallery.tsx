@@ -21,7 +21,7 @@ export default function ImageGallery(props: ImageGalleryProps) {
     files.map((file) => {
       generatePresignedUrl(file)
         .then((response) => {
-          if (!response.ok) {
+          if (!response .ok) {
             throw new Error("Failed to get presigned URL");
           }
           return response.json();
@@ -42,10 +42,19 @@ export default function ImageGallery(props: ImageGalleryProps) {
     });
   }
 
+  // x-amz-meta-* has to match
+  //the body of request in generatePresignedUrl   
   function uploadFileToS3(file: File, presignedUrl: string) {
     console.log("Uploading file to S3 with presigned URL:", presignedUrl);
     return fetch(presignedUrl, {
       method: "PUT",
+      headers: {
+        "Content-Type": file.type,
+        "x-amz-meta-name": file.name,
+        "x-amz-meta-size": String(file.size),
+        "x-amz-meta-type": file.type,
+        "x-amz-meta-lastModified": String(file.lastModified),
+      },
       body: file,
     });
   }

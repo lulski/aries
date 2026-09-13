@@ -91,12 +91,13 @@ public class PresignedUrlController {
         var contentType = metadata.get("type");
         var fileSize = metadata.get("size");
 
+        for (Map.Entry<String, String> entry : metadata.entrySet()) {
+            LOGGER.info("Metadata key: {}, value: {}", entry.getKey(), entry.getValue());
+        }
+
         LOGGER.info("Received request to create presigned URL for bucket: {}, fileName: {}, contentType: {}",
                 bucketName, fileName, contentType);
 
-        if (!validateMIMEType(metadata.get("type"))) {
-            return Mono.error(new IllegalArgumentException("Invalid MIME type: only image uploads are allowed"));
-        }
 
         return Mono.fromCallable(() -> {
             PutObjectRequest objectRequest = PutObjectRequest.builder()
@@ -132,13 +133,6 @@ public class PresignedUrlController {
         return !bucket.isEmpty() && !bucket.contains("..");
     }
 
-    // private String getContentTypeFromMetadata(Map<String, String> metadata) {
-    //     return metadata.getOrDefault("content-type", "application/octet-stream");
-    // // }
-
-    // private String getFilenameFromMetadata(Map<String, String> metadata) {
-    //     return metadata.get("name");
-    // }
 
     private boolean validateMIMEType(String contentType) {
         if (contentType == null || contentType.isEmpty()) {
