@@ -33,9 +33,24 @@ podman volume create aries_mongodb_data && podman volume create aries_mongodb_co
 podman run -d \
   --name mongodb \
   -p 27017:27017 \
+  -e MONGO_INITDB_ROOT_USERNAME=admin \
+  -e MONGO_INITDB_ROOT_PASSWORD=admin \
   -v aries_mongodb_data:/data/db:Z \
   -v aries_mongodb_config:/data/configdb:Z \
   library/mongo:8.0.4
+```
+
+### Run Ollama for local LLM
+```
+#this model seems okay for 16GB GPU
+ollama run gemma4:e4b-it-q8_0 
+
+#start ollama
+OLLAMA_CONTEXT_LENGTH=64000 ollama serve
+
+# stop ollama
+sudo systemctl stop ollama
+
 ```
 
 ### Run the Backend (Development)

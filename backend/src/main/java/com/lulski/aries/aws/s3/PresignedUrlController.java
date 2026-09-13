@@ -1,10 +1,13 @@
 package com.lulski.aries.aws.s3;
 
 import java.time.Duration;
+import java.time.Instant;
 import java.util.Map;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -20,11 +23,17 @@ import software.amazon.awssdk.services.s3.presigner.S3Presigner;
 import software.amazon.awssdk.services.s3.presigner.model.GetObjectPresignRequest;
 import software.amazon.awssdk.services.s3.presigner.model.PutObjectPresignRequest;
 
+
+
 @RestController
 public class PresignedUrlController {
 
     private final S3Presigner presigner;
     private final Logger LOGGER = LoggerFactory.getLogger(PresignedUrlController.class);
+
+    @Value("${aries.fileupload.s3.duration.timeout.minutes}")
+    int DURATION_TIMEOUT;
+
 
     public PresignedUrlController(S3Presigner presigner) {
         this.presigner = presigner;
@@ -49,7 +58,7 @@ public class PresignedUrlController {
                     .build();
 
             GetObjectPresignRequest presignRequest = GetObjectPresignRequest
-                    .builder().signatureDuration(Duration.ofMinutes(10))
+                    .builder().signatureDuration(Duration.ofMinutes(DURATION_TIMEOUT))
                     .getObjectRequest(getObjectRequest)
                     .build();
 
@@ -69,24 +78,23 @@ public class PresignedUrlController {
      * @param fileName   the name of the file in the S3 bucket
      * @return a Mono containing the presigned URL
      */
-    @PostMapping("/s3/presigned/{bucketName}/{fileName}")
+    @PostMapping("/s3/presigned/{bucketName}")
     public Mono<PresignedUrlResponseDto> createPresignedUrl(
             @PathVariable String bucketName,
-            @PathVariable String fileName,
-            @RequestBody(required = false) Map<String, String> metadata) {
+            @RequestBody(required = true) Map<String, String> metadata) {
 
-        if (!validateInput(bucketName, fileName)) {
+        if (!validateInput(bucketName)) {
             return Mono.error(new IllegalArgumentException("Invalid bucket or file name"));
         }
 
-        String contentType = getContentTypeFromMetadata(metadata);
+        var fileName = metadata.get("name");
+        var contentType = metadata.get("type");
+        var fileSize = metadata.get("size");
+
         LOGGER.info("Received request to create presigned URL for bucket: {}, fileName: {}, contentType: {}",
                 bucketName, fileName, contentType);
 
-        // TODO: we should validate the content type to prevent malicious uploads,
-        // but for now we will just log it and let S3 handle the validation based on the
-        // content type of the uploaded file
-        if (!validateMIMEType(contentType)) {
+        if (!validateMIMEType(metadata.get("type"))) {
             return Mono.error(new IllegalArgumentException("Invalid MIME type: only image uploads are allowed"));
         }
 
@@ -95,30 +103,42 @@ public class PresignedUrlController {
                     .bucket(bucketName)
                     .key(fileName)
                     .metadata(metadata)
-                    .contentType(getContentTypeFromMetadata(metadata))
+                    .contentType(contentType)
                     .build();
 
             PutObjectPresignRequest presignRequest = PutObjectPresignRequest.builder()
-                    .signatureDuration(Duration.ofMinutes(10))
+                    .signatureDuration(Duration.ofMinutes(DURATION_TIMEOUT))
                     .putObjectRequest(objectRequest)
                     .build();
 
+            var presignResponse = presigner.presignPutObject(presignRequest);
+
+                    
             var presignedUrlResponse = new PresignedUrlResponseDto(
-                    presigner.presignPutObject(presignRequest).url().toExternalForm());
+                presignResponse.url().toExternalForm(),
+                Instant.now().plusSeconds(DURATION_TIMEOUT * 60),
+                bucketName,
+                fileName,
+                fileSize
+                );
+
             return presignedUrlResponse;
         })
                 .subscribeOn(Schedulers.boundedElastic())
                 .onErrorMap(e -> new PresignedUrlException("Failed to create presigned URL", e));
     }
 
-    private boolean validateInput(String bucket, String object) {
-        return !bucket.isEmpty() && !bucket.contains("..") &&
-                !object.isEmpty() && !object.contains("..");
+    private boolean validateInput(String bucket) {
+        return !bucket.isEmpty() && !bucket.contains("..");
     }
 
-    private String getContentTypeFromMetadata(Map<String, String> metadata) {
-        return metadata.getOrDefault("content-type", "application/octet-stream");
-    }
+    // private String getContentTypeFromMetadata(Map<String, String> metadata) {
+    //     return metadata.getOrDefault("content-type", "application/octet-stream");
+    // // }
+
+    // private String getFilenameFromMetadata(Map<String, String> metadata) {
+    //     return metadata.get("name");
+    // }
 
     private boolean validateMIMEType(String contentType) {
         if (contentType == null || contentType.isEmpty()) {

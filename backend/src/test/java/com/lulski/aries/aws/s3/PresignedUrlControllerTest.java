@@ -77,14 +77,37 @@ class PresignedUrlControllerTest {
                 .verifyComplete();
     }
 
+    // @Test
+    // void testCreatePresignedUrlSuccess() throws Exception {
+    //     // String bucket = "test-bucket";
+    //     String bucket = "aries";
+    //     String object = "folder/test-object.txt";
+    //     HashMap<String, String> metaData = new HashMap<>();
+    //     metaData.put("key1", "value1");
+    //     metaData.put("content-type", "image/jpeg");
+    //     String expectedUrl = "https://s3.amazonaws.com/presigned-url";
+
+    //     when(presigner.presignPutObject(any(PutObjectPresignRequest.class)))
+    //             .thenReturn(presignedPutObjectRequest);
+
+    //     when(presignedPutObjectRequest.url())
+    //             .thenReturn(new URI(expectedUrl).toURL());
+
+    //     StepVerifier.create(controller.createPresignedUrl(bucket, object, metaData))
+    //             .assertNext(response -> {
+    //                 assert response.url().equals(expectedUrl);
+    //             })
+    //             .verifyComplete();
+
+    // }
+
     @Test
     void testCreatePresignedUrlSuccess() throws Exception {
-        // String bucket = "test-bucket";
         String bucket = "aries";
-        String object = "folder/test-object.txt";
+        String fileName = "folder/test-object.txt";
         HashMap<String, String> metaData = new HashMap<>();
-        metaData.put("key1", "value1");
-        metaData.put("content-type", "image/jpeg");
+        metaData.put("name", fileName);
+        metaData.put("type", "image/jpeg");
         String expectedUrl = "https://s3.amazonaws.com/presigned-url";
 
         when(presigner.presignPutObject(any(PutObjectPresignRequest.class)))
@@ -93,22 +116,22 @@ class PresignedUrlControllerTest {
         when(presignedPutObjectRequest.url())
                 .thenReturn(new URI(expectedUrl).toURL());
 
-        StepVerifier.create(controller.createPresignedUrl(bucket, object, metaData))
+        StepVerifier.create(controller.createPresignedUrl(bucket, metaData))
                 .assertNext(response -> {
+                    // assert response.in().is2xxSuccessful();
                     assert response.url().equals(expectedUrl);
                 })
                 .verifyComplete();
-
     }
 
     @Test
     void testCreatePresignedUrlInvalidMIMEType() throws Exception {
         String bucket = "aries";
-        String object = "folder/test-object.txt";
         HashMap<String, String> metaData = new HashMap<>();
-        metaData.put("content-type", "text/plain");
+        metaData.put("name", "test.txt");
+        metaData.put("type", "text/plain");
 
-        StepVerifier.create(controller.createPresignedUrl(bucket, object, metaData))
+        StepVerifier.create(controller.createPresignedUrl(bucket, metaData))
                 .expectError(IllegalArgumentException.class)
                 .verify();
     }
@@ -116,11 +139,12 @@ class PresignedUrlControllerTest {
     @Test
     void testCreatePresignedUrlMissingContentType() throws Exception {
         String bucket = "aries";
-        String object = "folder/test-object.txt";
         HashMap<String, String> metaData = new HashMap<>();
+        metaData.put("name", "test.txt");
 
-        StepVerifier.create(controller.createPresignedUrl(bucket, object, metaData))
+        StepVerifier.create(controller.createPresignedUrl(bucket, metaData))
                 .expectError(IllegalArgumentException.class)
                 .verify();
     }
+
 }
