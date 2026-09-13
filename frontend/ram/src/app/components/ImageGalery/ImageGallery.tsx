@@ -15,6 +15,7 @@ export default function ImageGallery(props: ImageGalleryProps) {
     process.env.NEXT_PUBLIC_PRESIGNED_URL || "/api/s3/presigned";
   const S3_BUCKET_NAME =
     process.env.NEXT_PUBLIC_S3_BUCKET_NAME || "post-images";
+  const IMAGE_HOST = process.env.NEXT_PUBLIC_ARIES_IMAGE_HOST;
 
   function handleDrop(files: File[]) {
     console.log("accepted files", files);
@@ -34,7 +35,7 @@ export default function ImageGallery(props: ImageGalleryProps) {
           if (!response.ok) {
             throw new Error("Failed to upload file to S3");
           }
-          console.log("File uploaded to S3 successfully");
+          console.log("File uploaded to S3 successfully: " + IMAGE_HOST+ "/" +file.name);
         })
         .catch((error) => {
           console.error("Error generating presigned URL:", error);
@@ -94,17 +95,6 @@ export default function ImageGallery(props: ImageGalleryProps) {
     setImageUploadError(null);
   }
 
-  // function customValidation(file: File) {
-  //   if (file.size > parseInt(FILE_UPLOAD_MAX_SIZE || "2097152")) {
-  //     const error: FileError = {
-  //       message: `File size should not exceed ${parseInt(FILE_UPLOAD_MAX_SIZE || "2097152") / 1024 / 1024}mb`,
-  //       code: "file-too-large",
-  //     };
-  //     return error;
-  //   } else {
-  //     return null;
-  //   }
-  // }
 
   return (
     <>
@@ -194,7 +184,7 @@ export default function ImageGallery(props: ImageGalleryProps) {
                 </Text>
                 <Text size="sm" c="dimmed" inline mt={7}>
                   Attach as many files as you like, each file should not exceed
-                  2mb in size
+                  `{FILE_UPLOAD_MAX_SIZE}` in size
                 </Text>
               </div>
             </Group>

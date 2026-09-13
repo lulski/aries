@@ -15,6 +15,7 @@ import Image from "@tiptap/extension-image";
 import SubScript from "@tiptap/extension-subscript";
 import Superscript from "@tiptap/extension-superscript";
 // import Text from "@tiptap/extension-text";
+import { IconPhoto } from '@tabler/icons-react';
 import TextAlign from "@tiptap/extension-text-align";
 import { TextStyle } from "@tiptap/extension-text-style";
 import { useEditor } from "@tiptap/react";
@@ -66,7 +67,7 @@ export default function PostEdit({ form, error }: PostEditProps) {
     shouldRerenderOnTransaction: true,
   });
 
-  function addImage(editor: ReturnType<typeof useEditor> | null) {
+  function addImageUrl(editor: ReturnType<typeof useEditor> | null) {
     const url = window.prompt("Image URL");
     if (!url) return;
 
@@ -75,7 +76,7 @@ export default function PostEdit({ form, error }: PostEditProps) {
       return;
     }
 
-    editor.commands.setImage({ src: url });
+      editor.chain().focus().setImage({ src: url }).run()    
   }
 
   return (
@@ -159,6 +160,13 @@ export default function PostEdit({ form, error }: PostEditProps) {
                 "#fd7e14",
               ]}
             />
+            <RichTextEditor.Control
+              onClick={() => addImageUrl(editor)}
+              aria-label="Insert image from URL"
+              title="Insert image from URL"
+            >
+              <IconPhoto size="1rem" stroke={1.5} />
+            </RichTextEditor.Control>
           </RichTextEditor.Toolbar>
 
           <RichTextEditor.Content />
