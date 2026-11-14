@@ -45,11 +45,25 @@ podman run -d \
 #this model seems okay for 16GB GPU
 ollama run gemma4:e4b-it-q8_0 
 
-#start ollama
-OLLAMA_CONTEXT_LENGTH=64000 ollama serve
+#start ollama, make it accessible for podman containers
+OLLAMA_HOST=0.0.0.0:11434 OLLAMA_CONTEXT_LENGTH=64000 ollama serve
 
 # stop ollama
 sudo systemctl stop ollama
+
+
+# openweb-ui
+podman run -d \
+  --name openwebui \
+  --restart unless-stopped \
+  -p 3030:8080 \
+  -v openwebui-data:/app/backend/data \
+  -e WEBUI_SECRET_KEY="$(openssl rand -hex 32)" \
+  -e OLLAMA_BASE_URL=http://host.containers.internal:11434 \
+  ghcr.io/open-webui/open-webui:main
+
+
+
 
 ```
 

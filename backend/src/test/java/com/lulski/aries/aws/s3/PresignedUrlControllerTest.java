@@ -132,7 +132,7 @@ class PresignedUrlControllerTest {
         metaData.put("type", "text/plain");
 
         StepVerifier.create(controller.createPresignedUrl(bucket, metaData))
-                .expectError(IllegalArgumentException.class)
+                .expectError(PresignedUrlException.class)
                 .verify();
     }
 
@@ -143,7 +143,7 @@ class PresignedUrlControllerTest {
         metaData.put("name", "test.txt");
 
         StepVerifier.create(controller.createPresignedUrl(bucket, metaData))
-                .expectError(IllegalArgumentException.class)
+                .expectError(PresignedUrlException.class)
                 .verify();
     }
 
