@@ -18,6 +18,16 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
 
+      - name: Check role ARN is available
+        env:
+          ROLE_ARN: ${{ secrets.AWS_ROLE_ARN }}
+        run: |
+            if [ -z "$ROLE_ARN" ]; then
+            echo "::error::AWS_ROLE_ARN is empty or unavailable to this job"
+            exit 1
+            fi
+            echo "AWS_ROLE_ARN is available"
+
       - name: Configure AWS credentials
         uses: aws-actions/configure-aws-credentials@v4
         with:
