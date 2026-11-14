@@ -33,9 +33,38 @@ podman volume create aries_mongodb_data && podman volume create aries_mongodb_co
 podman run -d \
   --name mongodb \
   -p 27017:27017 \
+  -e MONGO_INITDB_ROOT_USERNAME=admin \
+  -e MONGO_INITDB_ROOT_PASSWORD=admin \
   -v aries_mongodb_data:/data/db:Z \
   -v aries_mongodb_config:/data/configdb:Z \
   library/mongo:8.0.4
+```
+
+### Run Ollama for local LLM
+```
+#this model seems okay for 16GB GPU
+ollama run gemma4:e4b-it-q8_0 
+
+#start ollama, make it accessible for podman containers
+OLLAMA_HOST=0.0.0.0:11434 OLLAMA_CONTEXT_LENGTH=64000 ollama serve
+
+# stop ollama
+sudo systemctl stop ollama
+
+
+# openweb-ui
+podman run -d \
+  --name openwebui \
+  --restart unless-stopped \
+  -p 3030:8080 \
+  -v openwebui-data:/app/backend/data \
+  -e WEBUI_SECRET_KEY="$(openssl rand -hex 32)" \
+  -e OLLAMA_BASE_URL=http://host.containers.internal:11434 \
+  ghcr.io/open-webui/open-webui:main
+
+
+
+
 ```
 
 ### Run the Backend (Development)

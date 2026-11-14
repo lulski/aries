@@ -5,14 +5,13 @@ meta {
 }
 
 post {
-  url: {{protocol}}://{{host}}:{{port}}/api/v1/s3/presigned/aries-img-bucket/666
-  body: multipartForm
+  url: {{protocol}}://{{host}}:{{port}}/api/v1/s3/presigned/aries-img-bucket
+  body: json
   auth: basic
 }
 
 headers {
-  User-Agent: insomnia/10.2.0
-  X-CSRF-TOKEN: undefined
+  Content-Type: application/json
 }
 
 auth:basic {
@@ -20,6 +19,15 @@ auth:basic {
   password: {{api_password}}
 }
 
+body:json {
+  {
+    "name": "wallhaven-zxrl5v.jpg",
+    "size": 3811149,
+    "type": "image/jpeg",
+    "lastModified": 1788689838908
+  }
+}
+
 body:multipart-form {
-  file: @file(/home/lulski/Pictures/backgrounds/Adidas_Blue.png)
+  ~file: 
 }

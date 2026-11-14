@@ -1,5 +1,14 @@
 package com.lulski.aries.aws.s3;
 
-public record PresignedUrlResponseDto(String url) {
+import java.time.Instant;
+
+public record PresignedUrlResponseDto(
+        String url,
+        Instant expiresAt,
+        String bucketName,
+        String fileName,
+        String objectSizeUnit
+) {
+
 
 }

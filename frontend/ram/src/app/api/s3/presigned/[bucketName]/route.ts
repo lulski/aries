@@ -11,7 +11,7 @@ export async function POST(
   console.info(">>> Requesting presigned URL for bucket: ", bucketName);
   console.info("Received request body for presigned URL generation:", body);
 
-  const fetchUrl = `${API_PRESIGNED_URL}/${bucketName}/${body.name}`;
+  const fetchUrl = `${API_PRESIGNED_URL}/${bucketName}`;
   console.info(">>> Fetching presigned URL from: ", fetchUrl);
 
   const response = await fetch(fetchUrl, {
@@ -24,9 +24,7 @@ export async function POST(
           `${process.env.API_USERNAME}:${process.env.API_PASSWORD}`,
         ).toString("base64"),
     },
-    body: JSON.stringify({
-      "content-type": body.type,
-    }),
+    body: JSON.stringify(body)
   });
 
   if (!response.ok) {
