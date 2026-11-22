@@ -75,6 +75,10 @@ gradle-app.setting
 
 terraform.tfstate.*.backup
 secrets.tfvars
+*.tfvars
+*.auto.tfvars
+!*.tfvars.example
+tfplan
 .env.prod
 
 */ram2.0
