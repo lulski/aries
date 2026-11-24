@@ -1,7 +1,7 @@
 "use client";
 
 import AuthGuard from "@/app/components/AuthGuard";
-import PostEdit from "@/app/components/Post/PostEdit";
+import PostEditTinyMCE from "@/app/components/Post/PostEditTinyMCE";
 import { Button, Group, SimpleGrid } from "@mantine/core";
 import { useForm } from "@mantine/form";
 import { useRouter } from "next/navigation";
@@ -64,7 +64,7 @@ export default function NewPostPage() {
     <AuthGuard>
       <form onSubmit={form.onSubmit(handleSubmit)}>
         <SimpleGrid cols={1} spacing={2} verticalSpacing={"lg"}>
-          <PostEdit form={form} error={contentError}></PostEdit>
+          <PostEditTinyMCE form={form} error={contentError}></PostEditTinyMCE>
 
           <Group justify="flex-end" mt="md">
             <Button type="submit">Submit</Button>
