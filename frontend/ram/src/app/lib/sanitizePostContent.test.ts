@@ -3,6 +3,7 @@ import { sanitizePostContent } from "./sanitizePostContent";
 describe("sanitizePostContent", () => {
   it.each([
     ["inline formatting", "<p><strong>a</strong><em>b</em><u>c</u><s>d</s><mark>e</mark><sub>f</sub><sup>g</sup></p>"],
+    ["emojis", "<p>😀 👍🏽 👩‍💻 ❤️ 🇮🇩</p>"],
     ["alignment", '<p style="text-align:justify">a</p>'],
     ["text color", '<p><span style="color:#fa5252">a</span></p>'],
     ["code blocks", '<pre class="language-css"><code class="language-css">a<br />b</code></pre>'],

@@ -13,6 +13,9 @@ import "tinymce/themes/silver/theme";
 import "tinymce/plugins/autolink";
 import "tinymce/plugins/autoresize";
 import "tinymce/plugins/code";
+import "tinymce/plugins/emoticons";
+// The emoji list, which the plugin would otherwise fetch at runtime.
+import "tinymce/plugins/emoticons/js/emojis.js";
 import "tinymce/plugins/image";
 import "tinymce/plugins/link";
 import "tinymce/plugins/lists";
@@ -70,7 +73,7 @@ const TOOLBAR = [
   "link unlink",
   "alignleft aligncenter alignjustify alignright",
   "undo redo",
-  "forecolor image table",
+  "forecolor image table emoticons",
 ].join(" | ");
 
 function addFormatToggle(
@@ -154,7 +157,7 @@ export default function TinyMCEEditor({
             max-width: 100%;
           }
         `,
-        plugins: "autolink autoresize code image link lists table",
+        plugins: "autolink autoresize code emoticons image link lists table",
         toolbar: TOOLBAR,
         toolbar_mode: "wrap",
         toolbar_sticky: true,
