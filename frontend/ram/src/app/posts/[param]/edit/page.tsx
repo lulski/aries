@@ -1,7 +1,7 @@
 "use client";
 
 import AuthGuard from "@/app/components/AuthGuard";
-import PostEdit from "@/app/components/Post/PostEdit";
+import PostEditTinyMCE from "@/app/components/Post/PostEditTinyMCE";
 import { PostData } from "@/app/lib/definitions";
 import { Button, Group, LoadingOverlay, Text } from "@mantine/core";
 import { useForm } from "@mantine/form";
@@ -118,7 +118,7 @@ export default function editPost() {
           overlayProps={{ radius: "sm", blur: 2 }}
           visible={isSubmitting}
         />
-        <PostEdit form={form}></PostEdit>
+        <PostEditTinyMCE form={form}></PostEditTinyMCE>
         <Group justify="flex-end" mt="md">
           <Button type="submit">Submit</Button>
         </Group>

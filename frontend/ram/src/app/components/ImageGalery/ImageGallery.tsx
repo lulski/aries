@@ -4,18 +4,28 @@ import { IconPhoto, IconUpload, IconX } from "@tabler/icons-react";
 import { useState } from "react";
 import { FileError, FileRejection } from "react-dropzone";
 import { ErrorBanner } from "../ErrorBanner/Error";
-type ImageGalleryProps = Partial<DropzoneProps> & {
-  numImages?: number | 0;
+
+export type UploadedImage = {
+  name: string;
+  url: string;
 };
 
-export default function ImageGallery(props: ImageGalleryProps) {
+type ImageGalleryProps = Partial<DropzoneProps> & {
+  numImages?: number | 0;
+  /** Called once per file, after it has been stored in S3. */
+  onUploadComplete?: (image: UploadedImage) => void;
+};
+
+export default function ImageGallery({
+  onUploadComplete,
+  ...props
+}: ImageGalleryProps) {
   const [imageUploadError, setImageUploadError] = useState<string | null>(null);
   const FILE_UPLOAD_MAX_SIZE = process.env.NEXT_PUBLIC_FILE_UPLOAD_MAX_SIZE;
   const BFF_PRESIGNED_URL =
     process.env.NEXT_PUBLIC_PRESIGNED_URL || "/api/s3/presigned";
   const S3_BUCKET_NAME =
     process.env.NEXT_PUBLIC_S3_BUCKET_NAME || "post-images";
-  const IMAGE_HOST = process.env.NEXT_PUBLIC_ARIES_IMAGE_HOST;
 
   function handleDrop(files: File[]) {
     console.log("accepted files", files);
@@ -31,23 +41,17 @@ export default function ImageGallery(props: ImageGalleryProps) {
           console.log("Presigned URL data:", data);
           return uploadFileToS3(file, data.presignedUrl);
         })
-        .then((response) => {
-          if (!response.ok) {
-            throw new Error("Failed to upload file to S3");
-          }
-          console.log("File uploaded to S3 successfully: " + IMAGE_HOST+ "/" +file.name);
-        })
         .catch((error) => {
-          console.error("Error generating presigned URL:", error);
+          console.error("Error uploading image:", error);
         });
     });
   }
 
   // x-amz-meta-* has to match
   //the body of request in generatePresignedUrl   
-  function uploadFileToS3(file: File, presignedUrl: string) {
+  async function uploadFileToS3(file: File, presignedUrl: string) {
     console.log("Uploading file to S3 with presigned URL:", presignedUrl);
-    return fetch(presignedUrl, {
+    const response = await fetch(presignedUrl, {
       method: "PUT",
       headers: {
         "Content-Type": file.type,
@@ -58,6 +62,13 @@ export default function ImageGallery(props: ImageGalleryProps) {
       },
       body: file,
     });
+    if (!response.ok) {
+      throw new Error("Failed to upload file to S3");
+    }
+
+    // The presigned URL without its signature is the object's permanent URL.
+    const { origin, pathname } = new URL(presignedUrl);
+    onUploadComplete?.({ name: file.name, url: origin + pathname });
   }
 
   function generatePresignedUrl(file: File) {

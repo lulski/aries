@@ -5,7 +5,7 @@ A modern, responsive personal website and blog built with Next.js, featuring ric
 ## Features
 
 - **Personal Portfolio**: Showcase your profile, skills, and experience
-- **Blog System**: Create, edit, and manage blog posts with rich text editing using TipTap
+- **Blog System**: Create, edit, and manage blog posts with rich text editing using TinyMCE
 - **Authentication**: Secure login system with session management
 - **Responsive Design**: Mobile-first design with Mantine components
 - **Theme Support**: Customizable themes with light/dark mode toggle
@@ -17,7 +17,7 @@ A modern, responsive personal website and blog built with Next.js, featuring ric
 
 - **Framework**: Next.js 15 with App Router
 - **UI Library**: Mantine v8
-- **Rich Text Editor**: TipTap with extensions
+- **Rich Text Editor**: TinyMCE (self-hosted)
 - **Authentication**: Iron Session
 - **Styling**: CSS Modules, SCSS
 - **Testing**: Jest, Vitest

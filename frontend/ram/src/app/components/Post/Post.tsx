@@ -6,21 +6,11 @@ import {
   MantineProvider,
   Text,
   Title,
+  Typography,
 } from "@mantine/core";
-import { Link, RichTextEditor } from "@mantine/tiptap";
-import "@mantine/tiptap/styles.css";
-import Document from "@tiptap/extension-document";
-import { Dropcursor } from "@tiptap/extension-dropcursor";
-import Highlight from "@tiptap/extension-highlight";
-import Image from "@tiptap/extension-image";
-import Paragraph from "@tiptap/extension-paragraph";
-import Superscript from "@tiptap/extension-superscript";
-import TextTiptap from "@tiptap/extension-text";
-import TextAlign from "@tiptap/extension-text-align";
-import { Color, TextStyle } from "@tiptap/extension-text-style";
-import { useEditor } from "@tiptap/react";
-import StarterKit from "@tiptap/starter-kit";
+import { useMemo } from "react";
 import { PostData } from "../../lib/definitions";
+import { sanitizePostContent } from "../../lib/sanitizePostContent";
 import "./styles.scss";
 
 type PostProps = {
@@ -43,32 +33,11 @@ const theme = createTheme({
   },
 });
 
-export default function Post({ post, allowHtmlMarkup }: PostProps) {
-  const editor = useEditor({
-    shouldRerenderOnTransaction: true,
-    editable: false,
-    extensions: [
-      StarterKit,
-      TextStyle,
-      Color,
-      Link,
-      Superscript,
-      Highlight,
-      TextAlign.configure({ types: ["heading", "paragraph"] }),
-      Image.configure({
-        resize: {
-          enabled: false,
-          alwaysPreserveAspectRatio: true,
-        },
-      }),
-      Document,
-      Paragraph,
-      TextTiptap,
-      Dropcursor,
-    ],
-    content: post.content,
-    immediatelyRender: false,
-  });
+export default function Post({ post }: PostProps) {
+  const content = useMemo(
+    () => sanitizePostContent(post.content),
+    [post.content],
+  );
 
   return (
     <MantineProvider theme={theme}>
@@ -77,13 +46,9 @@ export default function Post({ post, allowHtmlMarkup }: PostProps) {
           <Title order={1}>{post.title}</Title>
         </Group>
 
-        <RichTextEditor
-          editor={editor}
-          contentEditable={false}
-          content={post.content}
-        >
-          <RichTextEditor.Content />
-        </RichTextEditor>
+        <Typography className="post-content">
+          <div dangerouslySetInnerHTML={{ __html: content }} />
+        </Typography>
         <br />
         <Text size="xs" ta="right">
           {post.author}

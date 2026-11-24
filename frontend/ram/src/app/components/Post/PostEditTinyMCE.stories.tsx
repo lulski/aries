@@ -1,15 +1,15 @@
 import { useForm } from "@mantine/form";
 import type { Meta, StoryObj } from "@storybook/nextjs-vite";
-import PostEdit from "./PostEdit";
+import PostEditTinyMCE from "./PostEditTinyMCE";
 
 const meta = {
-  title: "Components/PostEdit",
+  title: "Components/PostEditTinyMCE",
 
-  component: PostEdit,
+  component: PostEditTinyMCE,
   parameters: {
     layout: "fullscreen",
   },
-} satisfies Meta<typeof PostEdit>;
+} satisfies Meta<typeof PostEditTinyMCE>;
 
 export default meta;
 type Story = StoryObj<typeof meta>;
@@ -39,7 +39,7 @@ function PostEditWrapper({ initialValues, error }: PostEditWrapperProps) {
     },
   });
 
-  return <PostEdit form={form} error={error} />;
+  return <PostEditTinyMCE form={form} error={error} />;
 }
 
 export const Empty: Story = {
