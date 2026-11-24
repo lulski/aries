@@ -9,7 +9,9 @@ import {
 } from "@mantine/core";
 import { UseFormReturnType } from "@mantine/form";
 import dynamic from "next/dynamic";
-import ImageGallery from "../ImageGalery/ImageGallery";
+import { useRef } from "react";
+import ImageGallery, { UploadedImage } from "../ImageGalery/ImageGallery";
+import type { TinyMCE } from "./TinyMCEEditor";
 
 const TinyMCEEditor = dynamic(() => import("./TinyMCEEditor"), {
   ssr: false,
@@ -27,6 +29,16 @@ interface PostEditTinyMCEProps {
 
 export default function PostEditTinyMCE({ form, error }: PostEditTinyMCEProps) {
   const colorScheme = useComputedColorScheme("light");
+  const editorRef = useRef<TinyMCE | null>(null);
+
+  // Inserts at the cursor, or at the start if the editor was never focused.
+  function insertImage({ name, url }: UploadedImage) {
+    const editor = editorRef.current;
+    if (!editor) return;
+    editor.insertContent(
+      editor.dom.createHTML("img", { src: url, alt: name }),
+    );
+  }
 
   return (
     <>
@@ -50,12 +62,13 @@ export default function PostEditTinyMCE({ form, error }: PostEditTinyMCEProps) {
         <TinyMCEEditor
           key={colorScheme}
           colorScheme={colorScheme}
+          editorRef={editorRef}
           getInitialContent={() => form.getValues().content}
           onChange={(html) => form.setFieldValue("content", html)}
         />
       </InputWrapper>
       <Group justify="center" mt="md">
-        <ImageGallery />
+        <ImageGallery onUploadComplete={insertImage} />
       </Group>
     </>
   );

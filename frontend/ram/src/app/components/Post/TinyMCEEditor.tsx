@@ -27,16 +27,18 @@ import "tinymce/skins/ui/oxide/content.js";
 import "tinymce/skins/ui/oxide/skin.js";
 
 import { Editor, IAllProps } from "@tinymce/tinymce-react";
-import { useState } from "react";
+import { RefObject, useState } from "react";
 
 type InitOptions = NonNullable<IAllProps["init"]>;
-type TinyMCE = Parameters<NonNullable<InitOptions["setup"]>>[0];
+export type TinyMCE = Parameters<NonNullable<InitOptions["setup"]>>[0];
 
 interface TinyMCEEditorProps {
   /** Read once, on mount. TinyMCE owns the content from then on. */
   getInitialContent: () => string;
   onChange: (html: string) => void;
   colorScheme: "light" | "dark";
+  /** Set to the editor instance while it is ready, null otherwise. */
+  editorRef?: RefObject<TinyMCE | null>;
 }
 
 // Keep in sync with the AppShell header height in AriesLayout.
@@ -108,6 +110,7 @@ export default function TinyMCEEditor({
   getInitialContent,
   onChange,
   colorScheme,
+  editorRef,
 }: TinyMCEEditorProps) {
   // Must stay stable: the wrapper resets the editor when `initialValue` changes.
   const [initialContent] = useState(getInitialContent);
@@ -118,6 +121,13 @@ export default function TinyMCEEditor({
       licenseKey="gpl"
       initialValue={initialContent}
       onEditorChange={onChange}
+      onInit={(_event, editor) => {
+        if (!editorRef) return;
+        editorRef.current = editor;
+        editor.on("remove", () => {
+          if (editorRef.current === editor) editorRef.current = null;
+        });
+      }}
       init={{
         skin: isDark ? "oxide-dark" : "oxide",
         content_css: isDark ? "dark" : "default",
@@ -139,6 +149,9 @@ export default function TinyMCEEditor({
           }
           th {
             text-align: left;
+          }
+          img {
+            max-width: 100%;
           }
         `,
         plugins: "autolink autoresize code image link lists table",
